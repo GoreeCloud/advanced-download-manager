@@ -1,5 +1,11 @@
 [workspace]
-members = ["crates/download-core", "crates/download-http", "crates/download-state", "crates/gcdm"]
+members = [
+    "crates/download-core",
+    "crates/download-http",
+    "crates/download-state",
+    "crates/download-store-sqlite",
+    "crates/gcdm",
+]
 resolver = "3"
 
 [workspace.package]

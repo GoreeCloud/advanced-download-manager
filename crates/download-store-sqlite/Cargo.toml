@@ -1,0 +1,14 @@
+[package]
+name = "goreecloud-download-store-sqlite"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+goreecloud-download-core = { path = "../download-core" }
+goreecloud-download-state = { path = "../download-state" }
+rusqlite = { version = "=0.40.2", default-features = false, features = ["bundled", "fallible_uint"] }
+
+[lints]
+workspace = true
