@@ -1,19 +1,19 @@
 ---
 title: "ADR-0003 — SQLite Durable Job Store"
 document_type: "Architecture Decision Record"
-version: "v0.1"
+version: "v0.2"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Accepted"
 classification: "Public"
-last_updated: "2026-09-15"
+last_updated: "2026-09-16"
 ---
 
 # ADR-0003 — SQLite Durable Job Store
 
 ## Decision
 
-Use **SQLite** as the first durable local job-state backend for GoreeCloud Advanced Download Manager, accessed from Rust through **rusqlite 0.40.2** with its `bundled` feature and default features disabled.
+Use **SQLite** as the first durable local job-state backend for GoreeCloud Advanced Download Manager, accessed from Rust through **rusqlite 0.40.2** with its `bundled` and `fallible_uint` features and default features disabled.
 
 The SQLite adapter will live in a separate `crates/download-store-sqlite` crate and must implement the backend-neutral durability contract already defined by `crates/download-state` and ADR-0002. The shared domain and recovery crates remain independent of SQLite.
 
@@ -31,7 +31,7 @@ The initial database policy is intentionally conservative:
 
 ## Verified dependency baseline
 
-Dependency selection was reviewed on September 15, 2026 against current upstream primary sources and applicable GoreeCloud dependency/open-source governance.
+Dependency selection was reviewed on September 15–16, 2026 against current upstream primary sources and applicable GoreeCloud dependency/open-source governance.
 
 ### rusqlite
 
@@ -41,6 +41,7 @@ Upstream release `v0.40.2` was published August 8, 2026. Its package metadata de
 - MIT license;
 - Rust 2021 edition;
 - `bundled` support for compiling SQLite sources rather than relying on a system SQLite installation;
+- `fallible_uint` support for checked conversion of SQLite integer values into unsigned Rust integer types;
 - `libsqlite3-sys` dependency version `0.38.2`.
 
 Upstream source:
@@ -87,7 +88,7 @@ The `bundled` feature is selected to make the SQLite implementation version cont
 
 This improves reproducibility across Linux, Windows, and Android and avoids making a system SQLite package a hidden mandatory dependency. It also increases the source/build dependency surface, so the exact rusqlite/libsqlite3-sys/SQLite baseline must remain visible in `Cargo.lock`, dependency review, vulnerability scanning, and future update records.
 
-Default rusqlite features are disabled because the first adapter does not need the optional statement-cache or wasm-oriented default feature set. Only the `bundled` capability is enabled initially.
+Default rusqlite features are disabled because the first adapter does not need the optional statement-cache or wasm-oriented default feature set. The adapter enables only `bundled` plus `fallible_uint`. `fallible_uint` is used for bounded SQLite metadata count reads such as table-existence checks; it does not change the durable representation of download byte counters, which remain fixed-width 8-byte blobs so the full `u64` range is preserved.
 
 ## Journal and synchronous policy
 
