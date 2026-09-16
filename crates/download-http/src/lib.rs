@@ -182,9 +182,7 @@ mod tests {
             ),
             HttpRequestPlan::Resume {
                 start_at: 512,
-                if_range: IfRangeValidator::LastModified(
-                    "Tue, 15 Sep 2026 12:00:00 GMT".into()
-                ),
+                if_range: IfRangeValidator::LastModified("Tue, 15 Sep 2026 12:00:00 GMT".into()),
             }
         );
     }
