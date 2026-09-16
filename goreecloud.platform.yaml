@@ -1,5 +1,5 @@
 # GoreeCloud Advanced Download Manager Platform Contract declaration
-# File internal version: 0.1.1
+# File internal version: 0.1.2
 # Declaration validity does not prove implementation or acceptance.
 
 schema_version: "0.2"
@@ -10,7 +10,7 @@ component:
   product_name: GoreeCloud Advanced Download Manager
   repository: GoreeCloud/goreecloud-advanced-download-manager
 
-lifecycle: concept
+lifecycle: development
 version: "0.1.0"
 
 supported_platforms: []
@@ -99,8 +99,8 @@ conformance:
   validated_at: null
   evidence: []
   blockers:
-    - "No executable download engine or platform client is implemented."
-    - "No supported platform has build or runtime qualification evidence."
+    - "The Rust source foundation implements job-state and resume-validator contracts but no network transfer engine or durable persistence backend yet."
+    - "No supported platform has installable-client or representative runtime qualification evidence."
     - "No Platform System integration acceptance evidence exists."
     - "No release or production-acceptance evidence exists."
     - "A recognized software license has not yet been selected; RIGHTS.md is the current interim no-license-grant rights notice."

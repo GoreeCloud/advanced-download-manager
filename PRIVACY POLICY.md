@@ -1,9 +1,9 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Privacy Policy"
 document_type: "Application Privacy Policy"
-version: "v0.1"
+version: "v0.2"
 product_version: "0.1.0"
-release_lifecycle: "Concept"
+release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
 last_updated: "2026-09-15"
@@ -13,9 +13,11 @@ last_updated: "2026-09-15"
 
 ## Current runtime boundary
 
-GoreeCloud Advanced Download Manager is currently a **Concept** with documentation only. No repository implementation currently performs downloads or processes user download URLs, credentials, history, files, browser sessions, clipboard contents, device discovery, or transfer telemetry.
+GoreeCloud Advanced Download Manager is currently in **Development** with an initial Rust source foundation. The current core accepts only HTTP/HTTPS source strings, treats source URLs as sensitive values, and redacts them from Rust `Debug` output.
 
-This current boundary is not Privacy Shield acceptance; it reflects the absence of an application runtime.
+The current implementation does **not** yet perform network downloads or persist operational user download URLs, credentials, history, files, browser sessions, clipboard contents, device discovery, or transfer telemetry. A minimal development CLI shell exposes status/version text only.
+
+These source-level boundaries are not Privacy Shield acceptance and do not establish production privacy protection.
 
 ## Planned privacy requirements
 
