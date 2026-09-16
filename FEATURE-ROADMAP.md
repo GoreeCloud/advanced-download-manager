@@ -3,9 +3,9 @@ title: "GoreeCloud Advanced Download Manager — Feature Roadmap"
 product: "GoreeCloud Advanced Download Manager"
 document_type: "Feature Roadmap"
 status: "Active"
-version: "v0.2"
+version: "v0.3"
 classification: "Public"
-last_updated: "2026-09-15"
+last_updated: "2026-09-16"
 authoritative_record: true
 repository: "GoreeCloud/goreecloud-advanced-download-manager"
 canonical_source: "repository"
@@ -28,7 +28,7 @@ The roadmap prioritizes a durable local-first transfer engine first, then policy
 
 Status: **Development — Phase 1 source foundation in progress**
 
-Authoritative `main` is currently `1f5d45323ccb94e041f2d497d363ff443bb51505`. The post-merge Core Foundation run `35053832104` completed successfully for that exact revision.
+Authoritative `main` is currently `b343d90cace827f5a0a4c192e2c653a74e1e9256`. The post-merge Core Foundation run `35078078940` completed successfully for that exact revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.
 
 Verified repository state currently establishes:
 
@@ -37,10 +37,11 @@ Verified repository state currently establishes:
 - `crates/download-core` portable job identity, lifecycle, progress, sensitive-URL redaction, validator, and final-promotion source contracts;
 - `crates/download-http` dependency-free HTTP full/restart/resume planning and response-disposition contracts, including safe `If-Range` selection and range-offset validation;
 - `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;
+- `crates/download-store-sqlite` transaction-safe durable job-state persistence with pinned bundled SQLite/rusqlite, explicit schema/version validation, generation-checked atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;
 - the minimal `gcdm` Development-stage shell;
 - repository-policy, Rust Ubuntu/Windows, and Android portable-core CI coverage for the current bounded source foundation.
 
-No durable persistence backend, serialization layer, filesystem mutation, real network transfer execution, runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. All seven Integral Platform Systems remain unaccepted for this application.
+No filesystem mutation/durable checkpoint ordering, real network transfer execution, end-to-end runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite adapter establishes durable job metadata persistence only; all seven Integral Platform Systems remain unaccepted for this application.
 
 Phase 0 therefore remains open for outstanding governance/toolchain decisions and CI/release foundations, while Phase 1 is now actively in progress rather than merely planned.
 
@@ -63,7 +64,7 @@ Planned outcomes:
 - establish CI, test, packaging, dependency, and release-validation foundations appropriate to each target platform;
 - keep `SPECIFICATIONS.md`, this roadmap, Tasks Management, user documentation, and future changelog records synchronized with verified reality.
 
-Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.
+Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, the SQLite durable-store decision in ADR-0003, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved transport/UI/IPC implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.
 
 **Exit criteria:** repository governance baseline exists, architecture boundaries are documented, initial implementation plan is testable, and no planned integration is represented as accepted without evidence.
 
@@ -93,10 +94,11 @@ Verified source progress:
 - `download-core` establishes bounded job identity/state/progress contracts, sensitive URL debug redaction, remote-validator decisions, and final-file-promotion gating;
 - `download-http` establishes fail-closed full/restart/resume request planning and response-body disposition, including strong-ETag/Last-Modified `If-Range` handling, exact `206` offset checks, full replacement on `200`, and restart behavior for `412`/`416`;
 - `download-state` establishes schema version `1`, deterministic per-job staging paths, versioned checkpoints, optimistic generation-based mutation batches, recovery dispositions, partial-file length reconciliation, and completed-artifact revalidation;
-- ADR-0002 defines transaction boundaries, checkpoint ordering, migration/rollback, staging/promotion, and crash-recovery expectations before a persistence backend is selected;
-- the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android portable-core CI.
+- `download-store-sqlite` implements the first durable local metadata backend with atomic generation-checked batches, fail-closed schema validation, integrity checks, native-path preservation, sensitive-URL handling, and reopen/round-trip coverage;
+- ADR-0002 defines transaction, checkpoint-ordering, migration/rollback, staging/promotion, and crash-recovery boundaries, while ADR-0003 records the pinned SQLite/rusqlite backend and durability policy;
+- the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android CI.
 
-These are source-level contracts only. A transaction-safe persistence backend, serializer/migration adapter, filesystem implementation, single-stream HTTP/HTTPS transport, and runtime restart recovery remain required before the Phase 1 exit criteria can be satisfied.
+The transaction-safe job-metadata persistence boundary is now implemented and verified. Filesystem creation and durable checkpoint ordering, single-stream HTTP/HTTPS transport execution, service wiring, and end-to-end restart recovery remain required before the Phase 1 exit criteria can be satisfied.
 
 **Exit criteria:** a single-stream download can be created, persisted, interrupted, resumed safely, validated against remote-object identity, and recovered after an unexpected application stop without corrupting the target file.
 

@@ -1,12 +1,12 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Features"
 document_type: "Feature State"
-version: "v0.4"
+version: "v0.5"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
-last_updated: "2026-09-15"
+last_updated: "2026-09-16"
 ---
 
 # GoreeCloud Advanced Download Manager — Features
@@ -32,10 +32,11 @@ The repository contains an initial Rust source foundation. The implemented bound
 - versioned job checkpoint contracts carrying job identity, sensitive source URL, final/staging paths, state, progress, expected length, and remote validators while retaining sensitive-URL debug redaction;
 - recovery dispositions that route active jobs through validator-safe HTTP full/restart/resume planning, re-enter verification or processing after interruption, and require completed-artifact revalidation after restart;
 - partial-file reconciliation rules that accept matching durable length, truncate an uncommitted tail beyond the checkpoint, and require restart when the checkpoint is ahead of the actual partial artifact;
-- generation-based mutation-batch contracts for future atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;
+- generation-based mutation-batch contracts for atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;
+- a pinned `crates/download-store-sqlite` durable job-state adapter using bundled SQLite through `rusqlite 0.40.2`, with explicit schema/version validation, optimistic generation checking, atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;
 - a minimal `gcdm` Development-stage status/version shell that deliberately does not implement download commands.
 
-This is source-foundation functionality only. Network transfer execution, a durable persistence backend, serialization, filesystem mutation, restart recovery at runtime, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The HTTP and durable-state contract crates do not perform network or persistence I/O and do not establish a usable downloader.
+This is still Development-stage foundation functionality. Durable job metadata persistence is now implemented at the SQLite adapter boundary, but network transfer execution, filesystem mutation/durable checkpoint ordering, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.
 
 ## Planned feature families
 
