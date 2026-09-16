@@ -57,5 +57,11 @@ jobs:
           rustup toolchain install 1.98.1 --profile minimal
           rustup default 1.98.1
           rustup target add aarch64-linux-android --toolchain 1.98.1
-      - name: Check shared core for Android target
-        run: cargo check -p goreecloud-download-core --target aarch64-linux-android --locked
+      - name: Check portable shared-core crates for Android target
+        run: >-
+          cargo check
+          -p goreecloud-download-core
+          -p goreecloud-download-http
+          -p goreecloud-download-state
+          --target aarch64-linux-android
+          --locked
