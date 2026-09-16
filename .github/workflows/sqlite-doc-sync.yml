@@ -1,0 +1,81 @@
+name: SQLite Documentation Sync
+
+on:
+  push:
+    branches:
+      - docs/sqlite-state-sync
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out documentation branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: docs/sqlite-state-sync
+          fetch-depth: 0
+      - name: Align roadmap, features, and changelog
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              if old not in text:
+                  raise SystemExit(f"expected text not found in {path}: {old[:120]}")
+              p.write_text(text.replace(old, new, 1))
+
+          replace('FEATURE-ROADMAP.md', 'version: "v0.2"', 'version: "v0.3"')
+          replace('FEATURE-ROADMAP.md', 'last_updated: "2026-09-15"', 'last_updated: "2026-09-16"')
+          replace('FEATURE-ROADMAP.md',
+              'Authoritative `main` is currently `1f5d45323ccb94e041f2d497d363ff443bb51505`. The post-merge Core Foundation run `35053832104` completed successfully for that exact revision.',
+              'Authoritative `main` is currently `b343d90cace827f5a0a4c192e2c653a74e1e9256`. The post-merge Core Foundation run `35078078940` completed successfully for that exact revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.')
+          replace('FEATURE-ROADMAP.md',
+              '- `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;',
+              '- `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;\n- `crates/download-store-sqlite` transaction-safe durable job-state persistence with pinned bundled SQLite/rusqlite, explicit schema/version validation, generation-checked atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;')
+          replace('FEATURE-ROADMAP.md',
+              'No durable persistence backend, serialization layer, filesystem mutation, real network transfer execution, runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. All seven Integral Platform Systems remain unaccepted for this application.',
+              'No filesystem mutation/durable checkpoint ordering, real network transfer execution, end-to-end runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite adapter establishes durable job metadata persistence only; all seven Integral Platform Systems remain unaccepted for this application.')
+          replace('FEATURE-ROADMAP.md',
+              'Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.',
+              'Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, the SQLite durable-store decision in ADR-0003, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved transport/UI/IPC implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.')
+          replace('FEATURE-ROADMAP.md',
+              '- `download-state` establishes schema version `1`, deterministic per-job staging paths, versioned checkpoints, optimistic generation-based mutation batches, recovery dispositions, partial-file length reconciliation, and completed-artifact revalidation;\n- ADR-0002 defines transaction boundaries, checkpoint ordering, migration/rollback, staging/promotion, and crash-recovery expectations before a persistence backend is selected;\n- the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android portable-core CI.',
+              '- `download-state` establishes schema version `1`, deterministic per-job staging paths, versioned checkpoints, optimistic generation-based mutation batches, recovery dispositions, partial-file length reconciliation, and completed-artifact revalidation;\n- `download-store-sqlite` implements the first durable local metadata backend with atomic generation-checked batches, fail-closed schema validation, integrity checks, native-path preservation, sensitive-URL handling, and reopen/round-trip coverage;\n- ADR-0002 defines transaction, checkpoint-ordering, migration/rollback, staging/promotion, and crash-recovery boundaries, while ADR-0003 records the pinned SQLite/rusqlite backend and durability policy;\n- the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android CI.')
+          replace('FEATURE-ROADMAP.md',
+              'These are source-level contracts only. A transaction-safe persistence backend, serializer/migration adapter, filesystem implementation, single-stream HTTP/HTTPS transport, and runtime restart recovery remain required before the Phase 1 exit criteria can be satisfied.',
+              'The transaction-safe job-metadata persistence boundary is now implemented and verified. Filesystem creation and durable checkpoint ordering, single-stream HTTP/HTTPS transport execution, service wiring, and end-to-end restart recovery remain required before the Phase 1 exit criteria can be satisfied.')
+
+          replace('FEATURES.md', 'version: "v0.4"', 'version: "v0.5"')
+          replace('FEATURES.md', 'last_updated: "2026-09-15"', 'last_updated: "2026-09-16"')
+          replace('FEATURES.md',
+              '- generation-based mutation-batch contracts for future atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;',
+              '- generation-based mutation-batch contracts for atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;\n- a pinned `crates/download-store-sqlite` durable job-state adapter using bundled SQLite through `rusqlite 0.40.2`, with explicit schema/version validation, optimistic generation checking, atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;')
+          replace('FEATURES.md',
+              'This is source-foundation functionality only. Network transfer execution, a durable persistence backend, serialization, filesystem mutation, restart recovery at runtime, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The HTTP and durable-state contract crates do not perform network or persistence I/O and do not establish a usable downloader.',
+              'This is still Development-stage foundation functionality. Durable job metadata persistence is now implemented at the SQLite adapter boundary, but network transfer execution, filesystem mutation/durable checkpoint ordering, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.')
+
+          replace('CHANGELOG.md', 'version: "v0.4"', 'version: "v0.5"')
+          replace('CHANGELOG.md', 'last_updated: "2026-09-15"', 'last_updated: "2026-09-16"')
+          replace('CHANGELOG.md',
+              '- Added ADR-0002 to define durable-state transaction, migration/rollback, checkpoint ordering, staging/promotion, and restart-recovery expectations before a persistence backend is selected.',
+              '- Added ADR-0002 to define durable-state transaction, migration/rollback, checkpoint ordering, staging/promotion, and restart-recovery expectations before a persistence backend is selected.\n- Added `crates/download-store-sqlite`, the first transaction-safe durable job-state backend, using pinned `rusqlite 0.40.2` with bundled SQLite and bounded unsigned metadata conversion.\n- Added explicit SQLite schema/version validation, generation-checked atomic mutation batches, integrity checking, lossless native-path persistence, sensitive-URL handling, reopen/round-trip tests, and ADR-0003 documenting the backend and durability policy.\n- Extended Android CI with NDK C-toolchain configuration and compilation of the SQLite adapter for the Android shared-core target.')
+          replace('CHANGELOG.md',
+              '- No network transfer execution, durable persistence backend, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.',
+              '- No network transfer execution, filesystem durability/runtime transfer orchestration, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.')
+          PY
+      - name: Remove temporary synchronization workflow and commit
+        shell: bash
+        run: |
+          git rm .github/workflows/sqlite-doc-sync.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add FEATURE-ROADMAP.md FEATURES.md CHANGELOG.md
+          git commit -m 'docs: sync SQLite persistence state'
+          git push origin HEAD:docs/sqlite-state-sync
