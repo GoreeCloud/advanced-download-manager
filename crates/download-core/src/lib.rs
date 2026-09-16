@@ -411,7 +411,10 @@ mod tests {
         job.start().unwrap();
         job.record_progress(10).unwrap();
         job.begin_verification().unwrap();
-        assert_eq!(job.complete(false), Err(TransitionError::FinalFileNotPromoted));
+        assert_eq!(
+            job.complete(false),
+            Err(TransitionError::FinalFileNotPromoted)
+        );
         assert_eq!(job.state(), JobState::Verifying);
         job.complete(true).unwrap();
         assert_eq!(job.state(), JobState::Completed);
@@ -422,7 +425,10 @@ mod tests {
         let mut job = job(Some(10), RemoteValidators::default());
         job.start().unwrap();
         job.record_progress(9).unwrap();
-        assert_eq!(job.begin_verification(), Err(TransitionError::TransferIncomplete));
+        assert_eq!(
+            job.begin_verification(),
+            Err(TransitionError::TransferIncomplete)
+        );
         assert_eq!(job.state(), JobState::Downloading);
     }
 
@@ -431,7 +437,10 @@ mod tests {
         let mut job = job(Some(10), RemoteValidators::default());
         job.start().unwrap();
         job.record_progress(5).unwrap();
-        assert_eq!(job.record_progress(4), Err(TransitionError::ProgressRegressed));
+        assert_eq!(
+            job.record_progress(4),
+            Err(TransitionError::ProgressRegressed)
+        );
         assert_eq!(
             job.record_progress(11),
             Err(TransitionError::ProgressExceedsExpected)
@@ -451,7 +460,10 @@ mod tests {
             etag: Some("new-etag".into()),
             last_modified: None,
         };
-        assert_eq!(job.evaluate_resume(&remote), ResumeDecision::RestartRequired);
+        assert_eq!(
+            job.evaluate_resume(&remote),
+            ResumeDecision::RestartRequired
+        );
     }
 
     #[test]
@@ -461,7 +473,10 @@ mod tests {
             last_modified: None,
         };
         let job = job(None, validators.clone());
-        assert_eq!(job.evaluate_resume(&validators), ResumeDecision::ResumeAllowed);
+        assert_eq!(
+            job.evaluate_resume(&validators),
+            ResumeDecision::ResumeAllowed
+        );
     }
 
     #[test]
