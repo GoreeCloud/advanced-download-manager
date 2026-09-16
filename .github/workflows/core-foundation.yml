@@ -38,15 +38,6 @@ jobs:
         run: rustup toolchain install 1.98.1 --profile minimal --component rustfmt --component clippy
       - name: Use pinned Rust toolchain
         run: rustup default 1.98.1
-      - name: Generate candidate dependency lockfile
-        run: cargo generate-lockfile
-      - name: Emit candidate dependency lockfile
-        if: matrix.os == 'ubuntu-24.04'
-        shell: bash
-        run: |
-          echo '--- BEGIN CANDIDATE CARGO.LOCK ---'
-          cat Cargo.lock
-          echo '--- END CANDIDATE CARGO.LOCK ---'
       - name: Verify formatting
         run: cargo fmt --all -- --check
       - name: Run Clippy
@@ -66,13 +57,22 @@ jobs:
           rustup toolchain install 1.98.1 --profile minimal
           rustup default 1.98.1
           rustup target add aarch64-linux-android --toolchain 1.98.1
-      - name: Generate candidate dependency lockfile
-        run: cargo generate-lockfile
+      - name: Configure Android NDK C toolchain
+        shell: bash
+        run: |
+          if [[ -z "${ANDROID_NDK_HOME:-}" ]]; then
+            echo "ANDROID_NDK_HOME is not available on the runner" >&2
+            exit 1
+          fi
+          toolchain="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          echo "CC_aarch64_linux_android=$toolchain/aarch64-linux-android21-clang" >> "$GITHUB_ENV"
+          echo "AR_aarch64_linux_android=$toolchain/llvm-ar" >> "$GITHUB_ENV"
       - name: Check portable shared-core crates for Android target
         run: >-
           cargo check
           -p goreecloud-download-core
           -p goreecloud-download-http
           -p goreecloud-download-state
+          -p goreecloud-download-store-sqlite
           --target aarch64-linux-android
           --locked
