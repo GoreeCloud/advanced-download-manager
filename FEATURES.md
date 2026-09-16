@@ -1,7 +1,7 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Features"
 document_type: "Feature State"
-version: "v0.2"
+version: "v0.3"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
@@ -13,7 +13,7 @@ last_updated: "2026-09-15"
 
 ## Current verified source functionality
 
-The repository now contains an initial Rust source foundation. The implemented bounded core currently provides:
+The repository contains an initial Rust source foundation. The implemented bounded core currently provides:
 
 - validated job identifiers;
 - HTTP/HTTPS-only source URL admission for the current core boundary;
@@ -24,9 +24,12 @@ The repository now contains an initial Rust source foundation. The implemented b
 - a requirement that known-length transfers be complete before verification;
 - a requirement that a final file be safely promoted before a job can become completed;
 - ETag/Last-Modified resume-decision logic that does not silently approve resume when validators are unavailable;
+- dependency-free HTTP resume-safety contracts that choose full, restart-full, or validator-bound range requests from persisted progress state;
+- strong-ETag preference with Last-Modified fallback for planned `If-Range` requests, while weak or unavailable validators force full restart rather than unsafe append;
+- HTTP response-body disposition rules that only permit append after a valid `206 Partial Content` response begins at the requested byte offset, treat `200 OK` as a full-body replacement, and require restart or rejection for incompatible range responses;
 - a minimal `gcdm` Development-stage status/version shell that deliberately does not implement download commands.
 
-This is source-foundation functionality only. Network transfer execution, persistent job storage, restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet.
+This is source-foundation functionality only. Network transfer execution, persistent job storage, restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The HTTP contract crate does not perform network I/O and does not establish a usable downloader.
 
 ## Planned feature families
 
