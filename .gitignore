@@ -1,0 +1,36 @@
+# GoreeCloud file internal version: 0.1.0
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+!.env.template
+
+# OS/editor local state
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Generated/build/cache outputs
+build/
+dist/
+out/
+target/
+coverage/
+.cache/
+tmp/
+temp/
+logs/
+node_modules/
+.gradle/
+
+# Local databases and runtime state
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
