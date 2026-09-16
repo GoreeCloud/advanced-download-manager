@@ -1,12 +1,12 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Changelog"
 document_type: "Changelog"
-version: "v0.4"
+version: "v0.5"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
-last_updated: "2026-09-15"
+last_updated: "2026-09-16"
 ---
 
 # GoreeCloud Advanced Download Manager — Changelog
@@ -24,9 +24,12 @@ All notable governed repository changes should be recorded here. Source mileston
 - Added strong-ETag/Last-Modified `If-Range` planning, weak-validator fallback behavior, exact resume-offset checks for `206 Partial Content`, full-body replacement behavior for `200 OK`, and explicit restart behavior for `412 Precondition Failed` / `416 Range Not Satisfiable`.
 - Added the dependency-free `crates/download-state` contract crate for schema compatibility, deterministic per-job partial-file paths, versioned job checkpoints, crash-recovery dispositions, partial-file reconciliation, final-artifact revalidation, and generation-based atomic mutation-batch boundaries for a future persistence adapter.
 - Added ADR-0002 to define durable-state transaction, migration/rollback, checkpoint ordering, staging/promotion, and restart-recovery expectations before a persistence backend is selected.
+- Added `crates/download-store-sqlite`, the first transaction-safe durable job-state backend, using pinned `rusqlite 0.40.2` with bundled SQLite and bounded unsigned metadata conversion.
+- Added explicit SQLite schema/version validation, generation-checked atomic mutation batches, integrity checking, lossless native-path persistence, sensitive-URL handling, reopen/round-trip tests, and ADR-0003 documenting the backend and durability policy.
+- Extended Android CI with NDK C-toolchain configuration and compilation of the SQLite adapter for the Android shared-core target.
 - Expanded Android shared-core CI coverage to compile the portable core, HTTP safety, and durable-state contract crates for the Android target.
 - Added repository-policy validation and CI definitions for formatting, Clippy, tests, native workspace checking, and Android shared-core compilation checking.
-- No network transfer execution, durable persistence backend, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.
+- No network transfer execution, filesystem durability/runtime transfer orchestration, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.
 
 ### Documentation and governance
 
