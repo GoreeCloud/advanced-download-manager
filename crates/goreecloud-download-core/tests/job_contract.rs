@@ -1,0 +1,12 @@
+[package]
+name = "gcdm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+goreecloud-download-core = { path = "../download-core" }
+
+[lints]
+workspace = true
