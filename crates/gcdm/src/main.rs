@@ -14,12 +14,16 @@ fn main() {
             println!("Download commands are not implemented yet.");
         }
         Some(_) => {
-            eprintln!("This Development source foundation does not implement download commands yet.");
+            eprintln!(
+                "This Development source foundation does not implement download commands yet."
+            );
             std::process::exit(2);
         }
         None => {
             println!("GoreeCloud Advanced Download Manager {PRODUCT_VERSION}");
-            println!("Development source foundation; no supported download workflow is available yet.");
+            println!(
+                "Development source foundation; no supported download workflow is available yet."
+            );
         }
     }
 }
