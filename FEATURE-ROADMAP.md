@@ -3,7 +3,7 @@ title: "GoreeCloud Advanced Download Manager — Feature Roadmap"
 product: "GoreeCloud Advanced Download Manager"
 document_type: "Feature Roadmap"
 status: "Active"
-version: "v0.1"
+version: "v0.2"
 classification: "Public"
 last_updated: "2026-09-15"
 authoritative_record: true
@@ -20,22 +20,29 @@ drive_sync_target: "GoreeCloud/Feature Roadmap/GoreeCloud Advanced Download Mana
 
 ## Product direction
 
-GoreeCloud Advanced Download Manager is planned as the universal download and transfer-orchestration layer for the GoreeCloud ecosystem. It is intended to operate as a powerful standalone application on Linux, Windows, and Android while also exposing a shared download service to authorized GoreeCloud applications.
+GoreeCloud Advanced Download Manager is being developed as the universal download and transfer-orchestration layer for the GoreeCloud ecosystem. It is intended to operate as a powerful standalone application on Linux, Windows, and Android while also exposing a shared download service to authorized GoreeCloud applications.
 
 The roadmap prioritizes a durable local-first transfer engine first, then policy, automation, user experience, platform integration, and cross-device orchestration. Specialized protocols such as BitTorrent remain delegated to the appropriate GoreeCloud service rather than being duplicated unnecessarily.
 
 ## Current verified state
 
-Status: **Pre-implementation / documentation foundation**
+Status: **Development — Phase 1 source foundation in progress**
+
+Authoritative `main` is currently `1f5d45323ccb94e041f2d497d363ff443bb51505`. The post-merge Core Foundation run `35053832104` completed successfully for that exact revision.
 
 Verified repository state currently establishes:
 
-- the repository exists with `main` as its default branch;
-- `SPECIFICATIONS.md` records the planned product specification;
-- the specification is explicitly classified as planned rather than implemented;
-- no download-engine implementation, platform client, release artifact, production deployment, or runtime acceptance evidence has yet been established in this repository.
+- product internal version `0.1.0` and Development lifecycle documentation;
+- the governed repository documentation baseline, architecture boundaries, changelog, current feature state, user/privacy/security documentation, and Platform Contract declaration;
+- `crates/download-core` portable job identity, lifecycle, progress, sensitive-URL redaction, validator, and final-promotion source contracts;
+- `crates/download-http` dependency-free HTTP full/restart/resume planning and response-disposition contracts, including safe `If-Range` selection and range-offset validation;
+- `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;
+- the minimal `gcdm` Development-stage shell;
+- repository-policy, Rust Ubuntu/Windows, and Android portable-core CI coverage for the current bounded source foundation.
 
-The repository documentation baseline is still incomplete under current GoreeCloud repository governance. Missing mandatory repository documents and platform-contract declarations must be added through later governed work rather than being treated as complete by this roadmap.
+No durable persistence backend, serialization layer, filesystem mutation, real network transfer execution, runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. All seven Integral Platform Systems remain unaccepted for this application.
+
+Phase 0 therefore remains open for outstanding governance/toolchain decisions and CI/release foundations, while Phase 1 is now actively in progress rather than merely planned.
 
 # Delivery sequence
 
@@ -56,12 +63,14 @@ Planned outcomes:
 - establish CI, test, packaging, dependency, and release-validation foundations appropriate to each target platform;
 - keep `SPECIFICATIONS.md`, this roadmap, Tasks Management, user documentation, and future changelog records synchronized with verified reality.
 
+Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.
+
 **Exit criteria:** repository governance baseline exists, architecture boundaries are documented, initial implementation plan is testable, and no planned integration is represented as accepted without evidence.
 
 ## Phase 1 — Durable local download engine foundation
 
 **Roadmap ID:** ADM-100  
-**Status:** Planned
+**Status:** In progress
 
 Build the common platform-independent engine and persistent job model.
 
@@ -78,6 +87,16 @@ Planned outcomes:
 - explicit transfer states such as queued, waiting, downloading, verifying, processing, completed, and failed;
 - structured diagnostics and error categories;
 - local-first operation without mandatory GoreeCloud Identity or cloud dependencies.
+
+Verified source progress:
+
+- `download-core` establishes bounded job identity/state/progress contracts, sensitive URL debug redaction, remote-validator decisions, and final-file-promotion gating;
+- `download-http` establishes fail-closed full/restart/resume request planning and response-body disposition, including strong-ETag/Last-Modified `If-Range` handling, exact `206` offset checks, full replacement on `200`, and restart behavior for `412`/`416`;
+- `download-state` establishes schema version `1`, deterministic per-job staging paths, versioned checkpoints, optimistic generation-based mutation batches, recovery dispositions, partial-file length reconciliation, and completed-artifact revalidation;
+- ADR-0002 defines transaction boundaries, checkpoint ordering, migration/rollback, staging/promotion, and crash-recovery expectations before a persistence backend is selected;
+- the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android portable-core CI.
+
+These are source-level contracts only. A transaction-safe persistence backend, serializer/migration adapter, filesystem implementation, single-stream HTTP/HTTPS transport, and runtime restart recovery remain required before the Phase 1 exit criteria can be satisfied.
 
 **Exit criteria:** a single-stream download can be created, persisted, interrupted, resumed safely, validated against remote-object identity, and recovered after an unexpected application stop without corrupting the target file.
 
@@ -405,15 +424,15 @@ The following requirements apply throughout the roadmap rather than belonging to
 
 The next bounded engineering work should proceed in this order unless a later authoritative decision changes the sequence:
 
-1. Finish Phase 0 repository/governance baseline.
-2. Implement Phase 1 durable single-stream HTTP/HTTPS transfer and persistent job state.
-3. Add validator-safe resume and crash/restart recovery.
-4. Add checksum verification and reason-specific retry behavior.
-5. Add controlled multipart acceleration and per-host limits.
-6. Add queues, priorities, scheduling, bandwidth, and storage policy.
-7. Establish the first Linux service/CLI client as the reference desktop implementation.
-8. Build the Glaze UI client against the stable service contract.
-9. Expand to Windows and Android using the common engine/service contracts.
+1. Close remaining Phase 0 governance and implementation-foundation gaps that materially gate safe Phase 1 work, without treating documentation completion as runtime completion.
+2. Select and implement the transaction-safe persistence backend plus serialization/migration adapter against ADR-0002, including schema-version and optimistic-generation enforcement.
+3. Implement filesystem staging, durable checkpoint write ordering, tail truncation/restart reconciliation, synchronization, and safe final-file promotion.
+4. Implement the first real single-stream HTTP/HTTPS transport adapter against the existing HTTP request/response safety contracts.
+5. Wire persisted pause/resume and crash/restart recovery end to end, including changed-remote-object, interrupted-write, missing-artifact, and storage-failure fixtures.
+6. Add checksum verification and reason-specific retry behavior.
+7. Add controlled multipart acceleration and per-host limits.
+8. Add queues, priorities, scheduling, bandwidth, and storage policy.
+9. Establish the first Linux service/CLI client as the reference desktop implementation, then build the Glaze UI client against the stable service contract and expand to Windows and Android.
 10. Introduce browser integration, APIs, cross-device orchestration, and broader GoreeCloud integrations only after the local engine and authorization boundaries are stable.
 
 This sequencing intentionally prevents browser interception, remote control, synchronization, or ecosystem integration from becoming dependencies of the basic download engine.
