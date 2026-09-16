@@ -1,5 +1,5 @@
 # GoreeCloud Advanced Download Manager Platform Contract declaration
-# File internal version: 0.1.0
+# File internal version: 0.1.1
 # Declaration validity does not prove implementation or acceptance.
 
 schema_version: "0.2"
@@ -103,4 +103,4 @@ conformance:
     - "No supported platform has build or runtime qualification evidence."
     - "No Platform System integration acceptance evidence exists."
     - "No release or production-acceptance evidence exists."
-    - "A recognized software license or approved public rights notice has not yet been selected."
+    - "A recognized software license has not yet been selected; RIGHTS.md is the current interim no-license-grant rights notice."
