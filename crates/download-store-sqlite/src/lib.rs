@@ -507,6 +507,7 @@ fn encode_path(path: &Path) -> Result<(&'static str, Vec<u8>), StoreError> {
 }
 
 #[cfg(windows)]
+#[allow(clippy::chunks_exact_to_as_chunks)]
 fn decode_path(encoding: &str, bytes: &[u8]) -> Result<PathBuf, StoreError> {
     if encoding != "windows-utf16le-v1" {
         return Err(StoreError::UnsupportedPathEncoding);
