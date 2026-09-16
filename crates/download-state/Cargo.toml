@@ -1,0 +1,13 @@
+[package]
+name = "goreecloud-download-state"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+goreecloud-download-core = { path = "../download-core" }
+goreecloud-download-http = { path = "../download-http" }
+
+[lints]
+workspace = true
