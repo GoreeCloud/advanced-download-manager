@@ -1,0 +1,50 @@
+name: Branch Repair
+
+on:
+  push:
+    branches:
+      - feature/sqlite-durable-store
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/sqlite-durable-store
+          fetch-depth: 0
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.98.1 --profile minimal --component rustfmt
+      - name: Repair SQLite dependency feature and format workspace
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          cargo = Path('crates/download-store-sqlite/Cargo.toml')
+          text = cargo.read_text()
+          old = 'features = ["bundled"]'
+          new = 'features = ["bundled", "fallible_uint"]'
+          if old in text:
+              text = text.replace(old, new, 1)
+              cargo.write_text(text)
+          elif new not in text:
+              raise SystemExit('unexpected rusqlite feature declaration')
+          PY
+          cargo +1.98.1 fmt --all
+      - name: Commit repairs when needed
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No repair changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crates/download-store-sqlite/Cargo.toml crates/download-store-sqlite/src/lib.rs
+          git commit -m 'Fix SQLite durable store CI'
+          git push origin HEAD:feature/sqlite-durable-store
