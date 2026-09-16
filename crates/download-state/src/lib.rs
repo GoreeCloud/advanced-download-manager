@@ -194,10 +194,7 @@ impl JobCheckpointV1 {
 
     pub fn recovery_disposition(&self) -> RecoveryDisposition {
         match self.state {
-            JobState::Queued
-            | JobState::Downloading
-            | JobState::Paused
-            | JobState::Waiting(_) => {
+            JobState::Queued | JobState::Downloading | JobState::Paused | JobState::Waiting(_) => {
                 RecoveryDisposition::Transfer(plan_request(self.downloaded_bytes, &self.validators))
             }
             JobState::Verifying => RecoveryDisposition::ReverifyStaging,
@@ -222,17 +219,17 @@ pub enum RecoveryDisposition {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum PartialLengthDecision {
     Consistent,
-    TruncateUncommittedTail { from: u64, to: u64 },
+    TruncateUncommittedTail {
+        from: u64,
+        to: u64,
+    },
     RestartRequired {
         checkpoint_bytes: u64,
         actual_bytes: u64,
     },
 }
 
-pub fn reconcile_partial_length(
-    checkpoint_bytes: u64,
-    actual_bytes: u64,
-) -> PartialLengthDecision {
+pub fn reconcile_partial_length(checkpoint_bytes: u64, actual_bytes: u64) -> PartialLengthDecision {
     match actual_bytes.cmp(&checkpoint_bytes) {
         Ordering::Equal => PartialLengthDecision::Consistent,
         Ordering::Greater => PartialLengthDecision::TruncateUncommittedTail {
@@ -442,9 +439,7 @@ mod tests {
             checkpoint.recovery_disposition(),
             RecoveryDisposition::Transfer(HttpRequestPlan::Resume {
                 start_at: 4096,
-                if_range: goreecloud_download_http::IfRangeValidator::StrongEtag(
-                    "\"v1\"".into()
-                ),
+                if_range: goreecloud_download_http::IfRangeValidator::StrongEtag("\"v1\"".into()),
             })
         );
     }
