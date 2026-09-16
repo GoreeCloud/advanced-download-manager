@@ -1,9 +1,9 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Security"
 document_type: "Repository Security Guidance"
-version: "v0.1"
+version: "v0.2"
 product_version: "0.1.0"
-release_lifecycle: "Concept"
+release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
 last_updated: "2026-09-15"
@@ -13,7 +13,9 @@ last_updated: "2026-09-15"
 
 ## Current security status
 
-The project is currently at **Concept** lifecycle and has no verified executable application in this repository. Runtime hardening, protocol security, credential storage, file scanning, update security, and Wardveil Security integration are therefore not yet accepted.
+The project is currently in **Development** with an initial Rust source foundation. Shared core code forbids Rust `unsafe` code, validates bounded job identifiers, restricts the current source boundary to HTTP/HTTPS URL strings, redacts sensitive URLs from `Debug` output, enforces bounded job-state transitions, and prevents a job from reaching completed state unless final-file promotion is explicitly confirmed.
+
+The current implementation does not yet contain network transfer execution, credential storage, archive/media parsing, downloaded-file execution, remote APIs, browser connectors, platform installers, update delivery, or accepted Wardveil Security runtime integration. Runtime hardening and production security acceptance therefore remain open.
 
 ## Reporting security-sensitive findings
 
