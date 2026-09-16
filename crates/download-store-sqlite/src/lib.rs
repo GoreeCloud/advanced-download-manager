@@ -150,10 +150,7 @@ impl SqliteStore {
                 staging_path: decode_path(&path_encoding, &staging_path_bytes)?,
                 state: decode_state(&state_code, state_detail.as_deref())?,
                 downloaded_bytes: decode_u64(&downloaded_bytes_blob)?,
-                expected_bytes: expected_bytes_blob
-                    .as_deref()
-                    .map(decode_u64)
-                    .transpose()?,
+                expected_bytes: expected_bytes_blob.as_deref().map(decode_u64).transpose()?,
                 validators: RemoteValidators {
                     etag,
                     last_modified,
@@ -288,7 +285,8 @@ fn validate_schema(connection: &Connection) -> Result<(), StoreError> {
         .map_err(StoreError::Database)?
         .ok_or(StoreError::MetadataInvariant)?;
 
-    let schema_version = u32::try_from(schema_version).map_err(|_| StoreError::InvalidSchemaVersion)?;
+    let schema_version =
+        u32::try_from(schema_version).map_err(|_| StoreError::InvalidSchemaVersion)?;
     if schema_version == 0 {
         return Err(StoreError::InvalidSchemaVersion);
     }
@@ -554,16 +552,28 @@ impl fmt::Display for StoreError {
         match self {
             Self::Database(error) => write!(formatter, "SQLite operation failed: {error}"),
             Self::CoreInput(error) => write!(formatter, "stored core value is invalid: {error}"),
-            Self::State(error) => write!(formatter, "stored checkpoint violates state contract: {error}"),
+            Self::State(error) => write!(
+                formatter,
+                "stored checkpoint violates state contract: {error}"
+            ),
             Self::WrongApplicationId { found } => {
-                write!(formatter, "database application id {found} does not belong to this store")
+                write!(
+                    formatter,
+                    "database application id {found} does not belong to this store"
+                )
             }
-            Self::UnrecognizedStore => {
-                formatter.write_str("database contains unrecognized tables and is not a GoreeCloud download store")
+            Self::UnrecognizedStore => formatter.write_str(
+                "database contains unrecognized tables and is not a GoreeCloud download store",
+            ),
+            Self::MissingSchema => {
+                formatter.write_str("required durable-store schema is incomplete")
             }
-            Self::MissingSchema => formatter.write_str("required durable-store schema is incomplete"),
-            Self::MetadataInvariant => formatter.write_str("durable-store metadata invariant failed"),
-            Self::InvalidSchemaVersion => formatter.write_str("durable-store schema version is invalid"),
+            Self::MetadataInvariant => {
+                formatter.write_str("durable-store metadata invariant failed")
+            }
+            Self::InvalidSchemaVersion => {
+                formatter.write_str("durable-store schema version is invalid")
+            }
             Self::MigrationRequired { found, current } => write!(
                 formatter,
                 "durable-store schema {found} requires migration to {current}"
@@ -580,7 +590,9 @@ impl fmt::Display for StoreError {
                 formatter.write_str("stored unsigned integer encoding is invalid")
             }
             Self::InvalidJobState => formatter.write_str("stored job-state encoding is invalid"),
-            Self::ValidatorTooLong => formatter.write_str("stored remote validator exceeds the supported length"),
+            Self::ValidatorTooLong => {
+                formatter.write_str("stored remote validator exceeds the supported length")
+            }
             Self::PathTooLong => formatter.write_str("stored path exceeds the supported length"),
             Self::UnsupportedPathEncoding => {
                 formatter.write_str("stored path encoding is not supported on this platform")
@@ -589,7 +601,9 @@ impl fmt::Display for StoreError {
             Self::PathEncodingMismatch => {
                 formatter.write_str("final and staging paths use different platform encodings")
             }
-            Self::IntegrityCheckFailed => formatter.write_str("SQLite quick-check reported database corruption"),
+            Self::IntegrityCheckFailed => {
+                formatter.write_str("SQLite quick-check reported database corruption")
+            }
         }
     }
 }
@@ -699,7 +713,8 @@ mod tests {
 
         {
             let mut store = SqliteStore::open(&database.path).unwrap();
-            let batch = CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap();
+            let batch =
+                CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap();
             store.apply_batch(&batch).unwrap();
             assert_eq!(store.generation().unwrap(), 1);
         }
@@ -720,7 +735,9 @@ mod tests {
         let mut store = SqliteStore::open(&database.path).unwrap();
 
         store
-            .apply_batch(&CommitBatchV1::new(0, vec![JobMutationV1::Upsert(first.clone())]).unwrap())
+            .apply_batch(
+                &CommitBatchV1::new(0, vec![JobMutationV1::Upsert(first.clone())]).unwrap(),
+            )
             .unwrap();
 
         let stale = CommitBatchV1::new(0, vec![JobMutationV1::Upsert(second)]).unwrap();
@@ -743,7 +760,9 @@ mod tests {
         let mut store = SqliteStore::open(&database.path).unwrap();
 
         store
-            .apply_batch(&CommitBatchV1::new(0, vec![JobMutationV1::Upsert(first.clone())]).unwrap())
+            .apply_batch(
+                &CommitBatchV1::new(0, vec![JobMutationV1::Upsert(first.clone())]).unwrap(),
+            )
             .unwrap();
         store
             .apply_batch(
@@ -766,7 +785,8 @@ mod tests {
     fn unsigned_counters_round_trip_above_sqlite_signed_integer_range() {
         let database = TestDatabase::new();
         let id = JobId::parse("huge-job").unwrap();
-        let paths = PartialArtifactPaths::for_job(PathBuf::from("downloads/huge.bin"), &id).unwrap();
+        let paths =
+            PartialArtifactPaths::for_job(PathBuf::from("downloads/huge.bin"), &id).unwrap();
         let checkpoint = JobCheckpointV1::from_fields(JobCheckpointFieldsV1 {
             id,
             source: SensitiveUrl::parse("https://example.invalid/huge.bin").unwrap(),
@@ -781,7 +801,9 @@ mod tests {
 
         let mut store = SqliteStore::open(&database.path).unwrap();
         store
-            .apply_batch(&CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap())
+            .apply_batch(
+                &CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap(),
+            )
             .unwrap();
         assert_eq!(store.load_all().unwrap(), vec![checkpoint]);
     }
@@ -859,7 +881,9 @@ mod tests {
     fn unix_non_utf8_paths_round_trip_losslessly() {
         let database = TestDatabase::new();
         let id = JobId::parse("non-utf8").unwrap();
-        let destination = PathBuf::from(OsString::from_vec(vec![b'd', b'l', b'/', 0xff, b'.', b'b', b'i', b'n']));
+        let destination = PathBuf::from(OsString::from_vec(vec![
+            b'd', b'l', b'/', 0xff, b'.', b'b', b'i', b'n',
+        ]));
         let paths = PartialArtifactPaths::for_job(destination, &id).unwrap();
         let checkpoint = JobCheckpointV1::from_fields(JobCheckpointFieldsV1 {
             id,
@@ -875,7 +899,9 @@ mod tests {
 
         let mut store = SqliteStore::open(&database.path).unwrap();
         store
-            .apply_batch(&CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap())
+            .apply_batch(
+                &CommitBatchV1::new(0, vec![JobMutationV1::Upsert(checkpoint.clone())]).unwrap(),
+            )
             .unwrap();
         assert_eq!(store.load_all().unwrap(), vec![checkpoint]);
     }
