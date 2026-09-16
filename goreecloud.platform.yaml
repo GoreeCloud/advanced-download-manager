@@ -1,0 +1,106 @@
+# GoreeCloud Advanced Download Manager Platform Contract declaration
+# File internal version: 0.1.0
+# Declaration validity does not prove implementation or acceptance.
+
+schema_version: "0.2"
+
+component:
+  type: application
+  id: goreecloud-advanced-download-manager
+  product_name: GoreeCloud Advanced Download Manager
+  repository: GoreeCloud/goreecloud-advanced-download-manager
+
+lifecycle: concept
+version: "0.1.0"
+
+supported_platforms: []
+
+api:
+  versions: []
+  endpoints: []
+
+platform_systems:
+  manager:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Central administration, policy, inventory, and download-management integration is planned but not implemented or accepted."
+  privacy_shield:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Privacy Mode and download-policy integration are planned; no application-specific Privacy Shield runtime implementation or acceptance exists."
+  wardveil_security:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Download reputation, quarantine, file-policy, and post-download security integration are planned but not implemented or accepted."
+  everkeep:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Completed-download protection and continuity integration are planned; no Everkeep application acceptance exists."
+  glaze_ui:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Glaze UI 1.4.1 is the current required consumer target; no runtime UI exists and no application-specific conformance is accepted."
+  mesh:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Trusted-device discovery and remote download control are planned but not implemented or accepted."
+    capabilities: []
+    dependencies: []
+    published_events: []
+    consumed_events: []
+  identity:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Core local downloading is intended to work without an account; optional identity-bound synchronization and remote workflows are not implemented or accepted."
+
+health:
+  health_endpoint: null
+  readiness_endpoint: null
+
+continuity:
+  backup:
+    required: true
+    requirements:
+      - "Durable job/configuration state must have a documented recovery strategy before production acceptance."
+  restore:
+    required: true
+    requirements:
+      - "Persistent job state and configuration restore must preserve integrity and avoid falsely completing partial downloads."
+  export:
+    required: true
+    requirements:
+      - "User-owned rules, queues, settings, checksums, and eligible download metadata should support portable export when implemented."
+  portability:
+    required: true
+    requirements:
+      - "Downloaded user files must remain ordinary usable files and must not require GoreeCloud Advanced Download Manager for continued access."
+
+external_dependencies: []
+
+compatibility:
+  platform_contract: "0.2"
+  glaze_ui_required: "1.4.1"
+  requires: []
+  provides: []
+
+evidence:
+  acceptance_tests: []
+  release: []
+
+conformance:
+  status: unverified
+  validated_at: null
+  evidence: []
+  blockers:
+    - "No executable download engine or platform client is implemented."
+    - "No supported platform has build or runtime qualification evidence."
+    - "No Platform System integration acceptance evidence exists."
+    - "No release or production-acceptance evidence exists."
+    - "A recognized software license or approved public rights notice has not yet been selected."
