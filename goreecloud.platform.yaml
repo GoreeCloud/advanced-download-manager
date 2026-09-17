@@ -109,7 +109,7 @@ conformance:
   validated_at: null
   evidence: []
   blockers:
-    - "The Rust source foundation implements job-state and resume-validator contracts but no network transfer engine or durable persistence backend yet."
+    - "The Rust source foundation includes transaction-safe SQLite job-state persistence but no network transfer engine, filesystem durability/runtime transfer orchestration, or end-to-end restart recovery yet."
     - "No supported platform has installable-client or representative runtime qualification evidence."
     - "No Integral Platform System integration acceptance evidence exists."
     - "No release or production-acceptance evidence exists."
