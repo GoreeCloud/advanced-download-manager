@@ -40,6 +40,8 @@ EXPECTED_PLATFORM_SYSTEMS = {
     "glaze_ui",
     "mesh",
     "identity",
+    "policy",
+    "observability",
 }
 
 
@@ -64,7 +66,7 @@ def validate_platform_contract() -> None:
         "lifecycle: development",
         'version: "0.1.0"',
         'platform_contract: "0.2"',
-        'glaze_ui_required: "1.4.1"',
+        'glaze_ui_required: "1.5.1"',
     )
     for fragment in required_fragments:
         if fragment not in text:
