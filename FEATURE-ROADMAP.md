@@ -3,9 +3,9 @@ title: "GoreeCloud Advanced Download Manager — Feature Roadmap"
 product: "GoreeCloud Advanced Download Manager"
 document_type: "Feature Roadmap"
 status: "Active"
-version: "v0.3"
+version: "v0.4"
 classification: "Public"
-last_updated: "2026-09-16"
+last_updated: "2026-09-17"
 authoritative_record: true
 repository: "GoreeCloud/goreecloud-advanced-download-manager"
 canonical_source: "repository"
@@ -28,12 +28,13 @@ The roadmap prioritizes a durable local-first transfer engine first, then policy
 
 Status: **Development — Phase 1 source foundation in progress**
 
-Authoritative `main` is currently `b343d90cace827f5a0a4c192e2c653a74e1e9256`. The post-merge Core Foundation run `35078078940` completed successfully for that exact revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.
+The current implementation baseline synchronized by this roadmap is PR #10 merge `05b0e4160743457bc77917b27cc34613932b7f17`. PR #10 exact head `3a088bfb5af93899fd0a109463103a2bb0f0c132` passed pull-request Core Foundation run `35282982627`, was squash-merged into authoritative `main` as `05b0e4160743457bc77917b27cc34613932b7f17`, and post-merge Core Foundation run `35283255520` completed successfully for that exact merge revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.
 
 Verified repository state currently establishes:
 
 - product internal version `0.1.0` and Development lifecycle documentation;
 - the governed repository documentation baseline, architecture boundaries, changelog, current feature state, user/privacy/security documentation, and Platform Contract declaration;
+- the current Platform Contract representation evaluates exactly nine Integral Platform Systems — GoreeCloud Manager, Privacy Shield, Wardveil Security, Everkeep, Glaze UI, GoreeCloud Mesh, GoreeCloud Identity, GoreeCloud Policy, and GoreeCloud Observability — and requires Stable Glaze UI `1.5.1`; every application-specific Platform-System integration remains blocked/unaccepted pending implementation and evidence;
 - `crates/download-core` portable job identity, lifecycle, progress, sensitive-URL redaction, validator, and final-promotion source contracts;
 - `crates/download-http` dependency-free HTTP full/restart/resume planning and response-disposition contracts, including safe `If-Range` selection and range-offset validation;
 - `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;
@@ -41,7 +42,7 @@ Verified repository state currently establishes:
 - the minimal `gcdm` Development-stage shell;
 - repository-policy, Rust Ubuntu/Windows, and Android portable-core CI coverage for the current bounded source foundation.
 
-No filesystem mutation/durable checkpoint ordering, real network transfer execution, end-to-end runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite adapter establishes durable job metadata persistence only; all seven Integral Platform Systems remain unaccepted for this application.
+No filesystem mutation/durable checkpoint ordering, real network transfer execution, end-to-end runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite adapter establishes durable job metadata persistence only; all nine Integral Platform Systems remain unaccepted for this application, and the Glaze UI `1.5.1` requirement is a conformance target rather than evidence of a runtime UI or application-specific acceptance.
 
 Phase 0 therefore remains open for outstanding governance/toolchain decisions and CI/release foundations, while Phase 1 is now actively in progress rather than merely planned.
 
@@ -64,7 +65,7 @@ Planned outcomes:
 - establish CI, test, packaging, dependency, and release-validation foundations appropriate to each target platform;
 - keep `SPECIFICATIONS.md`, this roadmap, Tasks Management, user documentation, and future changelog records synchronized with verified reality.
 
-Verified progress includes the repository documentation baseline, product version/lifecycle model, Platform Contract declaration, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, the SQLite durable-store decision in ADR-0003, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved transport/UI/IPC implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.
+Verified progress includes the repository documentation baseline, product version/lifecycle model, the current nine-system Platform Contract declaration with Stable Glaze UI `1.5.1` as the required consumer target, Rust shared-core decision in ADR-0001, durable-state/recovery rules in ADR-0002, the SQLite durable-store decision in ADR-0003, architecture boundaries, and baseline cross-platform CI. Remaining Phase 0 work includes unresolved transport/UI/IPC implementation-stack decisions, licensing posture, broader dependency/security and release validation, and repository-governance gaps such as default-branch protection where provider capabilities permit.
 
 **Exit criteria:** repository governance baseline exists, architecture boundaries are documented, initial implementation plan is testable, and no planned integration is represented as accepted without evidence.
 
