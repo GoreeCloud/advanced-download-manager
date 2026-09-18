@@ -13,7 +13,7 @@ Stable extension 0.2.12 uses accepted native helper **0.2.11 / protocol 2**. The
 From the canonical repository root:
 
 ```bash
-./extensions/download-manager/scripts/install-native-host-linux.sh
+./clients/firefox/scripts/install-native-host-linux.sh
 ```
 
 The installer copies the helper to:
@@ -35,7 +35,7 @@ Helper 0.2.11 is required because the Mozilla-signed 0.2.10 restart diagnostic e
 To remove the user-scoped native helper:
 
 ```bash
-./extensions/download-manager/scripts/install-native-host-linux.sh --uninstall
+./clients/firefox/scripts/install-native-host-linux.sh --uninstall
 ```
 
 ## Firefox Flatpak
