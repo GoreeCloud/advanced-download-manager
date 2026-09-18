@@ -657,9 +657,9 @@ fn recover_post_transfer(
     generation: &mut u64,
     checkpoint: &mut JobCheckpointV1,
 ) -> Result<Option<DownloadOutcome>, RuntimeError> {
-    let final_path = checkpoint.paths().final_path();
+    let final_path = checkpoint.paths().final_path().clone();
     if final_path.exists() {
-        let metadata = fs::metadata(final_path).map_err(|_| RuntimeError::Storage)?;
+        let metadata = fs::metadata(&final_path).map_err(|_| RuntimeError::Storage)?;
         if !metadata.is_file() {
             return Err(RuntimeError::FinalArtifactMissing);
         }
@@ -1150,8 +1150,14 @@ mod tests {
     fn body_failure_never_advances_checkpoint_beyond_durable_bytes() {
         let root = TestRoot::new("body-failure");
         let mut store = root.store();
-        let job = DownloadJob::new(id(), source(), root.destination(), None, RemoteValidators::default())
-            .unwrap();
+        let job = DownloadJob::new(
+            id(),
+            source(),
+            root.destination(),
+            None,
+            RemoteValidators::default(),
+        )
+        .unwrap();
         let runtime = SingleStreamRuntime::new(3).unwrap();
         runtime.enqueue(&mut store, &job).unwrap();
 
@@ -1166,10 +1172,10 @@ mod tests {
             },
         }]);
 
-        assert_eq!(
+        assert!(matches!(
             runtime.execute(&mut store, &id(), &transport),
             Err(RuntimeError::Transport(TransportErrorKind::Body))
-        );
+        ));
 
         let stored = store.load(&id()).unwrap().unwrap();
         assert_eq!(stored.downloaded_bytes(), 3);
@@ -1232,12 +1238,12 @@ mod tests {
         }]);
 
         let runtime = SingleStreamRuntime::new(3).unwrap();
-        assert_eq!(
+        assert!(matches!(
             runtime.execute(&mut store, &id(), &transport),
             Err(RuntimeError::Protocol(
                 ProtocolError::RemoteValidatorChanged
             ))
-        );
+        ));
         assert_eq!(fs::read(checkpoint.paths().staging_path()).unwrap(), b"abc");
         assert_eq!(store.load(&id()).unwrap().unwrap().downloaded_bytes(), 3);
     }
@@ -1269,9 +1275,9 @@ mod tests {
         }]);
 
         let runtime = SingleStreamRuntime::new(3).unwrap();
-        assert_eq!(
+        assert!(matches!(
             runtime.execute(&mut store, &id(), &transport),
             Err(RuntimeError::Protocol(ProtocolError::ResumeRangeNotToEnd))
-        );
+        ));
     }
 }
