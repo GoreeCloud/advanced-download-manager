@@ -48,6 +48,14 @@ name = "goreecloud-download-core"
 version = "0.1.0"
 
 [[package]]
+name = "goreecloud-download-fs"
+version = "0.1.0"
+dependencies = [
+ "goreecloud-download-core",
+ "goreecloud-download-state",
+]
+
+[[package]]
 name = "goreecloud-download-http"
 version = "0.1.0"
 dependencies = [

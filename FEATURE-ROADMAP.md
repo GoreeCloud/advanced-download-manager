@@ -3,7 +3,7 @@ title: "GoreeCloud Advanced Download Manager — Feature Roadmap"
 product: "GoreeCloud Advanced Download Manager"
 document_type: "Feature Roadmap"
 status: "Active"
-version: "v0.4"
+version: "v0.5"
 classification: "Public"
 last_updated: "2026-09-17"
 authoritative_record: true
@@ -28,7 +28,7 @@ The roadmap prioritizes a durable local-first transfer engine first, then policy
 
 Status: **Development — Phase 1 source foundation in progress**
 
-The current implementation baseline synchronized by this roadmap is PR #10 merge `05b0e4160743457bc77917b27cc34613932b7f17`. PR #10 exact head `3a088bfb5af93899fd0a109463103a2bb0f0c132` passed pull-request Core Foundation run `35282982627`, was squash-merged into authoritative `main` as `05b0e4160743457bc77917b27cc34613932b7f17`, and post-merge Core Foundation run `35283255520` completed successfully for that exact merge revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.
+The repository baseline entering this filesystem milestone is PR #11 merge `3bb2b12f177feba20d85243261565401cea78b22`. PR #11 exact head `18f679df6cd0ffd25f82e430979dc392d2d0ddaa` passed pull-request Core Foundation run `35283887053`, was squash-merged into authoritative `main` as `3bb2b12f177feba20d85243261565401cea78b22`, and post-merge Core Foundation run `35284057435` completed successfully for that exact merge revision across repository policy, Rust Ubuntu, Rust Windows, and Android validation.
 
 Verified repository state currently establishes:
 
@@ -39,10 +39,11 @@ Verified repository state currently establishes:
 - `crates/download-http` dependency-free HTTP full/restart/resume planning and response-disposition contracts, including safe `If-Range` selection and range-offset validation;
 - `crates/download-state` backend-neutral schema compatibility, deterministic staging-path, versioned checkpoint, generation-batch, crash-recovery disposition, partial-artifact reconciliation, and completed-artifact revalidation contracts;
 - `crates/download-store-sqlite` transaction-safe durable job-state persistence with pinned bundled SQLite/rusqlite, explicit schema/version validation, generation-checked atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;
+- `crates/download-fs` bounded staging-file durability primitives for checkpoint-length reconciliation, truncation of uncommitted tails, restart-on-short-partial recovery, synchronized append/truncate operations, refusal to overwrite an existing final artifact, and rename-based final promotion with Unix parent-directory synchronization;
 - the minimal `gcdm` Development-stage shell;
 - repository-policy, Rust Ubuntu/Windows, and Android portable-core CI coverage for the current bounded source foundation.
 
-No filesystem mutation/durable checkpoint ordering, real network transfer execution, end-to-end runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite adapter establishes durable job metadata persistence only; all nine Integral Platform Systems remain unaccepted for this application, and the Glaze UI `1.5.1` requirement is a conformance target rather than evidence of a runtime UI or application-specific acceptance.
+No end-to-end coordination of staging-file durability with persisted checkpoint commits, real network transfer execution, runtime restart recovery, supported graphical client, installable release artifact, production deployment, or Platform-System runtime acceptance is verified yet. The SQLite and staging-file adapters establish bounded durability primitives only; all nine Integral Platform Systems remain unaccepted for this application, and the Glaze UI `1.5.1` requirement is a conformance target rather than evidence of a runtime UI or application-specific acceptance.
 
 Phase 0 therefore remains open for outstanding governance/toolchain decisions and CI/release foundations, while Phase 1 is now actively in progress rather than merely planned.
 
@@ -96,10 +97,11 @@ Verified source progress:
 - `download-http` establishes fail-closed full/restart/resume request planning and response-body disposition, including strong-ETag/Last-Modified `If-Range` handling, exact `206` offset checks, full replacement on `200`, and restart behavior for `412`/`416`;
 - `download-state` establishes schema version `1`, deterministic per-job staging paths, versioned checkpoints, optimistic generation-based mutation batches, recovery dispositions, partial-file length reconciliation, and completed-artifact revalidation;
 - `download-store-sqlite` implements the first durable local metadata backend with atomic generation-checked batches, fail-closed schema validation, integrity checks, native-path preservation, sensitive-URL handling, and reopen/round-trip coverage;
+- `download-fs` implements bounded staging-file operations with checkpoint-length reconciliation, synchronized append/truncate semantics, safe restart when the checkpoint is ahead of the partial artifact, non-overwriting final promotion, and filesystem-focused unit coverage;
 - ADR-0002 defines transaction, checkpoint-ordering, migration/rollback, staging/promotion, and crash-recovery boundaries, while ADR-0003 records the pinned SQLite/rusqlite backend and durability policy;
 - the exact merged source revision is covered by successful repository-policy, Rust Ubuntu, Rust Windows, and Android CI.
 
-The transaction-safe job-metadata persistence boundary is now implemented and verified. Filesystem creation and durable checkpoint ordering, single-stream HTTP/HTTPS transport execution, service wiring, and end-to-end restart recovery remain required before the Phase 1 exit criteria can be satisfied.
+The transaction-safe job-metadata persistence boundary and bounded staging-file durability primitives are now implemented and verified independently. Their database-to-filesystem checkpoint ordering and service orchestration, single-stream HTTP/HTTPS transport execution, and end-to-end restart recovery remain required before the Phase 1 exit criteria can be satisfied.
 
 **Exit criteria:** a single-stream download can be created, persisted, interrupted, resumed safely, validated against remote-object identity, and recovered after an unexpected application stop without corrupting the target file.
 
@@ -428,8 +430,8 @@ The following requirements apply throughout the roadmap rather than belonging to
 The next bounded engineering work should proceed in this order unless a later authoritative decision changes the sequence:
 
 1. Close remaining Phase 0 governance and implementation-foundation gaps that materially gate safe Phase 1 work, without treating documentation completion as runtime completion.
-2. Select and implement the transaction-safe persistence backend plus serialization/migration adapter against ADR-0002, including schema-version and optimistic-generation enforcement.
-3. Implement filesystem staging, durable checkpoint write ordering, tail truncation/restart reconciliation, synchronization, and safe final-file promotion.
+2. Continue qualifying the implemented SQLite persistence backend for migration/rollback, locking, corruption, and service-lifecycle requirements as Phase 1 wiring expands.
+3. Integrate the verified staging-file primitives with durable checkpoint write ordering and service orchestration, including interrupted-write and storage-failure fixtures.
 4. Implement the first real single-stream HTTP/HTTPS transport adapter against the existing HTTP request/response safety contracts.
 5. Wire persisted pause/resume and crash/restart recovery end to end, including changed-remote-object, interrupted-write, missing-artifact, and storage-failure fixtures.
 6. Add checksum verification and reason-specific retry behavior.

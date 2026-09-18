@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/download-core",
+    "crates/download-fs",
     "crates/download-http",
     "crates/download-state",
     "crates/download-store-sqlite",

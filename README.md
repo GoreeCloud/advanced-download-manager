@@ -1,17 +1,17 @@
-<!-- File internal version: v0.5 -->
+<!-- File internal version: v0.6 -->
 # GoreeCloud Advanced Download Manager
 
 **Product internal version:** 0.1.0  
 **Release lifecycle:** Development  
-**Repository state:** Initial Rust source foundation with verified SQLite durable job-state persistence; no supported network download workflow or installable client is currently verified.
+**Repository state:** Initial Rust source foundation with verified SQLite durable job-state persistence and bounded durable staging-file primitives; no supported network download workflow or installable client is currently verified.
 
 GoreeCloud Advanced Download Manager is the developing cross-platform download and transfer-orchestration application for Linux, Windows, and Android. Its target is a local-first common download engine with durable transfers, intelligent acceleration, queues, automation, privacy and security controls, browser integration, and authorized GoreeCloud ecosystem coordination.
 
 ## Current availability
 
-There is currently **no supported build for ordinary download-manager use**. The repository contains a Rust workspace with portable core-domain contracts, HTTP resume-safety contracts, durable state/recovery contracts, a transaction-safe SQLite job-state backend, and a minimal `gcdm` command-line shell, but it does not yet perform network downloads, execute filesystem durability/final-promotion workflows, prove end-to-end runtime restart recovery, or provide a supported graphical client.
+There is currently **no supported build for ordinary download-manager use**. The repository contains a Rust workspace with portable core-domain contracts, HTTP resume-safety contracts, durable state/recovery contracts, a transaction-safe SQLite job-state backend, bounded durable staging-file primitives, and a minimal `gcdm` command-line shell, but it does not yet perform network downloads, coordinate filesystem durability and final promotion with persisted checkpoints in an end-to-end transfer workflow, prove runtime restart recovery, or provide a supported graphical client.
 
-The implemented source foundation covers bounded job identity/state contracts, sensitive URL redaction in debug output, progress invariants, final-file-promotion gating, remote-validator decisions, HTTP full/restart/resume request planning, safe range-response disposition, schema compatibility, deterministic partial-file naming, checkpoint/recovery planning, partial-file reconciliation, final-artifact revalidation, generation-based atomic mutation-batch boundaries, SQLite schema/version validation, optimistic generation checks, integrity checks, lossless native-path persistence, and reopen/round-trip coverage. These foundations are not a complete download engine.
+The implemented source foundation covers bounded job identity/state contracts, sensitive URL redaction in debug output, progress invariants, final-file-promotion gating, remote-validator decisions, HTTP full/restart/resume request planning, safe range-response disposition, schema compatibility, deterministic partial-file naming, checkpoint/recovery planning, partial-file reconciliation, final-artifact revalidation, generation-based atomic mutation-batch boundaries, SQLite schema/version validation, optimistic generation checks, integrity checks, lossless native-path persistence, reopen/round-trip coverage, synchronized staging-file append/truncation, checkpoint-length reconciliation, and non-overwriting final-file promotion. These foundations are not a complete download engine.
 
 ## Product direction
 
@@ -24,6 +24,7 @@ The implementation uses a Rust workspace pinned to Rust 1.98.1:
 - `crates/download-core` — portable shared job/state/resume-domain contracts;
 - `crates/download-http` — dependency-free HTTP resume-safety request/response contracts with no network I/O;
 - `crates/download-state` — dependency-free durable-state and recovery contracts;
+- `crates/download-fs` — bounded staging-file durability primitives for checkpoint-length reconciliation, synchronized append/truncate operations, and safe final-file promotion; it performs no network I/O;
 - `crates/download-store-sqlite` — transaction-safe SQLite durable job-state adapter;
 - `crates/gcdm` — minimal Development-stage CLI shell.
 
@@ -53,4 +54,4 @@ CI validates formatting, Clippy, tests, native workspace checks, repository poli
 
 ## Development boundaries
 
-The Rust core/runtime direction is selected for the shared engine foundation, backend-neutral HTTP resume contracts exist, and the initial SQLite durable job-state backend is implemented. Real HTTP/HTTPS network execution, filesystem mutation and durable write ordering, end-to-end restart recovery, HTTP/3, IPC/API technology, graphical client frameworks, credential storage, packaging, signing, and production recovery mechanisms remain separate implementation decisions and evidence gates. No platform is treated as supported or Stable merely because portable source compiles for it.
+The Rust core/runtime direction is selected for the shared engine foundation, backend-neutral HTTP resume contracts exist, the initial SQLite durable job-state backend is implemented, and bounded staging-file durability primitives are implemented. Real HTTP/HTTPS network execution, transaction ordering between persisted checkpoints and filesystem writes, end-to-end restart recovery, HTTP/3, IPC/API technology, graphical client frameworks, credential storage, packaging, signing, and production recovery mechanisms remain separate implementation decisions and evidence gates. No platform is treated as supported or Stable merely because portable source compiles for it.
