@@ -23,7 +23,7 @@ class SchedulerHardeningContractTests(unittest.TestCase):
     def test_ci_executes_node_scheduler_regression(self):
         workflow = (REPO / ".github" / "workflows" / "firefox-repository.yml").read_text()
         self.assertIn(
-            "node extensions/download-manager/tests/test_browser_scheduler.js",
+            "node clients/firefox/tests/test_browser_scheduler.js",
             workflow,
         )
 
