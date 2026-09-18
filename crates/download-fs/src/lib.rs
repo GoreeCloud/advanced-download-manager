@@ -48,10 +48,9 @@ impl DurableStagingFile {
             ));
         }
 
-        let parent = paths
-            .staging_path()
-            .parent()
-            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "staging path has no parent"))?;
+        let parent = paths.staging_path().parent().ok_or_else(|| {
+            io::Error::new(io::ErrorKind::InvalidInput, "staging path has no parent")
+        })?;
         fs::create_dir_all(parent)?;
 
         let staging_existed = paths.staging_path().exists();
