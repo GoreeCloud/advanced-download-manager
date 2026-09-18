@@ -5,7 +5,6 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPOSITORY_ROOT = ROOT.parents[1]
 MANIFEST = ROOT / "manifest.json"
 BACKGROUND = ROOT / "background.js"
 OPTIONS = ROOT / "ui" / "options.js"
@@ -68,11 +67,13 @@ class NativeProtocolContractTests(unittest.TestCase):
 
     def test_release_state_matches_manifest_and_accepted_stable_version(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        inventory = json.loads(INVENTORY.read_text(encoding="utf-8"))
-        record = next(item for item in inventory["extensions"] if item["slug"] == "download-manager")
-        self.assertEqual(record["source_version"], manifest["version"])
-        self.assertEqual(record["source_state"], "stable")
-        self.assertEqual(record["accepted_stable_version"], manifest["version"])
+        state = json.loads(RELEASE_STATE.read_text(encoding="utf-8"))
+        self.assertEqual(state["source_version"], manifest["version"])
+        self.assertEqual(state["source_state"], "stable")
+        self.assertEqual(state["accepted_stable_version"], manifest["version"])
+        self.assertEqual(state["firefox_addon_id"], "download-manager@goreecloud.com")
+        self.assertEqual(state["canonical_repository"], "GoreeCloud/goreecloud-advanced-download-manager")
+        self.assertEqual(state["canonical_path"], "clients/firefox")
 
 
 if __name__ == "__main__":
