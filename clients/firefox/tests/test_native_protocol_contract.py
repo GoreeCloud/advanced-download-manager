@@ -11,7 +11,7 @@ BACKGROUND = ROOT / "background.js"
 OPTIONS = ROOT / "ui" / "options.js"
 OPTIONS_HTML = ROOT / "ui" / "options.html"
 HELPER = ROOT / "scripts" / "native-host" / "goreecloud_download_manager_native.py"
-INVENTORY = REPOSITORY_ROOT / "docs" / "extension-inventory.json"
+RELEASE_STATE = ROOT / "release-state.json"
 
 EXPECTED_CAPABILITIES = {
     "segmented-range-integrity",
@@ -66,7 +66,7 @@ class NativeProtocolContractTests(unittest.TestCase):
         self.assertNotIn("not stable", text.lower())
         self.assertNotIn(">stable<", text.lower())
 
-    def test_inventory_matches_manifest_and_accepted_stable_version(self):
+    def test_release_state_matches_manifest_and_accepted_stable_version(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         inventory = json.loads(INVENTORY.read_text(encoding="utf-8"))
         record = next(item for item in inventory["extensions"] if item["slug"] == "download-manager")
