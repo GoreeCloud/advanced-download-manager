@@ -6,7 +6,7 @@ product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
-last_updated: "2026-09-17"
+last_updated: "2026-09-18"
 ---
 
 # GoreeCloud Advanced Download Manager — Features
@@ -37,7 +37,9 @@ The repository contains an initial Rust source foundation. The implemented bound
 - a `crates/download-fs` staging-file adapter that reconciles checkpoint and actual partial-file lengths, truncates uncommitted tails, restarts safely when persisted progress is ahead of the partial artifact, synchronizes append/truncate operations before reporting durable progress, refuses silent replacement of an existing final artifact, and promotes a synchronized staging file by rename with parent-directory synchronization on Unix;
 - a minimal `gcdm` Development-stage status/version shell that deliberately does not implement download commands.
 
-This is still Development-stage foundation functionality. Durable job metadata persistence and bounded staging-file durability primitives are now implemented independently, but network transfer execution, database-to-filesystem checkpoint ordering and orchestration, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.
+The same application repository also contains the application-owned Firefox client under `clients/firefox/`. Firefox client 0.2.12 separately retains accepted Stable evidence for Mozilla unlisted/self-distribution, browser-managed downloads, optional native segmented transfers, queueing/pause/resume/retry behavior, same-job native recovery, deterministic packaging, and the accepted Linux native helper 0.2.11 / protocol 2. That version-specific Firefox evidence does not establish completion or Stable status for the Rust application engine.
+
+The Rust application foundation remains Development-stage functionality. Durable job metadata persistence and bounded staging-file durability primitives are implemented independently, but shared-engine network execution, database-to-filesystem checkpoint ordering and orchestration, end-to-end application-engine restart recovery, multipart downloading, browser-to-shared-engine integration, Linux/Windows/Android graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does contain a separately accepted Firefox 0.2.12 client release; that narrower platform release must not be generalized into a Stable application-core claim.
 
 ## Planned feature families
 

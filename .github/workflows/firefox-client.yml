@@ -1,0 +1,74 @@
+name: Download Manager Firefox Client
+
+on:
+  pull_request:
+    paths:
+      - 'clients/firefox/**'
+      - '.github/workflows/firefox-client.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'clients/firefox/**'
+      - '.github/workflows/firefox-client.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Firefox release identity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('clients/firefox/manifest.json').read_text())
+          state = json.loads(Path('clients/firefox/release-state.json').read_text())
+          assert manifest['version'] == state['source_version'] == '0.2.12'
+          assert state['source_state'] == 'stable'
+          assert state['accepted_stable_version'] == '0.2.12'
+          assert manifest['browser_specific_settings']['gecko']['id'] == state['firefox_addon_id'] == 'download-manager@goreecloud.com'
+          PY
+      - name: Compile native and signing acceptance sources
+        run: |
+          python -m py_compile             clients/firefox/scripts/native-host/goreecloud_download_manager_native.py             clients/firefox/tests/signed_restart_smoke.py             clients/firefox/tests/amo_signed_version_recovery.py             clients/firefox/tests/verify_signed_xpi.py
+      - name: Test native core and source contracts
+        run: python -m unittest discover -s clients/firefox/tests -p 'test_*.py'
+      - name: Test Firefox scheduler contracts
+        run: |
+          node clients/firefox/tests/test_browser_scheduler.js
+          node clients/firefox/tests/test_mixed_scheduler.js
+          node clients/firefox/tests/test_lifecycle_faults.js
+          node clients/firefox/tests/test_retry_snapshots.js
+      - name: Check maintained JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find clients/firefox -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            node --check "$file"
+          done
+      - name: Build deterministic Firefox package
+        run: python clients/firefox/scripts/package.py
+      - name: Verify accepted 0.2.12 package parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$(find dist -maxdepth 1 -type f -name 'goreecloud-download-manager-0.2.12.xpi' -print -quit)"
+          test -n "$package"
+          unzip -t "$package"
+          actual="$(sha256sum "$package" | awk '{print $1}')"
+          expected="779425b150921c1969462066a3e79cb345d976d11369a6891b5611c63a3d5537"
+          test "$actual" = "$expected" || {
+            echo "::error::Migrated Firefox package hash differs from accepted 0.2.12 candidate"
+            echo "Expected: $expected"
+            echo "Actual:   $actual"
+            exit 1
+          }

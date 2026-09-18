@@ -6,16 +6,16 @@ product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Internal"
-last_updated: "2026-09-15"
+last_updated: "2026-09-18"
 ---
 
 # GoreeCloud Advanced Download Manager — Repository Notes
 
 ## Verified current state
 
-The repository is in **Development** with a bounded Rust shared-core source foundation. `SPECIFICATIONS.md` and `FEATURE-ROADMAP.md` remain authoritative for planned scope and delivery sequencing. The current source includes portable core job/state contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, a minimal CLI shell, repository validation, and cross-platform CI definitions.
+The repository is in **Development** with a bounded Rust shared-core source foundation and an application-owned Firefox client under `clients/firefox/`. `SPECIFICATIONS.md` and `FEATURE-ROADMAP.md` remain authoritative for planned scope and delivery sequencing. The current source includes portable core job/state contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, a minimal CLI shell, repository validation, and cross-platform CI definitions.
 
-No network transfer engine, durable persistence backend, serialization layer, graphical client, installable release, production deployment, or representative runtime acceptance is verified yet.
+No completed shared Rust network transfer engine, Linux/Windows/Android graphical application client, supported standalone application release, production deployment, or representative application-core runtime acceptance is verified yet. Separately, the Firefox client retains accepted Stable 0.2.12 signing/restart/native-recovery evidence; that platform-specific evidence does not promote the application core.
 
 Product internal version remains **0.1.0**. Development lifecycle reflects active source implementation and does not imply Release Candidate, Stable, or production readiness.
 
@@ -29,14 +29,14 @@ Product internal version remains **0.1.0**. Development lifecycle reflects activ
 - `crates/gcdm` is currently only a narrow Development CLI shell.
 - Durable single-stream HTTP/HTTPS downloading precedes multipart acceleration.
 - Specialized BitTorrent/magnet work is delegated to GoreeCloud Swarm.
-- Remote, browser, synchronization, and ecosystem integrations are later layers and must not become dependencies of the basic local transfer engine.
+- Remote, synchronization, and broader ecosystem integrations remain later layers and must not become dependencies of the basic local transfer engine. Firefox is now an application-owned client source under `clients/firefox/`; convergence from its existing browser/native implementation to the future shared Download Service remains a separate architecture task.
 - All seven Integral Platform Systems remain evaluated as applicable but blocked/unaccepted for this application.
 
 ## Open architecture work
 
 The next bounded implementation decision is the actual transaction-safe persistence backend and serialization/migration adapter that will satisfy ADR-0002. Filesystem checkpoint ordering, synchronization, locking, corruption handling, and restart fixtures must be validated before runtime durability is claimed. Actual HTTP/HTTPS client technology and the first single-stream transport path remain pending after or alongside that durable-state adapter.
 
-IPC/API technology, platform UI frameworks, Android bindings, credential storage, packaging/signing, broader dependency/security scanning, and production recovery mechanics remain open.
+IPC/API technology, Linux/Windows/Android platform UI frameworks, Android bindings, shared-engine credential storage, application packaging/signing, broader dependency/security scanning, and production recovery mechanics remain open. Firefox packaging/signing is separately implemented for the version-specific client release.
 
 ## Repository hygiene
 
