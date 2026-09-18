@@ -180,6 +180,7 @@ impl ReqwestTransport {
     pub fn new() -> Result<Self, TransportErrorKind> {
         let client = Client::builder()
             .redirect(Policy::none())
+            .no_proxy()
             .tls_backend_rustls()
             .user_agent(concat!(
                 "GoreeCloud-Advanced-Download-Manager/",
@@ -804,9 +805,12 @@ mod tests {
     use goreecloud_download_core::SensitiveUrl;
     use goreecloud_download_state::{CommitBatchV1, JobCheckpointV1, JobMutationV1};
     use std::collections::VecDeque;
-    use std::io::Cursor;
+    use std::io::{Cursor, Write};
+    use std::net::TcpListener;
     use std::sync::Mutex;
     use std::sync::atomic::{AtomicU64, Ordering};
+    use std::thread::{self, JoinHandle};
+    use std::time::Duration;
 
     static TEST_COUNTER: AtomicU64 = AtomicU64::new(0);
 
@@ -837,6 +841,38 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.0);
         }
+    }
+
+    fn serve_http_once(response: Vec<u8>) -> (String, JoinHandle<String>) {
+        let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind loopback HTTP server");
+        let address = listener.local_addr().expect("resolve loopback address");
+
+        let handle = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept loopback request");
+            stream
+                .set_read_timeout(Some(Duration::from_secs(10)))
+                .expect("set loopback read timeout");
+
+            let mut request = Vec::new();
+            let mut buffer = [0_u8; 1024];
+            while !request.windows(4).any(|window| window == b"\r\n\r\n") {
+                let read = stream.read(&mut buffer).expect("read loopback request");
+                if read == 0 {
+                    break;
+                }
+                request.extend_from_slice(&buffer[..read]);
+                assert!(request.len() <= 32 * 1024, "HTTP request headers are too large");
+            }
+
+            stream.write_all(&response).expect("write loopback response");
+            stream.flush().expect("flush loopback response");
+            String::from_utf8(request).expect("loopback request must be UTF-8 headers")
+        });
+
+        (
+            format!("http://{address}/file.bin?token=synthetic-test"),
+            handle,
+        )
     }
 
     enum ScriptedBody {
@@ -995,6 +1031,94 @@ mod tests {
         let path = checkpoint.paths().staging_path();
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, bytes).unwrap();
+    }
+
+    #[test]
+    fn reqwest_transport_executes_real_loopback_full_download() {
+        let root = TestRoot::new("real-http-full");
+        let mut store = root.store();
+        let (source_url, server) = serve_http_once(
+            b"HTTP/1.1 200 OK\r\nContent-Length: 6\r\nETag: \"v1\"\r\nConnection: close\r\n\r\nabcdef"
+                .to_vec(),
+        );
+        let job = DownloadJob::new(
+            id(),
+            SensitiveUrl::parse(source_url).unwrap(),
+            root.destination(),
+            None,
+            RemoteValidators::default(),
+        )
+        .unwrap();
+
+        let runtime = SingleStreamRuntime::new(3).unwrap();
+        runtime.enqueue(&mut store, &job).unwrap();
+        let transport = ReqwestTransport::new().unwrap();
+        let outcome = runtime.execute(&mut store, &id(), &transport).unwrap();
+
+        assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
+        let request = server.join().expect("loopback server thread").to_ascii_lowercase();
+        assert!(request.starts_with("get /file.bin?token=synthetic-test http/1.1\r\n"));
+        assert!(request.contains("\r\naccept-encoding: identity\r\n"));
+        assert!(!request.contains("\r\nrange:"));
+        assert!(!request.contains("\r\nif-range:"));
+    }
+
+    #[test]
+    fn reqwest_transport_sends_validator_bound_loopback_resume_headers() {
+        let root = TestRoot::new("real-http-resume");
+        let mut store = root.store();
+        let checkpoint = checkpoint(
+            &root,
+            JobState::Downloading,
+            3,
+            Some(6),
+            validators(Some("\"v1\"")),
+        );
+        write_staging(&checkpoint, b"abc");
+        seed(&mut store, &checkpoint);
+
+        let (source_url, server) = serve_http_once(
+            b"HTTP/1.1 206 Partial Content\r\nContent-Length: 3\r\nContent-Range: bytes 3-5/6\r\nETag: \"v1\"\r\nConnection: close\r\n\r\ndef"
+                .to_vec(),
+        );
+        let checkpoint = rebuild_checkpoint(
+            &checkpoint,
+            JobState::Downloading,
+            3,
+            Some(6),
+            validators(Some("\"v1\"")),
+        )
+        .unwrap();
+        let source_checkpoint = JobCheckpointV1::from_fields(JobCheckpointFieldsV1 {
+            id: checkpoint.id().clone(),
+            source: SensitiveUrl::parse(source_url).unwrap(),
+            final_path: checkpoint.paths().final_path().clone(),
+            staging_path: checkpoint.paths().staging_path().clone(),
+            state: checkpoint.state(),
+            downloaded_bytes: checkpoint.downloaded_bytes(),
+            expected_bytes: checkpoint.expected_bytes(),
+            validators: checkpoint.validators().clone(),
+        })
+        .unwrap();
+
+        let generation = store.generation().unwrap();
+        let batch = CommitBatchV1::new(
+            generation,
+            vec![JobMutationV1::Upsert(source_checkpoint)],
+        )
+        .unwrap();
+        store.apply_batch(&batch).unwrap();
+
+        let runtime = SingleStreamRuntime::new(2).unwrap();
+        let transport = ReqwestTransport::new().unwrap();
+        let outcome = runtime.execute(&mut store, &id(), &transport).unwrap();
+
+        assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
+        let request = server.join().expect("loopback server thread").to_ascii_lowercase();
+        assert!(request.starts_with("get /file.bin?token=synthetic-test http/1.1\r\n"));
+        assert!(request.contains("\r\nrange: bytes=3-\r\n"));
+        assert!(request.contains("\r\nif-range: \"v1\"\r\n"));
+        assert!(request.contains("\r\naccept-encoding: identity\r\n"));
     }
 
     #[test]
