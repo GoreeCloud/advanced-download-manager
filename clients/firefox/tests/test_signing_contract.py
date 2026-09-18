@@ -31,14 +31,13 @@ class SigningContractTests(unittest.TestCase):
         self.assertIn("git rev-parse origin/main", text)
         self.assertIn('if [[ "$GITHUB_SHA" != "$main_sha" ]]', text)
 
-    def test_signing_evidence_derives_stable_lifecycle_from_inventory(self):
+    def test_signing_evidence_derives_stable_lifecycle_from_release_state(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn("docs/extension-inventory.json", text)
-        self.assertIn("item.get('slug') == 'download-manager'", text)
-        self.assertIn("entry.get('source_state') == 'stable'", text)
-        self.assertIn("entry.get('accepted_stable_version') == version", text)
-        self.assertIn("'sourceState': entry.get('source_state')", text)
-        self.assertIn("'acceptedStableVersion': entry.get('accepted_stable_version')", text)
+        self.assertIn("clients/firefox/release-state.json", text)
+        self.assertIn("state.get('source_state') == 'stable'", text)
+        self.assertIn("state.get('accepted_stable_version') == version", text)
+        self.assertIn("'sourceState': state.get('source_state')", text)
+        self.assertIn("'acceptedStableVersion': state.get('accepted_stable_version')", text)
         self.assertIn("'stablePromoted': stable_promoted", text)
         self.assertNotIn("'stablePromoted': False", text)
 
