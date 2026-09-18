@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "product": "GoreeCloud Download Manager Extension",
+  "firefox_addon_id": "download-manager@goreecloud.com",
+  "source_version": "0.2.12",
+  "source_state": "stable",
+  "accepted_stable_version": "0.2.12",
+  "native_host": "goreecloud_download_manager",
+  "accepted_native_helper_version": "0.2.11",
+  "native_protocol": 2,
+  "canonical_repository": "GoreeCloud/goreecloud-advanced-download-manager",
+  "canonical_path": "clients/firefox",
+  "migrated_from": "GoreeCloud/goreecloud-firefox-extensions/extensions/download-manager",
+  "migrated_from_revision": "e7f502b15b706864268ddec18e327f12840f3b82",
+  "accepted_candidate_sha256": "779425b150921c1969462066a3e79cb345d976d11369a6891b5611c63a3d5537",
+  "accepted_signed_xpi_sha256": "4c02a152a258c4f8e76581ece2cb2a41f088463a4464354da0c374dfb2957f25"
+}
