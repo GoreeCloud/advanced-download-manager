@@ -1119,7 +1119,10 @@ mod tests {
         let outcome = runtime.execute(&mut store, &id(), &transport).unwrap();
 
         assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
-        let request = server.join().expect("loopback server thread").to_ascii_lowercase();
+        let request = server
+            .join()
+            .expect("loopback server thread")
+            .to_ascii_lowercase();
         assert!(request.starts_with("get /file.bin?token=synthetic-test http/1.1\r\n"));
         assert!(request.contains("\r\nrange: bytes=3-\r\n"));
         assert!(request.contains("\r\nif-range: \"v1\"\r\n"));
