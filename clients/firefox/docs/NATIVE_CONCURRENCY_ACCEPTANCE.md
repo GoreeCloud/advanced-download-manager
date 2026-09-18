@@ -8,7 +8,7 @@ This document records the native segmented batch scheduling gate at a configured
 
 ## Controlled environment
 
-The test used `extensions/download-manager/tests/concurrency_test_server.py` from canonical repository main. The server exposes eight deterministic 64 MiB payload URLs and records live HTTP request concurrency through `/status`.
+The test used `clients/firefox/tests/concurrency_test_server.py` from canonical repository main. The server exposes eight deterministic 64 MiB payload URLs and records live HTTP request concurrency through `/status`.
 
 The extension Manager was exercised against the first five controlled URLs. The completed Manager state showed all five controlled files as `complete`, each at `64.0 MB / 64.0 MB`, with the engine badge `native · 8 segments`.
 
