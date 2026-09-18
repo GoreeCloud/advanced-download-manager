@@ -1375,7 +1375,10 @@ mod tests {
             resumed.plans().as_slice(),
             [HttpRequestPlan::Resume { start_at: 3, .. }]
         ));
-        assert_eq!(reopened.load(&id()).unwrap().unwrap().state(), JobState::Completed);
+        assert_eq!(
+            reopened.load(&id()).unwrap().unwrap().state(),
+            JobState::Completed
+        );
     }
 
     #[test]
@@ -1412,7 +1415,10 @@ mod tests {
             transport.plans().as_slice(),
             [HttpRequestPlan::Resume { start_at: 3, .. }]
         ));
-        assert_eq!(store.load(&id()).unwrap().unwrap().state(), JobState::Completed);
+        assert_eq!(
+            store.load(&id()).unwrap().unwrap().state(),
+            JobState::Completed
+        );
     }
 
     #[test]
