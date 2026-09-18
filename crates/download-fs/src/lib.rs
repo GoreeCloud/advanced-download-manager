@@ -102,6 +102,18 @@ impl DurableStagingFile {
         self.file.metadata().map(|metadata| metadata.len())
     }
 
+    pub fn append_bytes(&mut self, bytes: &[u8]) -> io::Result<DurableWrite> {
+        self.file.seek(SeekFrom::End(0))?;
+        self.file.write_all(bytes)?;
+        self.file.flush()?;
+        self.file.sync_data()?;
+        let durable_bytes = self.durable_len()?;
+        Ok(DurableWrite {
+            appended_bytes: bytes.len() as u64,
+            durable_bytes,
+        })
+    }
+
     pub fn append_from<R: Read>(&mut self, reader: &mut R) -> io::Result<DurableWrite> {
         self.file.seek(SeekFrom::End(0))?;
         let appended_bytes = io::copy(reader, &mut self.file)?;
@@ -215,6 +227,20 @@ mod tests {
         assert_eq!(write.durable_bytes, 6);
         assert_eq!(fs::read(paths.staging_path()).unwrap(), b"abcdef");
         assert!(!paths.final_path().exists());
+    }
+
+    #[test]
+    fn byte_slice_append_is_synced_before_durable_length_is_reported() {
+        let root = TestRoot::new("append-bytes");
+        let paths = root.paths();
+        let (mut staging, disposition) =
+            DurableStagingFile::open(paths.clone(), 0).expect("open staging file");
+        assert_eq!(disposition, StagingOpenDisposition::Fresh);
+
+        let write = staging.append_bytes(b"abcdef").expect("append durable bytes");
+        assert_eq!(write.appended_bytes, 6);
+        assert_eq!(write.durable_bytes, 6);
+        assert_eq!(fs::read(paths.staging_path()).unwrap(), b"abcdef");
     }
 
     #[test]
