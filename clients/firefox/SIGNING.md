@@ -26,7 +26,7 @@ Governed GitHub Actions run `34176105690` signed exact source revision `2cc6d3bb
 - post-restart helper reconnect: accepted;
 - manual Resume actions after restart: `0`.
 
-The pre-promotion run correctly recorded `sourceState: source-candidate`, `acceptedStableVersion: null`, and `stablePromoted: false`. After repository lifecycle promotion, the canonical inventory records `source_state: stable` and `accepted_stable_version: 0.2.12`. The final governed rerun is expected to recover the exact already-approved 0.2.12 artifact, repeat signed-runtime acceptance, and record `stablePromoted: true` against the final Stable main revision.
+The pre-promotion run correctly recorded `sourceState: source-candidate`, `acceptedStableVersion: null`, and `stablePromoted: false`. After repository lifecycle promotion, `clients/firefox/release-state.json` records `source_state: stable` and `accepted_stable_version: 0.2.12`. The final governed rerun is expected to recover the exact already-approved 0.2.12 artifact, repeat signed-runtime acceptance, and record `stablePromoted: true` against the final Stable main revision.
 
 ## Why 0.2.11 was not promoted
 
@@ -49,7 +49,7 @@ The workflow:
 7. installs the signed XPI persistently into Firefox;
 8. starts a throttled native segmented transfer, exits the complete Firefox process while validated partial staging exists, and starts a new Firefox process against the same profile without reinstalling;
 9. requires signed extension survival, same-job preserved-range recovery, final exact SHA-256 integrity, staging cleanup, and helper reconnect; and
-10. writes a machine-readable evidence record whose `sourceState`, `acceptedStableVersion`, and `stablePromoted` fields are derived from the canonical extension inventory.
+10. writes a machine-readable evidence record whose `sourceState`, `acceptedStableVersion`, and `stablePromoted` fields are derived from `clients/firefox/release-state.json`.
 
 ## Release boundary
 
