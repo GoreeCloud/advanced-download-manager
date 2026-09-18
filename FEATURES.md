@@ -1,7 +1,7 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Features"
 document_type: "Feature State"
-version: "v0.6"
+version: "v0.7"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
@@ -27,6 +27,7 @@ The repository contains an initial Rust source foundation. The implemented bound
 - dependency-free HTTP resume-safety contracts that choose full, restart-full, or validator-bound range requests from persisted progress state;
 - strong-ETag preference with Last-Modified fallback for planned `If-Range` requests, while weak or unavailable validators force full restart rather than unsafe append;
 - HTTP response-body disposition rules that only permit append after a valid `206 Partial Content` response begins at the requested byte offset, treat `200 OK` as a full-body replacement, and require restart or rejection for incompatible range responses;
+- a shared `Content-Range` parser with unit, numeric, bound, and complete-length validation used by the native runtime;
 - an explicit durable-state schema contract with current schema version `1`, upgrade-required handling for older state, and fail-closed rejection of unsupported future schema state;
 - deterministic per-job partial-file paths that keep incomplete bytes separate from the final destination;
 - versioned job checkpoint contracts carrying job identity, sensitive source URL, final/staging paths, state, progress, expected length, and remote validators while retaining sensitive-URL debug redaction;
@@ -35,9 +36,12 @@ The repository contains an initial Rust source foundation. The implemented bound
 - generation-based mutation-batch contracts for atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;
 - a pinned `crates/download-store-sqlite` durable job-state adapter using bundled SQLite through `rusqlite 0.40.2`, with explicit schema/version validation, optimistic generation checking, atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;
 - a `crates/download-fs` staging-file adapter that reconciles checkpoint and actual partial-file lengths, truncates uncommitted tails, restarts safely when persisted progress is ahead of the partial artifact, synchronizes append/truncate operations before reporting durable progress, refuses silent replacement of an existing final artifact, and promotes a synchronized staging file by rename with parent-directory synchronization on Unix;
+- a `crates/download-runtime` native single-stream execution layer using pinned reqwest 0.13.5 with Rustls, automatic redirects disabled, automatic system proxies disabled, identity transfer encoding, fail-closed response/range/validator checks, and filesystem-before-SQLite checkpoint ordering;
+- real loopback HTTP integration coverage for full requests and validator-bound `Range`/`If-Range` resume requests on Ubuntu and Windows CI;
+- recovery coverage for interrupted response bodies across SQLite-store reopen, persisted Paused checkpoints, uncommitted-tail reconciliation, forced restart from zero, and the post-promotion/pre-Completed crash window;
 - a minimal `gcdm` Development-stage status/version shell that deliberately does not implement download commands.
 
-This is still Development-stage foundation functionality. Durable job metadata persistence and bounded staging-file durability primitives are now implemented independently, but network transfer execution, database-to-filesystem checkpoint ordering and orchestration, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.
+This is still Development-stage foundation functionality. Native single-stream HTTP execution, validator-safe resume, database-to-filesystem checkpoint ordering, and bounded reopen/promotion recovery are now implemented and tested on Ubuntu and Windows. The runtime is not exposed through a supported user-facing service or client; representative live HTTPS/TLS acceptance, Android transport, active in-flight pause/cancel control, configured redirects, authentication/cookies, proxies, storage-failure/corruption hardening, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration remain unimplemented or unaccepted. The repository does not yet establish a usable release.
 
 ## Planned feature families
 

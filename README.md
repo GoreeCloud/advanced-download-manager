@@ -1,17 +1,17 @@
-<!-- File internal version: v0.6 -->
+<!-- File internal version: v0.7 -->
 # GoreeCloud Advanced Download Manager
 
 **Product internal version:** 0.1.0  
 **Release lifecycle:** Development  
-**Repository state:** Initial Rust source foundation with verified SQLite durable job-state persistence and bounded durable staging-file primitives; no supported network download workflow or installable client is currently verified.
+**Repository state:** Development-stage Rust source with verified SQLite durable job-state persistence, bounded staging-file durability, and a native single-stream HTTP runtime; no supported end-user download workflow or installable client is currently verified.
 
 GoreeCloud Advanced Download Manager is the developing cross-platform download and transfer-orchestration application for Linux, Windows, and Android. Its target is a local-first common download engine with durable transfers, intelligent acceleration, queues, automation, privacy and security controls, browser integration, and authorized GoreeCloud ecosystem coordination.
 
 ## Current availability
 
-There is currently **no supported build for ordinary download-manager use**. The repository contains a Rust workspace with portable core-domain contracts, HTTP resume-safety contracts, durable state/recovery contracts, a transaction-safe SQLite job-state backend, bounded durable staging-file primitives, and a minimal `gcdm` command-line shell, but it does not yet perform network downloads, coordinate filesystem durability and final promotion with persisted checkpoints in an end-to-end transfer workflow, prove runtime restart recovery, or provide a supported graphical client.
+There is currently **no supported build for ordinary download-manager use**. The repository contains a Rust workspace with portable core-domain contracts, HTTP resume-safety contracts, durable state/recovery contracts, a transaction-safe SQLite job-state backend, bounded durable staging-file primitives, a native `download-runtime` single-stream transport/orchestration crate, and a minimal `gcdm` command-line shell. The runtime can execute bounded HTTP/HTTPS requests through reqwest/Rustls source, but no supported CLI or graphical client exposes that path yet; representative live HTTPS, Android transport, active pause/cancel control, redirect/authentication/proxy policy, packaging, and production acceptance remain unverified.
 
-The implemented source foundation covers bounded job identity/state contracts, sensitive URL redaction in debug output, progress invariants, final-file-promotion gating, remote-validator decisions, HTTP full/restart/resume request planning, safe range-response disposition, schema compatibility, deterministic partial-file naming, checkpoint/recovery planning, partial-file reconciliation, final-artifact revalidation, generation-based atomic mutation-batch boundaries, SQLite schema/version validation, optimistic generation checks, integrity checks, lossless native-path persistence, reopen/round-trip coverage, synchronized staging-file append/truncation, checkpoint-length reconciliation, and non-overwriting final-file promotion. These foundations are not a complete download engine.
+The implemented source foundation covers bounded job identity/state contracts, sensitive URL redaction in debug output, progress invariants, final-file-promotion gating, remote-validator decisions, HTTP full/restart/resume request planning, `Content-Range` parsing and response disposition, schema compatibility, deterministic partial-file naming, checkpoint/recovery planning, partial-file reconciliation, final-artifact revalidation, generation-based atomic mutation-batch boundaries, SQLite schema/version validation, optimistic generation checks, integrity checks, lossless native-path persistence, synchronized staging-file append/truncation, non-overwriting final-file promotion, filesystem-before-database checkpoint ordering, native single-stream full/resume execution, and recovery across SQLite reopen and the promotion/checkpoint crash window. These foundations are still not a complete supported download manager.
 
 ## Product direction
 
@@ -26,6 +26,7 @@ The implementation uses a Rust workspace pinned to Rust 1.98.1:
 - `crates/download-state` — dependency-free durable-state and recovery contracts;
 - `crates/download-fs` — bounded staging-file durability primitives for checkpoint-length reconciliation, synchronized append/truncate operations, and safe final-file promotion; it performs no network I/O;
 - `crates/download-store-sqlite` — transaction-safe SQLite durable job-state adapter;
+- `crates/download-runtime` — native single-stream HTTP/HTTPS execution and durability orchestration using pinned reqwest 0.13.5 with Rustls, automatic redirects disabled, ambient system proxies disabled, and identity transfer encoding for range safety;
 - `crates/gcdm` — minimal Development-stage CLI shell.
 
 CI validates formatting, Clippy, tests, native workspace checks, repository policy, and portable shared-core compilation for the Android target. A successful target compilation is not an Android application acceptance result.
@@ -38,7 +39,8 @@ CI validates formatting, Clippy, tests, native workspace checks, repository poli
 - [Architecture](ARCHITECTURE.md)
 - [ADR-0001 — Rust shared core](docs/architecture/ADR-0001-rust-shared-core.md)
 - [ADR-0002 — Durable job state and recovery contracts](docs/architecture/ADR-0002-durable-job-state-and-recovery-contracts.md)
-- [ADR-0003 — SQLite durable store](docs/architecture/ADR-0003-sqlite-durable-store.md)
+- [ADR-0003 — SQLite durable job store](docs/architecture/ADR-0003-sqlite-durable-job-store.md)
+- [ADR-0004 — Native single-stream HTTP/HTTPS runtime](docs/architecture/ADR-0004-native-single-stream-http-runtime.md)
 - [User manual](USER-MANUAL.md)
 - [Privacy policy](PRIVACY%20POLICY.md)
 - [Security guidance](SECURITY.md)
@@ -54,4 +56,4 @@ CI validates formatting, Clippy, tests, native workspace checks, repository poli
 
 ## Development boundaries
 
-The Rust core/runtime direction is selected for the shared engine foundation, backend-neutral HTTP resume contracts exist, the initial SQLite durable job-state backend is implemented, and bounded staging-file durability primitives are implemented. Real HTTP/HTTPS network execution, transaction ordering between persisted checkpoints and filesystem writes, end-to-end restart recovery, HTTP/3, IPC/API technology, graphical client frameworks, credential storage, packaging, signing, and production recovery mechanisms remain separate implementation decisions and evidence gates. No platform is treated as supported or Stable merely because portable source compiles for it.
+The Rust core/runtime direction, SQLite metadata backend, bounded staging-file adapter, and first native single-stream HTTP/HTTPS runtime are selected and implemented. Exact-head CI verifies live loopback HTTP full/resume requests plus durability/reopen recovery on Ubuntu and Windows; the Rustls HTTPS path is compiled but representative live TLS acceptance is still pending. Android currently validates only the portable/shared-core packages, not `download-runtime`. Active pause/cancel orchestration, redirects, authentication/cookies, proxies, broader retry/storage-failure behavior, service/IPC, graphical clients, packaging, signing, and production recovery remain separate implementation and evidence gates. No platform is treated as supported or Stable merely because source or a bounded test passes.
