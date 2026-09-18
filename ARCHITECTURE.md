@@ -6,14 +6,14 @@ product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active Development"
 classification: "Public"
-last_updated: "2026-09-17"
+last_updated: "2026-09-18"
 ---
 
 # GoreeCloud Advanced Download Manager — Architecture
 
 ## Status
 
-The product is in **Development** with a bounded Rust shared-core source foundation. The component boundaries below remain the target architecture; the Rust core-domain contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, SQLite durable job-state adapter, bounded staging-file durability adapter, and minimal CLI shell are currently implemented.
+The product is in **Development** with a bounded Rust shared-core source foundation and an application-owned Firefox client under `clients/firefox/`. The Rust application core remains Development; the Firefox client separately retains its accepted Stable 0.2.12 evidence. The component boundaries below remain the target architecture; the Rust core-domain contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, SQLite durable job-state adapter, bounded staging-file durability adapter, minimal CLI shell, and Firefox client source are currently implemented.
 
 ## Initial technology decision
 
@@ -44,11 +44,13 @@ Stores jobs, queue/rule definitions, history where enabled, transfer checkpoints
 
 ### Platform UI clients
 
-Linux, Windows, and Android clients adapt platform-specific notifications, credential storage, filesystem/storage rules, lifecycle/background behavior, and Glaze UI presentation without forking core transfer semantics unnecessarily. No graphical client is implemented yet.
+Linux, Windows, and Android application clients are planned to adapt platform-specific notifications, credential storage, filesystem/storage rules, lifecycle/background behavior, and Glaze UI presentation without forking core transfer semantics unnecessarily. No Linux, Windows, or Android graphical application client is implemented yet. The Firefox client is implemented separately under `clients/firefox/` and has its own accepted release boundary.
 
-### Browser Connector
+### Firefox client and Browser Connector
 
-Provides a narrow authenticated bridge for browser handoff. Browser extensions must not receive unrestricted engine, filesystem, credential, or history authority. This connector remains planned.
+`clients/firefox/` contains the application-owned Firefox client, version 0.2.12, with add-on ID `download-manager@goreecloud.com`. Its accepted Stable scope includes Firefox download management plus the separately installed Linux Native Messaging helper 0.2.11 / protocol 2 and the behaviors covered by retained signing/restart/recovery evidence.
+
+The current Firefox client predates completion of the shared Rust Download Service and therefore retains its own browser/native transfer implementation. A future Browser Connector remains responsible for converging browser handoff onto the governed shared application service without granting the extension unrestricted engine, filesystem, credential, or history authority. Firefox Stable evidence does not establish completion of that future shared-service integration.
 
 ### Mesh Connector
 
@@ -91,7 +93,7 @@ ADR-0002 defines the corresponding migration and rollback expectations. `crates/
 - Authorization must travel with remote/API operations rather than relying only on ambient identity.
 - URLs, credentials, referrers, cookies, and signed parameters are sensitive data.
 - Swarm owns BitTorrent specialization; the Download Manager may delegate and present unified status.
-- Browser interception, remote access, synchronization, and plugin/provider execution are opt-in or explicitly authorized surfaces, not prerequisites for the local engine.
+- Browser interception, remote access, synchronization, and plugin/provider execution are opt-in or explicitly authorized surfaces, not prerequisites for the local engine. The existing Firefox client is a separately governed application-owned surface and must not be treated as authority for the future shared engine.
 - Temporary/partial files must not be presented as successful final downloads.
 - Protocol and parser additions require explicit security, recovery, and compatibility behavior.
 - Shared core code forbids Rust `unsafe` code unless a later separately governed exception is explicitly justified and reviewed.
