@@ -56,6 +56,7 @@ impl DurableStagingFile {
         let staging_existed = paths.staging_path().exists();
         let mut file = OpenOptions::new()
             .create(true)
+            .truncate(false)
             .read(true)
             .write(true)
             .open(paths.staging_path())?;
