@@ -500,13 +500,13 @@ impl SingleStreamRuntime {
         }
 
         let durable_bytes = staging.durable_len().map_err(|_| RuntimeError::Storage)?;
-        if let Some(expected) = expected_bytes {
-            if durable_bytes != expected {
-                return Err(RuntimeError::IncompleteBody {
-                    expected,
-                    actual: durable_bytes,
-                });
-            }
+        if let Some(expected) = expected_bytes
+            && durable_bytes != expected
+        {
+            return Err(RuntimeError::IncompleteBody {
+                expected,
+                actual: durable_bytes,
+            });
         }
 
         checkpoint = rebuild_checkpoint(
@@ -706,13 +706,13 @@ fn recover_post_transfer(
     }
 
     let durable_bytes = staging.durable_len().map_err(|_| RuntimeError::Storage)?;
-    if let Some(expected) = checkpoint.expected_bytes() {
-        if durable_bytes != expected {
-            return Err(RuntimeError::IncompleteBody {
-                expected,
-                actual: durable_bytes,
-            });
-        }
+    if let Some(expected) = checkpoint.expected_bytes()
+        && durable_bytes != expected
+    {
+        return Err(RuntimeError::IncompleteBody {
+            expected,
+            actual: durable_bytes,
+        });
     }
 
     let final_path = staging.promote().map_err(|_| RuntimeError::Storage)?;
