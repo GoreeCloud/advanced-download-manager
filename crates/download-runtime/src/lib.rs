@@ -6,9 +6,7 @@ use std::fs;
 use std::io::{self, Read};
 use std::path::PathBuf;
 
-use goreecloud_download_core::{
-    DownloadJob, JobId, JobState, RemoteValidators, SensitiveUrl,
-};
+use goreecloud_download_core::{DownloadJob, JobId, JobState, RemoteValidators, SensitiveUrl};
 use goreecloud_download_fs::{DurableStagingFile, StagingOpenDisposition};
 use goreecloud_download_http::{
     ByteContentRange, HttpRequestPlan, HttpResponseDecision, HttpResponseMetadata,
@@ -192,16 +190,13 @@ impl ReqwestTransport {
         Ok(Self { client })
     }
 
-    fn response(
-        &self,
-        response: Response,
-    ) -> Result<TransportResponse, TransportErrorKind> {
+    fn response(&self, response: Response) -> Result<TransportResponse, TransportErrorKind> {
         let status_code = response.status().as_u16();
         let headers = response.headers();
         let content_range = match header_text(headers.get(CONTENT_RANGE))? {
-            Some(value) => Some(
-                parse_content_range(&value).map_err(|_| TransportErrorKind::Protocol)?,
-            ),
+            Some(value) => {
+                Some(parse_content_range(&value).map_err(|_| TransportErrorKind::Protocol)?)
+            }
             None => None,
         };
         let content_length = match header_text(headers.get(CONTENT_LENGTH))? {
@@ -304,11 +299,7 @@ impl SingleStreamRuntime {
         })
     }
 
-    pub fn enqueue(
-        &self,
-        store: &mut SqliteStore,
-        job: &DownloadJob,
-    ) -> Result<(), RuntimeError> {
+    pub fn enqueue(&self, store: &mut SqliteStore, job: &DownloadJob) -> Result<(), RuntimeError> {
         let (generation, existing) = load_consistent(store, job.id())?;
         if existing.is_some() {
             return Err(RuntimeError::JobAlreadyExists);
@@ -384,11 +375,9 @@ impl SingleStreamRuntime {
         mut checkpoint: JobCheckpointV1,
         transport: &T,
     ) -> Result<DownloadOutcome, RuntimeError> {
-        let (mut staging, disposition) = DurableStagingFile::open(
-            checkpoint.paths().clone(),
-            checkpoint.downloaded_bytes(),
-        )
-        .map_err(|_| RuntimeError::Storage)?;
+        let (mut staging, disposition) =
+            DurableStagingFile::open(checkpoint.paths().clone(), checkpoint.downloaded_bytes())
+                .map_err(|_| RuntimeError::Storage)?;
 
         if matches!(
             disposition,
@@ -413,8 +402,10 @@ impl SingleStreamRuntime {
             commit_checkpoint(store, generation, &checkpoint)?;
         }
 
-        let mut plan =
-            goreecloud_download_http::plan_request(checkpoint.downloaded_bytes(), checkpoint.validators());
+        let mut plan = goreecloud_download_http::plan_request(
+            checkpoint.downloaded_bytes(),
+            checkpoint.validators(),
+        );
 
         if matches!(plan, HttpRequestPlan::RestartFull { .. }) {
             checkpoint = reset_for_full_restart(store, generation, &mut staging, &checkpoint)?;
@@ -465,8 +456,7 @@ impl SingleStreamRuntime {
                 ));
             }
             if checkpoint.downloaded_bytes() != 0 {
-                checkpoint =
-                    reset_for_full_restart(store, generation, &mut staging, &checkpoint)?;
+                checkpoint = reset_for_full_restart(store, generation, &mut staging, &checkpoint)?;
             }
         }
 
@@ -546,10 +536,7 @@ impl SingleStreamRuntime {
     }
 }
 
-fn read_checkpoint_chunk(
-    body: &mut dyn Read,
-    buffer: &mut [u8],
-) -> Result<usize, RuntimeError> {
+fn read_checkpoint_chunk(body: &mut dyn Read, buffer: &mut [u8]) -> Result<usize, RuntimeError> {
     let mut filled = 0;
 
     while filled < buffer.len() {
@@ -574,19 +561,15 @@ fn validate_response_metadata(
             Ok((response.content_length, response.validators.clone()))
         }
         HttpResponseDecision::AppendResumeBody => {
-            let range = response
-                .content_range
-                .ok_or(RuntimeError::Protocol(
-                    ProtocolError::ResumeRangeMissingTotal,
-                ))?;
+            let range = response.content_range.ok_or(RuntimeError::Protocol(
+                ProtocolError::ResumeRangeMissingTotal,
+            ))?;
             let complete_length = range.complete_length.ok_or(RuntimeError::Protocol(
                 ProtocolError::ResumeRangeMissingTotal,
             ))?;
 
             if range.end.checked_add(1) != Some(complete_length) {
-                return Err(RuntimeError::Protocol(
-                    ProtocolError::ResumeRangeNotToEnd,
-                ));
+                return Err(RuntimeError::Protocol(ProtocolError::ResumeRangeNotToEnd));
             }
 
             if let Some(content_length) = response.content_length {
@@ -608,20 +591,16 @@ fn validate_response_metadata(
                 .expected_bytes()
                 .is_some_and(|expected| expected != complete_length)
             {
-                return Err(RuntimeError::Protocol(
-                    ProtocolError::ExpectedLengthChanged,
-                ));
+                return Err(RuntimeError::Protocol(ProtocolError::ExpectedLengthChanged));
             }
 
             let validators =
                 merge_resume_validators(checkpoint.validators(), &response.validators)?;
             Ok((Some(complete_length), validators))
         }
-        HttpResponseDecision::RetryFromBeginning | HttpResponseDecision::Reject => {
-            Err(RuntimeError::Protocol(ProtocolError::UnexpectedStatus(
-                response.status_code,
-            )))
-        }
+        HttpResponseDecision::RetryFromBeginning | HttpResponseDecision::Reject => Err(
+            RuntimeError::Protocol(ProtocolError::UnexpectedStatus(response.status_code)),
+        ),
     }
 }
 
@@ -707,11 +686,9 @@ fn recover_post_transfer(
         }
     }
 
-    let (staging, disposition) = DurableStagingFile::open(
-        checkpoint.paths().clone(),
-        checkpoint.downloaded_bytes(),
-    )
-    .map_err(|_| RuntimeError::Storage)?;
+    let (staging, disposition) =
+        DurableStagingFile::open(checkpoint.paths().clone(), checkpoint.downloaded_bytes())
+            .map_err(|_| RuntimeError::Storage)?;
 
     if matches!(
         disposition,
@@ -798,10 +775,7 @@ fn commit_checkpoint(
     generation: &mut u64,
     checkpoint: &JobCheckpointV1,
 ) -> Result<(), RuntimeError> {
-    let batch = CommitBatchV1::new(
-        *generation,
-        vec![JobMutationV1::Upsert(checkpoint.clone())],
-    )?;
+    let batch = CommitBatchV1::new(*generation, vec![JobMutationV1::Upsert(checkpoint.clone())])?;
     let next_generation = batch.next_generation();
     store.apply_batch(&batch)?;
     *generation = next_generation;
@@ -1012,11 +986,8 @@ mod tests {
 
     fn seed(store: &mut SqliteStore, checkpoint: &JobCheckpointV1) {
         let generation = store.generation().unwrap();
-        let batch = CommitBatchV1::new(
-            generation,
-            vec![JobMutationV1::Upsert(checkpoint.clone())],
-        )
-        .unwrap();
+        let batch = CommitBatchV1::new(generation, vec![JobMutationV1::Upsert(checkpoint.clone())])
+            .unwrap();
         store.apply_batch(&batch).unwrap();
     }
 
@@ -1030,8 +1001,14 @@ mod tests {
     fn fresh_full_download_checkpoints_then_promotes() {
         let root = TestRoot::new("fresh");
         let mut store = root.store();
-        let job = DownloadJob::new(id(), source(), root.destination(), None, RemoteValidators::default())
-            .unwrap();
+        let job = DownloadJob::new(
+            id(),
+            source(),
+            root.destination(),
+            None,
+            RemoteValidators::default(),
+        )
+        .unwrap();
         let runtime = SingleStreamRuntime::new(3).unwrap();
         runtime.enqueue(&mut store, &job).unwrap();
 
@@ -1046,10 +1023,12 @@ mod tests {
         let outcome = runtime.execute(&mut store, &id(), &transport).unwrap();
         assert_eq!(outcome.durable_bytes, 6);
         assert_eq!(fs::read(&outcome.final_path).unwrap(), b"abcdef");
-        assert!(!root
-            .destination()
-            .with_file_name("file.bin.gcdm-part.job-001")
-            .exists());
+        assert!(
+            !root
+                .destination()
+                .with_file_name("file.bin.gcdm-part.job-001")
+                .exists()
+        );
 
         let stored = store.load(&id()).unwrap().unwrap();
         assert_eq!(stored.state(), JobState::Completed);
@@ -1092,9 +1071,7 @@ mod tests {
             transport.plans(),
             vec![HttpRequestPlan::Resume {
                 start_at: 3,
-                if_range: goreecloud_download_http::IfRangeValidator::StrongEtag(
-                    "\"v1\"".into()
-                ),
+                if_range: goreecloud_download_http::IfRangeValidator::StrongEtag("\"v1\"".into()),
             }]
         );
     }
@@ -1196,7 +1173,10 @@ mod tests {
 
         let stored = store.load(&id()).unwrap().unwrap();
         assert_eq!(stored.downloaded_bytes(), 3);
-        assert_eq!(fs::metadata(stored.paths().staging_path()).unwrap().len(), 3);
+        assert_eq!(
+            fs::metadata(stored.paths().staging_path()).unwrap().len(),
+            3
+        );
         assert_eq!(stored.state(), JobState::Downloading);
     }
 
@@ -1291,9 +1271,7 @@ mod tests {
         let runtime = SingleStreamRuntime::new(3).unwrap();
         assert_eq!(
             runtime.execute(&mut store, &id(), &transport),
-            Err(RuntimeError::Protocol(
-                ProtocolError::ResumeRangeNotToEnd
-            ))
+            Err(RuntimeError::Protocol(ProtocolError::ResumeRangeNotToEnd))
         );
     }
 }
