@@ -50,12 +50,16 @@ It reads lifecycle authority from `clients/firefox/release-state.json` and retai
 
 Repository secret availability is not inferred from workflow source. `AMO_JWT_ISSUER` and `AMO_JWT_SECRET` must be authorized for this repository before a future signing execution can succeed.
 
-## Shared-repository cleanup
+## Shared-repository cleanup — Complete
 
-The copy under `GoreeCloud/goreecloud-firefox-extensions/extensions/download-manager/` remains transitional until:
+The application-owned Firefox migration completed on 2026-09-18.
 
-1. the owning-repository migration PR passes application and Firefox-client validation;
-2. deterministic package parity is verified;
-3. the migration is merged into authoritative `main`;
-4. active shared Firefox policy/inventory is reconciled to the owning repository;
-5. the shared source copy is removed from active authority without deleting historical Git provenance.
+- Owning application migration: Advanced Download Manager PR #14 merged to authoritative `main` at `fbde048fccd8154e462793134984e9d587d31ecd`.
+- Owning application post-merge validation: `Download Manager Firefox Client` run #4 and `Core Foundation` run #55 both passed.
+- Shared Firefox cleanup: `GoreeCloud/goreecloud-firefox-extensions` PR #104 removed the transitional `extensions/download-manager/` copy, shared Download Manager signing workflow, and shared validation/package ownership.
+- Shared repository post-merge validation: Firefox Repository run #398 passed.
+- Current canonical source: `GoreeCloud/goreecloud-advanced-download-manager/clients/firefox/`.
+- Firefox add-on ID remains `download-manager@goreecloud.com`.
+- Accepted Stable Firefox version remains `0.2.12`, with accepted native helper `0.2.11` / protocol `2` and the preserved accepted candidate/signed XPI hashes recorded above.
+
+Historical source provenance remains available through Git history in the shared Firefox repository. The shared repository is no longer an active source authority or signing authority for Download Manager Firefox development.
