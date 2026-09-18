@@ -1,7 +1,7 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Architecture"
 document_type: "Architecture"
-version: "v0.5"
+version: "v0.6"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active Development"
@@ -13,26 +13,27 @@ last_updated: "2026-09-17"
 
 ## Status
 
-The product is in **Development** with a bounded Rust shared-core source foundation. The component boundaries below remain the target architecture; the Rust core-domain contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, SQLite durable job-state adapter, bounded staging-file durability adapter, and minimal CLI shell are currently implemented.
+The product is in **Development** with a bounded Rust source foundation. The component boundaries below remain the target architecture; the Rust core-domain contracts, HTTP resume-safety contracts, backend-neutral durable-state/recovery contracts, SQLite durable job-state adapter, staging-file durability adapter, native single-stream runtime/orchestrator, and minimal CLI shell are currently implemented.
 
 ## Initial technology decision
 
-The shared Download Engine foundation uses Rust, with the repository toolchain pinned to Rust 1.98.1 and workspace minimum `rust-version` 1.98. The current workspace separates portable domain logic, protocol-specific safety contracts, durable-state/recovery contracts, durable metadata persistence, bounded staging-file operations, and the CLI shell:
+The shared Download Engine foundation uses Rust, with the repository toolchain pinned to Rust 1.98.1 and workspace minimum `rust-version` 1.98. The current workspace separates portable domain logic, protocol-specific safety contracts, durable-state/recovery contracts, durable metadata persistence, bounded staging-file operations, native transport/orchestration, and the CLI shell:
 
 - `crates/download-core` — shared core-domain contracts intended to remain portable across Linux, Windows, and Android integration layers;
 - `crates/download-http` — dependency-free HTTP request/response safety contracts for full transfers, safe restart, validator-bound resume, and range-response disposition; it performs no network I/O;
 - `crates/download-state` — dependency-free durable-state and recovery contracts for schema compatibility, checkpoints, staging paths, atomic mutation-batch generations, crash recovery, and final-artifact revalidation; it performs no persistence or filesystem I/O;
 - `crates/download-store-sqlite` — transaction-safe SQLite durable job-state adapter with schema/version validation, generation-checked atomic mutation batches, integrity checks, and lossless native-path storage;
 - `crates/download-fs` — bounded staging-file adapter that applies checkpoint-length reconciliation, synchronized append/truncate operations, safe restart-on-short-partial behavior, and non-overwriting final-file promotion; it performs no network I/O;
+- `crates/download-runtime` — native single-stream HTTP/HTTPS transport/orchestration layer using pinned reqwest 0.13.5 with Rustls; it applies the HTTP safety contracts, synchronizes staging bytes before advancing SQLite checkpoints, and performs bounded recovery/restart orchestration;
 - `crates/gcdm` — minimal Development-stage command-line shell for version/status visibility while transfer commands remain unavailable.
 
-This decision establishes the common core language/runtime direction. SQLite is selected for the initial durable job-state metadata backend, while real HTTP/HTTP3 client libraries, IPC mechanism, desktop UI framework, Android UI/binding layer, package formats, credential-storage adapters, and production migration/recovery mechanisms remain separately governed implementation choices.
+This establishes the common core language/runtime direction, SQLite as the initial durable metadata backend, and reqwest 0.13.5 with Rustls as the first native single-stream HTTP/HTTPS transport. HTTP/3, broader protocol stacks, IPC mechanism, desktop UI framework, Android transport/binding strategy, package formats, credential-storage adapters, and production migration/recovery mechanisms remain separately governed implementation choices.
 
 ## Component model
 
 ### GoreeCloud Download Engine
 
-Owns protocol transfer execution, segmentation, resume semantics, retry behavior, integrity verification, queue scheduling, and bandwidth policy. The current Rust source implements bounded job/state/resume-validator contracts, HTTP resume-safety planning, durable recovery decisions, durable job metadata persistence, and bounded staging-file operations; actual protocol execution remains pending.
+Owns protocol transfer execution, segmentation, resume semantics, retry behavior, integrity verification, queue scheduling, and bandwidth policy. The current Rust source implements bounded job/state/resume-validator contracts, HTTP resume-safety planning, durable metadata persistence, staging-file operations, and the first native single-stream HTTP/HTTPS execution path. Multipart execution, generalized retry policy, additional protocols, and user-facing service control remain pending.
 
 ### GoreeCloud Download Service
 
@@ -60,7 +61,7 @@ Connects applicable capabilities to GoreeCloud Manager, Privacy Shield, Wardveil
 
 ## HTTP resume-safety boundary
 
-Before a real HTTP client is introduced, the source foundation defines transport-independent decisions that a later adapter must honor:
+The transport-independent HTTP safety contracts are consumed by the native runtime and continue to govern every request/response transition:
 
 - a transfer with no persisted bytes uses a full request;
 - a partial transfer may issue a range request only when a safe `If-Range` validator is available;
@@ -70,7 +71,27 @@ Before a real HTTP client is introduced, the source foundation defines transport
 - `412 Precondition Failed` and `416 Range Not Satisfiable` require retry from the beginning;
 - malformed, offset-mismatched, or otherwise unexpected partial responses are rejected rather than combined with existing data.
 
-These are source-level safety contracts. They do not establish network execution or parser correctness.
+The native runtime now applies these contracts to real reqwest responses and uses the shared `Content-Range` parser. Loopback tests validate real HTTP full and validator-bound range requests on Ubuntu and Windows; this does not establish representative Internet-server compatibility or live HTTPS/TLS acceptance.
+
+## Native single-stream runtime boundary
+
+`crates/download-runtime` is the first concrete native execution/orchestration layer. ADR-0004 records the transport choice and initial security boundaries.
+
+The current bounded runtime:
+
+- uses pinned reqwest `0.13.5` with default features disabled and only the blocking and Rustls feature set enabled;
+- disables automatic redirects rather than forwarding sensitive source URLs or credentials to an unapproved destination;
+- disables reqwest's automatic system-proxy discovery, so ambient `HTTP_PROXY`/`HTTPS_PROXY` state cannot silently change this milestone's network authority;
+- requests `Accept-Encoding: identity` so persisted byte offsets continue to refer to the representation used for range requests;
+- derives full/restart/range requests from `download-http` and validates status, `Content-Range`, expected length, and persisted validators before appending;
+- synchronizes each staging chunk before committing the corresponding downloaded-byte checkpoint to SQLite;
+- truncates/synchronizes the staging file and commits a zero-byte durable checkpoint before a forced full restart;
+- commits a Verifying checkpoint before final-file promotion and a Completed checkpoint only after promotion succeeds;
+- can reopen SQLite after an interrupted response body, reconcile the staging artifact, and continue with a validator-bound range request;
+- can resume a persisted Paused checkpoint through its explicit `resume` entry point;
+- can reconcile the crash window where the final artifact was already promoted while durable state still reports Verifying/Processing.
+
+The runtime is currently a library boundary, not a supported service or user-facing client. Active in-flight pause/cancel signaling, configured redirects, authentication/cookies, proxy support, generalized retry/backoff, storage-failure injection, Android transport qualification, and representative live HTTPS/TLS tests remain open.
 
 ## Durable state and recovery boundary
 
@@ -84,7 +105,7 @@ These are source-level safety contracts. They do not establish network execution
 - queued/downloading/paused/waiting jobs recover through the HTTP full/restart/resume planner; verifying and processing jobs re-enter their respective phases;
 - completed jobs require final-artifact presence and known-length consistency before completed state is trusted after restart.
 
-ADR-0002 defines the corresponding migration and rollback expectations. `crates/download-state` itself does not write a database or mutate files; `crates/download-store-sqlite` and `crates/download-fs` implement bounded persistence and staging-file primitives, but their existence does not prove end-to-end checkpoint ordering or runtime crash recovery.
+ADR-0002 defines the corresponding migration and rollback expectations. `crates/download-state` itself does not write a database or mutate files; `crates/download-store-sqlite`, `crates/download-fs`, and `crates/download-runtime` now implement and test the bounded metadata/filesystem ordering path, including restart after SQLite reopen and promotion-window recovery. Power-loss qualification, corruption/locking behavior, storage-failure injection, and service-lifecycle recovery remain separate evidence gates.
 
 ## Boundary rules
 
@@ -98,4 +119,4 @@ ADR-0002 defines the corresponding migration and rollback expectations. `crates/
 
 ## Near-term architecture work
 
-The next architecture layer is to wire the existing SQLite metadata adapter and staging-file adapter into a minimal single-stream HTTP/HTTPS transport against the existing HTTP safety contracts. Checkpoint/database-to-filesystem ordering, locking and corruption behavior, interrupted-write/storage-failure handling, validator changes, and restart fixtures must be validated before runtime durability is claimed.
+The next architecture layer is to harden the bounded runtime around storage failures, missing/conflicting artifacts, database locking/corruption, active pause/cancel lifecycle, and representative live HTTPS/TLS behavior, then expose the stable engine through the first service/CLI control boundary. Redirect, authentication/cookie, and proxy policy must be explicitly designed before those capabilities are enabled rather than inheriting ambient client behavior.

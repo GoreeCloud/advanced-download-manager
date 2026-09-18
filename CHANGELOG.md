@@ -1,7 +1,7 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Changelog"
 document_type: "Changelog"
-version: "v0.7"
+version: "v0.8"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
@@ -30,8 +30,12 @@ All notable governed repository changes should be recorded here. Source mileston
 - Added `crates/download-fs` as a workspace member for bounded staging-file durability, including checkpoint-length reconciliation, truncation of uncommitted tails, safe restart when persisted progress exceeds the partial artifact, synchronized append/truncate operations, refusal to overwrite an existing final artifact, and rename-based promotion with Unix parent-directory synchronization.
 - Added unit coverage for staging append durability, tail truncation, restart-on-short-partial recovery, safe promotion, existing-final refusal, and invalid extension attempts.
 - Expanded Android shared-core CI coverage to compile the portable core, HTTP safety, durable-state, SQLite store, and staging-filesystem crates for the Android target.
+- Added `crates/download-runtime` with pinned reqwest 0.13.5, default features disabled, blocking + Rustls transport, automatic redirects disabled, automatic system proxies disabled, and identity transfer encoding for range-offset safety.
+- Added real single-stream full/restart/resume orchestration that synchronizes staging bytes before SQLite progress commits, persists restart resets before new full requests, validates response length/ranges/validators, and commits Verifying before promotion and Completed after promotion.
+- Added native loopback HTTP integration tests for full requests and `Range`/`If-Range` resume requests, plus interrupted-body recovery across SQLite reopen, persisted Paused-state resume, changed-validator rejection, 412 restart, and promotion-window recovery.
+- Added ADR-0004 documenting the initial native single-stream transport and authority boundaries.
 - Added repository-policy validation and CI definitions for formatting, Clippy, tests, native workspace checking, and Android shared-core compilation checking.
-- No network transfer execution, SQLite-to-filesystem checkpoint orchestration, end-to-end restart recovery, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.
+- This milestone still does not provide a supported service/client, representative live HTTPS/TLS qualification, Android transport acceptance, active in-flight pause/cancel, redirect/authentication/proxy support, storage-failure/corruption qualification, multipart execution, installable release, Platform-System acceptance, deployment, or production qualification.
 
 ### Documentation and governance
 
@@ -43,3 +47,4 @@ All notable governed repository changes should be recorded here. Source mileston
 - Migrated the repository Platform Contract declaration and policy validator from the superseded seven-system model to all nine Integral Platform Systems by adding GoreeCloud Policy and GoreeCloud Observability as blocked/unaccepted integrations.
 - Updated the required Stable Glaze UI consumer target from 1.4.1 to 1.5.1 while preserving the truthful absence of a runtime UI or application-specific Glaze acceptance.
 - Reconciled README current-state wording with the verified SQLite durable-state implementation without implying network-transfer, filesystem-durability, restart-recovery, client, release, or production completion.
+- Reconciled README, architecture, feature state, roadmap, changelog, and architecture-record index with the bounded native runtime while preserving unverified HTTPS/Android/client/release/production boundaries.

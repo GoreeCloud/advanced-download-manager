@@ -132,6 +132,60 @@ pub fn evaluate_response(
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContentRangeParseError {
+    InvalidFormat,
+    UnsupportedUnit,
+    InvalidNumber,
+    InvalidBounds,
+}
+
+pub fn parse_content_range(value: &str) -> Result<ByteContentRange, ContentRangeParseError> {
+    let mut fields = value.split_ascii_whitespace();
+    let unit = fields.next().ok_or(ContentRangeParseError::InvalidFormat)?;
+    let range_and_length = fields.next().ok_or(ContentRangeParseError::InvalidFormat)?;
+    if fields.next().is_some() {
+        return Err(ContentRangeParseError::InvalidFormat);
+    }
+    if !unit.eq_ignore_ascii_case("bytes") {
+        return Err(ContentRangeParseError::UnsupportedUnit);
+    }
+
+    let (range, complete_length) = range_and_length
+        .split_once('/')
+        .ok_or(ContentRangeParseError::InvalidFormat)?;
+    let (start, end) = range
+        .split_once('-')
+        .ok_or(ContentRangeParseError::InvalidFormat)?;
+
+    let start = start
+        .parse::<u64>()
+        .map_err(|_| ContentRangeParseError::InvalidNumber)?;
+    let end = end
+        .parse::<u64>()
+        .map_err(|_| ContentRangeParseError::InvalidNumber)?;
+    let complete_length = if complete_length == "*" {
+        None
+    } else {
+        Some(
+            complete_length
+                .parse::<u64>()
+                .map_err(|_| ContentRangeParseError::InvalidNumber)?,
+        )
+    };
+
+    let parsed = ByteContentRange {
+        start,
+        end,
+        complete_length,
+    };
+    if !parsed.is_well_formed() {
+        return Err(ContentRangeParseError::InvalidBounds);
+    }
+
+    Ok(parsed)
+}
+
 fn is_strong_etag(value: &str) -> bool {
     let value = value.trim();
     value.len() >= 2
@@ -149,6 +203,46 @@ mod tests {
             etag: etag.map(str::to_owned),
             last_modified: last_modified.map(str::to_owned),
         }
+    }
+
+    #[test]
+    fn content_range_parser_accepts_known_and_unknown_complete_lengths() {
+        assert_eq!(
+            parse_content_range("bytes 1024-2047/4096"),
+            Ok(ByteContentRange {
+                start: 1024,
+                end: 2047,
+                complete_length: Some(4096),
+            })
+        );
+        assert_eq!(
+            parse_content_range("BYTES 5-9/*"),
+            Ok(ByteContentRange {
+                start: 5,
+                end: 9,
+                complete_length: None,
+            })
+        );
+    }
+
+    #[test]
+    fn content_range_parser_rejects_malformed_or_impossible_ranges() {
+        assert_eq!(
+            parse_content_range("items 0-1/2"),
+            Err(ContentRangeParseError::UnsupportedUnit)
+        );
+        assert_eq!(
+            parse_content_range("bytes 10-9/20"),
+            Err(ContentRangeParseError::InvalidBounds)
+        );
+        assert_eq!(
+            parse_content_range("bytes 0-20/20"),
+            Err(ContentRangeParseError::InvalidBounds)
+        );
+        assert_eq!(
+            parse_content_range("bytes nope"),
+            Err(ContentRangeParseError::InvalidFormat)
+        );
     }
 
     #[test]
