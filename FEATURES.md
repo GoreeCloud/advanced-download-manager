@@ -1,12 +1,12 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Features"
 document_type: "Feature State"
-version: "v0.5"
+version: "v0.6"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
-last_updated: "2026-09-16"
+last_updated: "2026-09-17"
 ---
 
 # GoreeCloud Advanced Download Manager — Features
@@ -34,9 +34,10 @@ The repository contains an initial Rust source foundation. The implemented bound
 - partial-file reconciliation rules that accept matching durable length, truncate an uncommitted tail beyond the checkpoint, and require restart when the checkpoint is ahead of the actual partial artifact;
 - generation-based mutation-batch contracts for atomic persistence adapters, including stale-writer detection boundaries and duplicate-job mutation rejection;
 - a pinned `crates/download-store-sqlite` durable job-state adapter using bundled SQLite through `rusqlite 0.40.2`, with explicit schema/version validation, optimistic generation checking, atomic mutation batches, integrity checks, lossless native-path persistence, sensitive-URL handling, and reopen/round-trip tests;
+- a `crates/download-fs` staging-file adapter that reconciles checkpoint and actual partial-file lengths, truncates uncommitted tails, restarts safely when persisted progress is ahead of the partial artifact, synchronizes append/truncate operations before reporting durable progress, refuses silent replacement of an existing final artifact, and promotes a synchronized staging file by rename with parent-directory synchronization on Unix;
 - a minimal `gcdm` Development-stage status/version shell that deliberately does not implement download commands.
 
-This is still Development-stage foundation functionality. Durable job metadata persistence is now implemented at the SQLite adapter boundary, but network transfer execution, filesystem mutation/durable checkpoint ordering, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.
+This is still Development-stage foundation functionality. Durable job metadata persistence and bounded staging-file durability primitives are now implemented independently, but network transfer execution, database-to-filesystem checkpoint ordering and orchestration, end-to-end restart recovery, multipart downloading, browser integration, graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does not yet establish a usable downloader or release.
 
 ## Planned feature families
 

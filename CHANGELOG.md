@@ -1,7 +1,7 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Changelog"
 document_type: "Changelog"
-version: "v0.6"
+version: "v0.7"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
@@ -27,9 +27,11 @@ All notable governed repository changes should be recorded here. Source mileston
 - Added `crates/download-store-sqlite`, the first transaction-safe durable job-state backend, using pinned `rusqlite 0.40.2` with bundled SQLite and bounded unsigned metadata conversion.
 - Added explicit SQLite schema/version validation, generation-checked atomic mutation batches, integrity checking, lossless native-path persistence, sensitive-URL handling, reopen/round-trip tests, and ADR-0003 documenting the backend and durability policy.
 - Extended Android CI with NDK C-toolchain configuration and compilation of the SQLite adapter for the Android shared-core target.
-- Expanded Android shared-core CI coverage to compile the portable core, HTTP safety, and durable-state contract crates for the Android target.
+- Added `crates/download-fs` as a workspace member for bounded staging-file durability, including checkpoint-length reconciliation, truncation of uncommitted tails, safe restart when persisted progress exceeds the partial artifact, synchronized append/truncate operations, refusal to overwrite an existing final artifact, and rename-based promotion with Unix parent-directory synchronization.
+- Added unit coverage for staging append durability, tail truncation, restart-on-short-partial recovery, safe promotion, existing-final refusal, and invalid extension attempts.
+- Expanded Android shared-core CI coverage to compile the portable core, HTTP safety, durable-state, SQLite store, and staging-filesystem crates for the Android target.
 - Added repository-policy validation and CI definitions for formatting, Clippy, tests, native workspace checking, and Android shared-core compilation checking.
-- No network transfer execution, filesystem durability/runtime transfer orchestration, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.
+- No network transfer execution, SQLite-to-filesystem checkpoint orchestration, end-to-end restart recovery, graphical client, installable release, Platform-System acceptance, or production qualification is included in this milestone.
 
 ### Documentation and governance
 
