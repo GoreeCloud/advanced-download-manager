@@ -861,10 +861,15 @@ mod tests {
                     break;
                 }
                 request.extend_from_slice(&buffer[..read]);
-                assert!(request.len() <= 32 * 1024, "HTTP request headers are too large");
+                assert!(
+                    request.len() <= 32 * 1024,
+                    "HTTP request headers are too large"
+                );
             }
 
-            stream.write_all(&response).expect("write loopback response");
+            stream
+                .write_all(&response)
+                .expect("write loopback response");
             stream.flush().expect("flush loopback response");
             String::from_utf8(request).expect("loopback request must be UTF-8 headers")
         });
@@ -1056,7 +1061,10 @@ mod tests {
         let outcome = runtime.execute(&mut store, &id(), &transport).unwrap();
 
         assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
-        let request = server.join().expect("loopback server thread").to_ascii_lowercase();
+        let request = server
+            .join()
+            .expect("loopback server thread")
+            .to_ascii_lowercase();
         assert!(request.starts_with("get /file.bin?token=synthetic-test http/1.1\r\n"));
         assert!(request.contains("\r\naccept-encoding: identity\r\n"));
         assert!(!request.contains("\r\nrange:"));
@@ -1102,11 +1110,8 @@ mod tests {
         .unwrap();
 
         let generation = store.generation().unwrap();
-        let batch = CommitBatchV1::new(
-            generation,
-            vec![JobMutationV1::Upsert(source_checkpoint)],
-        )
-        .unwrap();
+        let batch =
+            CommitBatchV1::new(generation, vec![JobMutationV1::Upsert(source_checkpoint)]).unwrap();
         store.apply_batch(&batch).unwrap();
 
         let runtime = SingleStreamRuntime::new(2).unwrap();
