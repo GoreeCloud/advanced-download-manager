@@ -33,7 +33,7 @@ Mozilla-signed 0.2.11 had already passed the same full restart/recovery gate aft
 
 That self-description contradicted an eventual Stable lifecycle even though the runtime behavior had passed. GoreeCloud therefore withheld 0.2.11 Stable promotion rather than mutating an already-signed version.
 
-0.2.12 changes the Firefox manifest version and makes the packaged Settings heading lifecycle-neutral: `GoreeCloud Download Manager Extension 0.2.12`. A regression prevents packaged Settings UI from embedding `source candidate`, `not Stable`, or a hard-coded Stable status. Lifecycle authority belongs to the canonical extension inventory and retained release evidence.
+0.2.12 changes the Firefox manifest version and makes the packaged Settings heading lifecycle-neutral: `GoreeCloud Download Manager Extension 0.2.12`. A regression prevents packaged Settings UI from embedding `source candidate`, `not Stable`, or a hard-coded Stable status. Lifecycle authority belongs to `clients/firefox/release-state.json` and retained release evidence.
 
 No native-helper behavior changed in 0.2.12. The accepted helper remains **0.2.11**, which includes the binary segmented-assembly correction and protocol-2 security/recovery contracts.
 
@@ -91,7 +91,7 @@ Sites requiring arbitrary request bodies, JavaScript-generated authorization, DR
 Install from the repository root:
 
 ```bash
-./extensions/download-manager/scripts/install-native-host-linux.sh
+./clients/firefox/scripts/install-native-host-linux.sh
 ```
 
 The helper is copied to:
@@ -117,7 +117,7 @@ Unsigned development builds can still be loaded temporarily through `about:debug
 Build the deterministic unsigned package with:
 
 ```bash
-python shared/scripts/package_extension.py download-manager
+python clients/firefox/scripts/package.py
 ```
 
 For the Stable source line this produces:
@@ -131,21 +131,21 @@ The XPI excludes the separately installed native helper and source-only scripts/
 ## Validation
 
 ```bash
-node --check extensions/download-manager/native_protocol.js
-node --check extensions/download-manager/background.js
-node --check extensions/download-manager/recovery.js
-node --check extensions/download-manager/scheduler_hardening.js
-node extensions/download-manager/tests/test_browser_scheduler.js
-node extensions/download-manager/tests/test_mixed_scheduler.js
-node extensions/download-manager/tests/test_lifecycle_faults.js
-node extensions/download-manager/tests/test_retry_snapshots.js
-node --check extensions/download-manager/ui/popup.js
-node --check extensions/download-manager/ui/manager.js
-node --check extensions/download-manager/ui/options.js
-python -m py_compile extensions/download-manager/scripts/native-host/goreecloud_download_manager_native.py
-python -m unittest discover -s extensions/download-manager/tests -p 'test_*.py'
-python shared/scripts/validate_repository.py
-python shared/scripts/package_extension.py download-manager
+node --check clients/firefox/native_protocol.js
+node --check clients/firefox/background.js
+node --check clients/firefox/recovery.js
+node --check clients/firefox/scheduler_hardening.js
+node clients/firefox/tests/test_browser_scheduler.js
+node clients/firefox/tests/test_mixed_scheduler.js
+node clients/firefox/tests/test_lifecycle_faults.js
+node clients/firefox/tests/test_retry_snapshots.js
+node --check clients/firefox/ui/popup.js
+node --check clients/firefox/ui/manager.js
+node --check clients/firefox/ui/options.js
+python -m py_compile clients/firefox/scripts/native-host/goreecloud_download_manager_native.py
+python -m unittest discover -s clients/firefox/tests -p 'test_*.py'
+python -m json.tool clients/firefox/release-state.json >/dev/null
+python clients/firefox/scripts/package.py
 ```
 
 ## Current boundaries
@@ -154,4 +154,4 @@ Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary PO
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 is Stable.** The canonical inventory records `source_state: stable` and `accepted_stable_version: 0.2.12`. Any later runtime version is a new lifecycle candidate and must independently repeat its applicable validation, Mozilla signing, signed-install/restart/native-recovery, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 is Stable.** The application-local Firefox release-state record declares `source_state: stable` and `accepted_stable_version: 0.2.12`. Any later runtime version is a new lifecycle candidate and must independently repeat its applicable validation, Mozilla signing, signed-install/restart/native-recovery, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
