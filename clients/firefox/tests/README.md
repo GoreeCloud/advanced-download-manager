@@ -61,25 +61,25 @@ Separate staging-link tests cover symlink rejection, no-follow file handling, sa
 Run the browser scheduler:
 
 ```bash
-node extensions/download-manager/tests/test_browser_scheduler.js
+node clients/firefox/tests/test_browser_scheduler.js
 ```
 
 Run the mixed Firefox/native scheduler:
 
 ```bash
-node extensions/download-manager/tests/test_mixed_scheduler.js
+node clients/firefox/tests/test_mixed_scheduler.js
 ```
 
 Run lifecycle-fault coverage:
 
 ```bash
-node extensions/download-manager/tests/test_lifecycle_faults.js
+node clients/firefox/tests/test_lifecycle_faults.js
 ```
 
 Run retry snapshot coverage:
 
 ```bash
-node extensions/download-manager/tests/test_retry_snapshots.js
+node clients/firefox/tests/test_retry_snapshots.js
 ```
 
 These suites cover concurrency ceilings, queue promotion, resume-while-full semantics, same-download-ID resume, cross-engine scheduling, deterministic ordering, cancellation finality, late-event/removed-job protection, launch-pending reconciliation, failure notification de-duplication, requested-filename normalization, configuration snapshot preservation, and queue-tail retry behavior.
