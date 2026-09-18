@@ -1,12 +1,12 @@
 ---
 title: "GoreeCloud Advanced Download Manager — Changelog"
 document_type: "Changelog"
-version: "v0.5"
+version: "v0.6"
 product_version: "0.1.0"
 release_lifecycle: "Development"
 status: "Active"
 classification: "Public"
-last_updated: "2026-09-16"
+last_updated: "2026-09-17"
 ---
 
 # GoreeCloud Advanced Download Manager — Changelog
@@ -38,3 +38,6 @@ All notable governed repository changes should be recorded here. Source mileston
 - Established the repository governance/documentation baseline, product internal version 0.1.0, architecture boundary, current feature state, user manual, privacy/security guidance, branding, benefits, competitive objectives, notes, editor configuration, ignore rules, rights notice, and Platform Contract declaration.
 - Advanced the software release lifecycle from Concept to Development only after source implementation began; planned feature requirements remain planned unless separately verified.
 - Reconciled the roadmap and current-state documentation with verified Phase 1 source-contract progress while preserving the distinction between source contracts and runtime durability.
+- Migrated the repository Platform Contract declaration and policy validator from the superseded seven-system model to all nine Integral Platform Systems by adding GoreeCloud Policy and GoreeCloud Observability as blocked/unaccepted integrations.
+- Updated the required Stable Glaze UI consumer target from 1.4.1 to 1.5.1 while preserving the truthful absence of a runtime UI or application-specific Glaze acceptance.
+- Reconciled README current-state wording with the verified SQLite durable-state implementation without implying network-transfer, filesystem-durability, restart-recovery, client, release, or production completion.

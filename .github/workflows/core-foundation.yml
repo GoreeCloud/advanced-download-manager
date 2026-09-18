@@ -71,6 +71,7 @@ jobs:
         run: >-
           cargo check
           -p goreecloud-download-core
+          -p goreecloud-download-fs
           -p goreecloud-download-http
           -p goreecloud-download-state
           -p goreecloud-download-store-sqlite
