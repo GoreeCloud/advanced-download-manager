@@ -237,7 +237,9 @@ mod tests {
             DurableStagingFile::open(paths.clone(), 0).expect("open staging file");
         assert_eq!(disposition, StagingOpenDisposition::Fresh);
 
-        let write = staging.append_bytes(b"abcdef").expect("append durable bytes");
+        let write = staging
+            .append_bytes(b"abcdef")
+            .expect("append durable bytes");
         assert_eq!(write.appended_bytes, 6);
         assert_eq!(write.durable_bytes, 6);
         assert_eq!(fs::read(paths.staging_path()).unwrap(), b"abcdef");
