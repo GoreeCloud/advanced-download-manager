@@ -1319,6 +1319,103 @@ mod tests {
     }
 
     #[test]
+    fn interrupted_body_resumes_after_sqlite_store_reopen() {
+        let root = TestRoot::new("restart-reopen");
+        let runtime = SingleStreamRuntime::new(3).unwrap();
+        let mut store = root.store();
+        let job = DownloadJob::new(
+            id(),
+            source(),
+            root.destination(),
+            None,
+            RemoteValidators::default(),
+        )
+        .unwrap();
+        runtime.enqueue(&mut store, &job).unwrap();
+
+        let interrupted = ScriptedTransport::new(vec![ScriptedResponse {
+            status_code: 200,
+            content_range: None,
+            content_length: Some(6),
+            validators: validators(Some("\"v1\"")),
+            body: ScriptedBody::FailAfter {
+                bytes: b"abcdef".to_vec(),
+                fail_after: 3,
+            },
+        }]);
+
+        assert!(matches!(
+            runtime.execute(&mut store, &id(), &interrupted),
+            Err(RuntimeError::Transport(TransportErrorKind::Body))
+        ));
+        drop(store);
+
+        let mut reopened = root.store();
+        let checkpoint = reopened.load(&id()).unwrap().unwrap();
+        assert_eq!(checkpoint.state(), JobState::Downloading);
+        assert_eq!(checkpoint.downloaded_bytes(), 3);
+        assert_eq!(checkpoint.expected_bytes(), Some(6));
+        assert_eq!(checkpoint.validators().etag.as_deref(), Some("\"v1\""));
+
+        let resumed = ScriptedTransport::new(vec![ScriptedResponse {
+            status_code: 206,
+            content_range: Some(ByteContentRange {
+                start: 3,
+                end: 5,
+                complete_length: Some(6),
+            }),
+            content_length: Some(3),
+            validators: validators(Some("\"v1\"")),
+            body: ScriptedBody::Bytes(b"def".to_vec()),
+        }]);
+
+        let outcome = runtime.execute(&mut reopened, &id(), &resumed).unwrap();
+        assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
+        assert!(matches!(
+            resumed.plans().as_slice(),
+            [HttpRequestPlan::Resume { start_at: 3, .. }]
+        ));
+        assert_eq!(reopened.load(&id()).unwrap().unwrap().state(), JobState::Completed);
+    }
+
+    #[test]
+    fn persisted_paused_checkpoint_resumes_through_runtime_resume() {
+        let root = TestRoot::new("persisted-pause");
+        let mut store = root.store();
+        let checkpoint = checkpoint(
+            &root,
+            JobState::Paused,
+            3,
+            Some(6),
+            validators(Some("\"v1\"")),
+        );
+        write_staging(&checkpoint, b"abc");
+        seed(&mut store, &checkpoint);
+
+        let transport = ScriptedTransport::new(vec![ScriptedResponse {
+            status_code: 206,
+            content_range: Some(ByteContentRange {
+                start: 3,
+                end: 5,
+                complete_length: Some(6),
+            }),
+            content_length: Some(3),
+            validators: validators(Some("\"v1\"")),
+            body: ScriptedBody::Bytes(b"def".to_vec()),
+        }]);
+
+        let runtime = SingleStreamRuntime::new(2).unwrap();
+        let outcome = runtime.resume(&mut store, &id(), &transport).unwrap();
+
+        assert_eq!(fs::read(outcome.final_path).unwrap(), b"abcdef");
+        assert!(matches!(
+            transport.plans().as_slice(),
+            [HttpRequestPlan::Resume { start_at: 3, .. }]
+        ));
+        assert_eq!(store.load(&id()).unwrap().unwrap().state(), JobState::Completed);
+    }
+
+    #[test]
     fn crash_after_promotion_is_recovered_from_verifying_checkpoint() {
         let root = TestRoot::new("promotion-recovery");
         let mut store = root.store();
