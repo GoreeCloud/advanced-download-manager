@@ -8,7 +8,7 @@ This document records the initial Firefox downloads-engine queue concurrency gat
 
 ## Controlled environment
 
-The test used `extensions/download-manager/tests/concurrency_test_server.py` from canonical repository main. The server exposes deterministic 64 MiB HTTP endpoints and reports live request concurrency through `/status`.
+The test used `clients/firefox/tests/concurrency_test_server.py` from canonical repository main. The server exposes deterministic 64 MiB HTTP endpoints and reports live request concurrency through `/status`.
 
 Extension settings for the run were:
 
