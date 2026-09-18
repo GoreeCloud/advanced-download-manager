@@ -12,7 +12,7 @@ Firefox also exposed `USER_CANCELED` while a managed browser download was intent
 
 ## 0.2.4 hardening
 
-`extensions/download-manager/scheduler_hardening.js` is loaded after the existing background and recovery scripts. It preserves the distinction between:
+`clients/firefox/scheduler_hardening.js` is loaded after the existing background and recovery scripts. It preserves the distinction between:
 
 - Firefox's underlying paused download object; and
 - GoreeCloud's managed `queued` state for an existing Firefox download waiting for a scheduler slot.
@@ -23,7 +23,7 @@ The actual `browser.downloads.resume(downloadId)` call still occurs only when `p
 
 ## Deterministic automated regression
 
-`extensions/download-manager/tests/test_browser_scheduler.js` executes the real background scripts in a Node VM with a mocked Firefox WebExtensions API and persistent in-memory extension storage. It validates:
+`clients/firefox/tests/test_browser_scheduler.js` executes the real background scripts in a Node VM with a mocked Firefox WebExtensions API and persistent in-memory extension storage. It validates:
 
 1. A five-job Firefox batch with `maxConcurrent = 3` launches exactly three downloads and leaves two queued.
 2. Pausing one active Firefox job promotes one queued job, preserving three active managed jobs.
