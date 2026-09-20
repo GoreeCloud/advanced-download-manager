@@ -7,7 +7,7 @@ version: "v0.1"
 classification: "Public"
 last_updated: "2026-09-15"
 authoritative_record: true
-repository: "GoreeCloud/goreecloud-advanced-download-manager"
+repository: "GoreeCloud/advanced-download-manager"
 authoritative_scope: "Repository-level planned product features, capabilities, architecture, integrations, privacy, security, platform support, and product vision"
 ---
 
