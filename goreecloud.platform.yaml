@@ -8,7 +8,7 @@ component:
   type: application
   id: goreecloud-advanced-download-manager
   product_name: GoreeCloud Advanced Download Manager
-  repository: GoreeCloud/goreecloud-advanced-download-manager
+  repository: GoreeCloud/advanced-download-manager
 
 lifecycle: development
 version: "0.1.0"
