@@ -14,7 +14,7 @@ last_updated: "2026-09-15"
 ## Canonical identity
 
 - **Product name:** GoreeCloud Advanced Download Manager
-- **Repository:** `GoreeCloud/goreecloud-advanced-download-manager`
+- **Repository:** `GoreeCloud/advanced-download-manager`
 - **CLI working command name:** `gcdm` is planned in the specification but is not implemented.
 - **Design system:** Glaze UI, using the current approved Stable consumer contract at implementation and acceptance time.
 
