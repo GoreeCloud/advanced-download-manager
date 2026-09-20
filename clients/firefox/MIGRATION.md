@@ -6,7 +6,7 @@ GoreeCloud Download Manager Extension is an application-owned Firefox client of 
 
 Canonical source after this migration:
 
-- Repository: `GoreeCloud/goreecloud-advanced-download-manager`
+- Repository: `GoreeCloud/advanced-download-manager`
 - Path: `clients/firefox/`
 - Firefox add-on ID: `download-manager@goreecloud.com`
 - Stable Firefox version: `0.2.12`
