@@ -8,7 +8,7 @@
   "native_host": "goreecloud_download_manager",
   "accepted_native_helper_version": "0.2.11",
   "native_protocol": 2,
-  "canonical_repository": "GoreeCloud/goreecloud-advanced-download-manager",
+  "canonical_repository": "GoreeCloud/advanced-download-manager",
   "canonical_path": "clients/firefox",
   "migrated_from": "GoreeCloud/goreecloud-firefox-extensions/extensions/download-manager",
   "migrated_from_revision": "e7f502b15b706864268ddec18e327f12840f3b82",
