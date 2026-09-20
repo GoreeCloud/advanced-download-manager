@@ -7,7 +7,7 @@ version: "v0.3"
 classification: "Public"
 last_updated: "2026-09-16"
 authoritative_record: true
-repository: "GoreeCloud/goreecloud-advanced-download-manager"
+repository: "GoreeCloud/advanced-download-manager"
 canonical_source: "repository"
 drive_sync_target: "GoreeCloud/Feature Roadmap/GoreeCloud Advanced Download Manager/FEATURE-ROADMAP.md"
 ---
