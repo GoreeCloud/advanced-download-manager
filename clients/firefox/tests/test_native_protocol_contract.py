@@ -72,7 +72,7 @@ class NativeProtocolContractTests(unittest.TestCase):
         self.assertEqual(state["source_state"], "stable")
         self.assertEqual(state["accepted_stable_version"], manifest["version"])
         self.assertEqual(state["firefox_addon_id"], "download-manager@goreecloud.com")
-        self.assertEqual(state["canonical_repository"], "GoreeCloud/goreecloud-advanced-download-manager")
+        self.assertEqual(state["canonical_repository"], "GoreeCloud/advanced-download-manager")
         self.assertEqual(state["canonical_path"], "clients/firefox")
 
 

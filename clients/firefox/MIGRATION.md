@@ -6,7 +6,7 @@ GoreeCloud Download Manager Extension is an application-owned Firefox client of 
 
 Canonical source after this migration:
 
-- Repository: `GoreeCloud/goreecloud-advanced-download-manager`
+- Repository: `GoreeCloud/advanced-download-manager`
 - Path: `clients/firefox/`
 - Firefox add-on ID: `download-manager@goreecloud.com`
 - Stable Firefox version: `0.2.12`
@@ -58,7 +58,7 @@ The application-owned Firefox migration completed on 2026-09-18.
 - Owning application post-merge validation: `Download Manager Firefox Client` run #4 and `Core Foundation` run #55 both passed.
 - Shared Firefox cleanup: `GoreeCloud/goreecloud-firefox-extensions` PR #104 removed the transitional `extensions/download-manager/` copy, shared Download Manager signing workflow, and shared validation/package ownership.
 - Shared repository post-merge validation: Firefox Repository run #398 passed.
-- Current canonical source: `GoreeCloud/goreecloud-advanced-download-manager/clients/firefox/`.
+- Current canonical source: `GoreeCloud/advanced-download-manager/clients/firefox/`.
 - Firefox add-on ID remains `download-manager@goreecloud.com`.
 - Accepted Stable Firefox version remains `0.2.12`, with accepted native helper `0.2.11` / protocol `2` and the preserved accepted candidate/signed XPI hashes recorded above.
 
