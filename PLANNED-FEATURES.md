@@ -9,12 +9,11 @@ last_updated: "2026-09-17"
 authoritative_record: true
 repository: "GoreeCloud/advanced-download-manager"
 canonical_source: "repository"
-drive_sync_target: "GoreeCloud/Feature Roadmap/GoreeCloud Advanced Download Manager/FEATURE-ROADMAP.md"
 ---
 
-# GoreeCloud Advanced Download Manager — Feature Roadmap
+# GoreeCloud Advanced Download Manager — Planned Features
 
-> **Canonical source:** This repository `FEATURE-ROADMAP.md` is the canonical editable roadmap. The corresponding GoreeCloud Drive Markdown record is a synchronized ecosystem-wide representation and must remain materially consistent with this file.
+> **Authority:** `PLANNED-FEATURES.md` is the authoritative repository planned-feature record. The former Drive mirror is retired after verified migration.
 >
 > **Implementation truth:** Unless a roadmap item is explicitly backed by verified source, test, build, integration, release, or runtime evidence, it remains **Planned**. The existence of `SPECIFICATIONS.md`, this roadmap, a branch, pull request, task record, prototype, or design does not establish implementation or release readiness.
 
