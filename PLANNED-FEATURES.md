@@ -446,3 +446,17 @@ This sequencing intentionally prevents browser interception, remote control, syn
 A phase is complete only when its required implementation exists in the authoritative source, applicable automated and manual validation has passed, exact source/release identities are known, documentation reflects the verified state, related task records are reconciled, and no unresolved blocker makes the completion claim inaccurate.
 
 Planned, partial, experimental, unmerged, or unverified work remains open.
+
+## Firefox client obligations migrated from Drive
+
+The former standalone Drive roadmap for **GoreeCloud Download Manager Extension** is now reconciled into this repository because the Firefox client is owned here under `clients/firefox/`.
+
+| ID | Feature / obligation | Priority | Current state |
+| --- | --- | --- | --- |
+| DME-002 | Harden redirect/source identity, late or duplicate native commands, and recovery fault handling. | High | Planned |
+| DME-003 | Add bandwidth limiting, time-based scheduling, hash verification, and richer retry/recovery behavior. | Medium | Planned |
+| DME-004 | Evaluate Windows and macOS native-host support after platform requirements are defined and accepted. | Medium | Future |
+
+The former DME-001 obligation—maintain the accepted 0.2.12 signed-runtime acceptance and provenance baseline—is represented in `IMPLEMENTED-FEATURES.md` and the client release evidence under `clients/firefox/`. The raw Drive source is preserved at `clients/firefox/docs/history/drive-feature-roadmap-source-2026-09-27.md`.
+
+Google Drive feature-roadmap synchronization for this client is retired. Future feature-state changes must be maintained in the repository-native records.
