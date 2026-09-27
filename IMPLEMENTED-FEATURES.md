@@ -45,9 +45,13 @@ The same application repository also contains the application-owned Firefox clie
 
 The Rust application foundation remains Development-stage functionality. Durable job metadata persistence and bounded staging-file durability primitives are implemented independently, but shared-engine network execution, database-to-filesystem checkpoint ordering and orchestration, end-to-end application-engine restart recovery, multipart downloading, browser-to-shared-engine integration, Linux/Windows/Android graphical clients, and Platform-System runtime integration are not implemented or accepted yet. The repository does contain a separately accepted Firefox 0.2.12 client release; that narrower platform release must not be generalized into a Stable application-core claim.
 
+### Firefox client 0.2.12 migrated roadmap baseline
+
+The former Drive roadmap recorded DME-001 as an ongoing obligation to maintain the accepted **0.2.12 signed-runtime acceptance and provenance baseline**. Current repository evidence already places that Firefox client under `clients/firefox/` and records its accepted Stable evidence separately from the Development-stage Rust application engine. This migrated roadmap statement therefore preserves that version-specific accepted client baseline without generalizing it into a Stable claim for the application core.
+
 ## Planned feature families
 
-The canonical requirements are maintained in `SPECIFICATIONS.md`; the delivery sequence is maintained in `FEATURE-ROADMAP.md`. Planned families include durable HTTP/HTTPS transfers, validator-safe resume, intelligent multipart acceleration, retries and mirrors, queues and scheduling, bandwidth/storage policy, rules and post-processing, checksum verification, browser acquisition workflows, non-DRM media-manifest downloads, secure authentication, Linux/Windows/Android clients, CLI/headless service operation, a shared local download API, privacy and security controls, and authorized cross-device GoreeCloud integration.
+The canonical requirements are maintained in `SPECIFICATIONS.md`; the delivery sequence is maintained in `PLANNED-FEATURES.md`. Planned families include durable HTTP/HTTPS transfers, validator-safe resume, intelligent multipart acceleration, retries and mirrors, queues and scheduling, bandwidth/storage policy, rules and post-processing, checksum verification, browser acquisition workflows, non-DRM media-manifest downloads, secure authentication, Linux/Windows/Android clients, CLI/headless service operation, a shared local download API, privacy and security controls, and authorized cross-device GoreeCloud integration.
 
 Torrent and magnet workflows remain planned as GoreeCloud Swarm delegation rather than an independent duplicate BitTorrent stack.
 
