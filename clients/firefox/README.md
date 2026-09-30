@@ -1,13 +1,20 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **Stable 0.2.12** — Mozilla-signed for unlisted/self-distribution and accepted through persistent-install/full-browser-restart native recovery
+**Status:** **0.2.13 source candidate** — media-context download correctness fix under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
 Firefox add-on ID: `download-manager@goreecloud.com`  
 Native Messaging host: `goreecloud_download_manager`  
-Stable extension version: `0.2.12`  
+Current source version: `0.2.13`  
+Accepted Stable extension version: `0.2.12`  
 Accepted native helper: `0.2.11` / protocol `2`
+
+## 0.2.13 source-candidate fix
+
+0.2.13 corrects Firefox context-menu URL selection for media wrapped in links. When Firefox supplies both `srcUrl` and `linkUrl` for an image, video, or audio element, GoreeCloud Download Manager now prefers the media source URL. Plain link context actions continue to use `linkUrl` when no media source exists.
+
+The regression is covered by the Firefox scheduler harness using an image-context case that includes both URLs and a plain-link fallback case. This source change does not alter the accepted native helper, Native Messaging protocol, cookie-forwarding model, or the accepted Stable 0.2.12 release. 0.2.13 must complete its own validation, Mozilla signing, persistent-install/runtime acceptance, and explicit lifecycle promotion before it can replace 0.2.12 as Stable.
 
 ## Stable 0.2.12 release evidence
 
@@ -154,4 +161,4 @@ Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary PO
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 is Stable.** The application-local Firefox release-state record declares `source_state: stable` and `accepted_stable_version: 0.2.12`. Any later runtime version is a new lifecycle candidate and must independently repeat its applicable validation, Mozilla signing, signed-install/restart/native-recovery, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.13 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.13 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
