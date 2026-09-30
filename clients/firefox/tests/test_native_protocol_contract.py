@@ -24,7 +24,7 @@ EXPECTED_CAPABILITIES = {
 class NativeProtocolContractTests(unittest.TestCase):
     def test_manifest_loads_protocol_contract_before_background(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        self.assertEqual(manifest["version"], "0.2.12")
+        self.assertEqual(manifest["version"], "0.2.13")
         scripts = manifest["background"]["scripts"]
         self.assertGreaterEqual(len(scripts), 2)
         self.assertEqual(scripts[0], "native_protocol.js")
@@ -60,7 +60,7 @@ class NativeProtocolContractTests(unittest.TestCase):
 
     def test_packaged_settings_label_is_lifecycle_neutral(self):
         text = OPTIONS_HTML.read_text(encoding="utf-8")
-        self.assertIn("GoreeCloud Download Manager Extension 0.2.12", text)
+        self.assertIn("GoreeCloud Download Manager Extension 0.2.13", text)
         self.assertNotIn("source candidate", text.lower())
         self.assertNotIn("not stable", text.lower())
         self.assertNotIn(">stable<", text.lower())
@@ -69,8 +69,9 @@ class NativeProtocolContractTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         state = json.loads(RELEASE_STATE.read_text(encoding="utf-8"))
         self.assertEqual(state["source_version"], manifest["version"])
-        self.assertEqual(state["source_state"], "stable")
-        self.assertEqual(state["accepted_stable_version"], manifest["version"])
+        self.assertEqual(state["source_state"], "source-candidate")
+        self.assertEqual(state["accepted_stable_version"], "0.2.12")
+        self.assertNotEqual(state["accepted_stable_version"], manifest["version"])
         self.assertEqual(state["firefox_addon_id"], "download-manager@goreecloud.com")
         self.assertEqual(state["canonical_repository"], "GoreeCloud/advanced-download-manager")
         self.assertEqual(state["canonical_path"], "clients/firefox")
