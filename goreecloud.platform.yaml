@@ -44,7 +44,7 @@ platform_systems:
     result: applicable-blocked
     version: null
     evidence: []
-    notes: "Glaze UI 1.5.1 is the current required Stable consumer target; no runtime UI exists and no application-specific conformance is accepted."
+    notes: "GLAZE UI V1.6 / 1.6.0 is the current Official consumer target; canonical lifecycle is Anchor (with retained Stable compatibility vocabulary in Glaze UI lifecycle metadata). No runtime UI exists and no application-specific conformance is accepted."
   mesh:
     result: applicable-blocked
     version: null
@@ -96,7 +96,7 @@ external_dependencies: []
 
 compatibility:
   platform_contract: "0.2"
-  glaze_ui_required: "1.5.1"
+  glaze_ui_required: "1.6.0"
   requires: []
   provides: []
 
