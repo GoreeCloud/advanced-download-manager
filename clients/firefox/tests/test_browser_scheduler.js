@@ -223,6 +223,38 @@ function countStates(jobs) {
 }
 
 async function main() {
+  const contextHarness = createHarness();
+
+  await contextHarness.browser.contextMenus.onClicked.emit({
+    menuItemId: "goreecloud-download",
+    srcUrl: "https://media.example.test/photo.jpg",
+    linkUrl: "https://www.example.test/article",
+    mediaType: "image",
+    pageUrl: "https://duckduckgo.com/?q=test"
+  });
+  await contextHarness.settle();
+
+  assert.equal(contextHarness.downloadCalls.length, 1, "image context action should launch one download");
+  assert.equal(
+    contextHarness.downloadCalls[0].options.url,
+    "https://media.example.test/photo.jpg",
+    "media context action must prefer srcUrl over a wrapping linkUrl"
+  );
+
+  await contextHarness.browser.contextMenus.onClicked.emit({
+    menuItemId: "goreecloud-download",
+    linkUrl: "https://downloads.example.test/archive.zip",
+    pageUrl: "https://www.example.test/downloads"
+  });
+  await contextHarness.settle();
+
+  assert.equal(contextHarness.downloadCalls.length, 2, "plain link context action should launch a second download");
+  assert.equal(
+    contextHarness.downloadCalls[1].options.url,
+    "https://downloads.example.test/archive.zip",
+    "plain link context action must keep using linkUrl when no media source exists"
+  );
+
   const h = createHarness();
 
   await h.message({
@@ -309,6 +341,8 @@ async function main() {
   assert.equal(h.notifications.length, 1, "completed Firefox job should emit one completion notification");
 
   console.log("BROWSER SCHEDULER HARDENING: PASS");
+  console.log("- media context prefers srcUrl over wrapping linkUrl: PASS");
+  console.log("- plain link context retains linkUrl fallback: PASS");
   console.log("- initial 3-active / 2-queued ceiling: PASS");
   console.log("- pause-driven queued-job promotion: PASS");
   console.log("- resume-while-full remains queued: PASS");

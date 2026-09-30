@@ -473,7 +473,9 @@ browser.runtime.onStartup.addListener(() => {
 
 browser.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId !== "goreecloud-download") return;
-  const url = info.linkUrl || info.srcUrl;
+  // Firefox can supply both URLs when media is wrapped in a link. Prefer the media source
+  // so an image/video/audio context-menu action downloads the media instead of its wrapper.
+  const url = info.srcUrl || info.linkUrl;
   if (!url) return;
   try {
     await queueDownload({ url });
