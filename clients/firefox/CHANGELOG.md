@@ -1,5 +1,13 @@
 # Change Log — GoreeCloud Download Manager Extension
 
+## 0.2.13 — Source candidate
+
+- Fixed Firefox context-menu capture for media wrapped in links. When Firefox provides both `srcUrl` and `linkUrl`, the extension now prefers the direct media source so **Download with GoreeCloud Download Manager Extension** downloads the selected image/video/audio rather than the wrapping page or article.
+- Preserved plain-link behavior by falling back to `linkUrl` when no media source URL exists.
+- Added deterministic scheduler-harness regressions for an image context containing both URLs and a plain-link fallback context.
+- Advanced the Firefox source version and lifecycle record to 0.2.13 source-candidate state. Accepted Stable remains 0.2.12, and no Mozilla-signed 0.2.13 release or runtime acceptance is claimed yet.
+- Kept native helper 0.2.11 / protocol 2 unchanged; this fix is confined to Firefox context-menu URL selection and candidate packaging/validation.
+
 ## 0.2.12 — Stable
 
 - Promoted GoreeCloud Download Manager Extension 0.2.12 to **Stable** after exact-source repository validation, Mozilla unlisted signing, signed-payload parity verification, persistent installation, full Firefox process restart, automatic same-job native recovery, exact final-file integrity, staging cleanup, and post-restart native-helper reconnection all passed.
