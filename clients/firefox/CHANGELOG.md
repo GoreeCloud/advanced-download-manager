@@ -9,7 +9,7 @@
 - Disabled Pause all, Resume all, and Clear completed when no current jobs can use those actions.
 - Added structured zero-download presentation to the toolbar popup and tailored its copy when automatic capture is disabled.
 - Shortened the Manager/popup product title to **GoreeCloud Download Manager** while preserving the manifest product identity.
-- Added polite live-region semantics to Manager and popup job containers.
+- Added dedicated visually hidden polite live regions for Manager/popup count changes without making the one-second-refreshing job lists themselves live regions.
 - Added deterministic source-contract coverage for the new Manager/popup UI states.
 - No transfer, scheduler, native-helper protocol, permission, or Save As behavior changed.
 - Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.18 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
