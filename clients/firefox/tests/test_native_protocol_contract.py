@@ -64,15 +64,11 @@ class NativeProtocolContractTests(unittest.TestCase):
         html = OPTIONS_HTML.read_text(encoding="utf-8")
         self.assertIn("captureFirefoxDownloads: true", background)
         self.assertIn("value.captureFirefoxDownloads !== false", background)
-        self.assertIn("askWhereToSave: true", background)
-        self.assertIn("value.askWhereToSave !== false", background)
-        self.assertIn("saveAs: (job.askWhereToSave ?? effectiveSettings.askWhereToSave) !== false", background)
+        self.assertIn("saveAs: true", background)
         self.assertIn("captureFirefoxDownloads", options)
-        self.assertIn("askWhereToSave", options)
         self.assertIn('id="captureFirefoxDownloads"', html)
-        self.assertIn('id="askWhereToSave"', html)
         self.assertIn("Automatically manage Firefox downloads", html)
-        self.assertIn("Ask where to save GoreeCloud-started downloads", html)
+        self.assertIn("Per-download destination", html)
         self.assertIn("Always ask you where to save files", html)
 
     def test_packaged_settings_label_is_lifecycle_neutral(self):
