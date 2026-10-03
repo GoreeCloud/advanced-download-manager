@@ -16,7 +16,7 @@ Accepted native helper: `0.2.11` / protocol `2`
 
 The toolbar popup now uses the shorter GoreeCloud Download Manager title and a structured zero-download state. When automatic capture is disabled, both Manager and popup explain that state rather than implying that Firefox downloads will necessarily appear automatically.
 
-Both job containers use polite live-region semantics so job-list state changes remain discoverable without forcing focus changes. 0.2.18 carries forward 0.2.17 compact Settings, 0.2.16 least-privilege permission UX, 0.2.15 mandatory Save As behavior, and 0.2.14 non-destructive automatic adoption.
+Manager and popup use dedicated visually hidden polite live regions that announce count changes only when active/queued/completed counts change, avoiding repeated screen-reader announcements from the one-second visual refresh. 0.2.18 carries forward 0.2.17 compact Settings, 0.2.16 least-privilege permission UX, 0.2.15 mandatory Save As behavior, and 0.2.14 non-destructive automatic adoption.
 
 0.2.18 is a source candidate only. Accepted Stable remains 0.2.12 until applicable Mozilla signing, persistent-install/runtime validation, and explicit lifecycle promotion succeed.
 
