@@ -12,11 +12,11 @@ No GoreeCloud server, analytics service, advertising service, or third-party tel
 
 ## Optional cookie permission
 
-Cookie access is optional and disabled by default. If the user enables cookie forwarding, Firefox requests the optional `cookies` permission together with optional `<all_urls>` host access.
+Cookie access is optional and disabled by default. In 0.2.16 source-candidate Settings, the request control remains disabled unless the native segmented helper is selected and cookie forwarding is deliberately enabled. Only then can Firefox request the optional `cookies` permission together with optional `<all_urls>` host access.
 
 When granted, the extension reads cookies only for the target download URL at download launch/resume time. Those cookies are passed to the local native helper through Firefox Native Messaging and are not intentionally written into `browser.storage.local`, native `metadata.json`, logs, or package files by the implemented code.
 
-Disabling cookie forwarding stops future cookie forwarding. Firefox permission state remains under Firefox's permission controls.
+Disabling cookie forwarding stops future cookie forwarding. Settings also exposes an explicit **Revoke cookie access** action that removes the optional permission through Firefox's permissions API; Firefox's own permission controls remain authoritative as well.
 
 ## Native helper
 

@@ -1,14 +1,26 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.15 source candidate** — per-download destination prompting plus automatic Firefox download adoption under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.16 source candidate** — native-settings and optional-permission UX hardening under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
 Firefox add-on ID: `download-manager@goreecloud.com`  
 Native Messaging host: `goreecloud_download_manager`  
-Current source version: `0.2.15`  
+Current source version: `0.2.16`  
 Accepted Stable extension version: `0.2.12`  
 Accepted native helper: `0.2.11` / protocol `2`
+
+## 0.2.16 source-candidate fix
+
+0.2.16 hardens the Settings privacy and information architecture exposed during representative 0.2.15 testing. General Firefox-download controls and native-acceleration controls are now separated into distinct Settings sections. When **Firefox downloads — maximum compatibility** is selected, native-only controls are visibly inactive and disabled.
+
+The optional Cookies + All Sites permission can no longer be requested merely because the permission button is visible. **Allow cookie access…** is enabled only when the native segmented helper is selected **and** target-site cookie forwarding is deliberately turned on. The Settings page discloses Firefox's broad permission wording before the request and includes **Revoke cookie access** after a grant.
+
+Cookie permission acquisition remains directly bound to the explicit user click required by Firefox. Saving settings never attempts to manufacture a permission request after asynchronous work, and cookie forwarding remains off by default. A browser-engine configuration can be saved without cookie permission because the native-only forwarding path is inactive.
+
+0.2.16 carries forward 0.2.15 mandatory per-download Save As behavior for GoreeCloud-started Firefox-engine transfers and 0.2.14 non-destructive automatic adoption. No new native-helper protocol or download transport behavior is claimed in 0.2.16.
+
+0.2.16 is a source candidate only. Accepted Stable remains 0.2.12 until applicable Mozilla signing, persistent-install/runtime validation, and explicit lifecycle promotion succeed.
 
 ## 0.2.15 source-candidate fix
 
@@ -106,7 +118,7 @@ Ordinary **Retry** is intentionally different: it creates a fresh GoreeCloud job
 
 ## Cookie forwarding
 
-Cookie forwarding is off by default. Settings requests Firefox's optional Cookies + All Sites permission directly from the explicit **Grant optional cookie permission** user action. When enabled, cookies for the target URL are forwarded in memory to the local native helper and are not intentionally written to managed download history or native recovery metadata.
+Cookie forwarding is off by default. In 0.2.16, Settings enables **Allow cookie access…** only after the native segmented helper and cookie forwarding are both deliberately selected. Firefox's optional Cookies + All Sites permission is still requested directly from that explicit user action. Settings also exposes **Revoke cookie access** after a grant. When forwarding is enabled and permitted, cookies for the target URL are forwarded in memory to the local native helper and are not intentionally written to managed download history or native recovery metadata.
 
 Accepted Firefox 155.0.1 / Flathub Flatpak testing previously demonstrated authenticated HEAD plus eight authenticated HTTP 206 ranges across a controlled 256 MiB source, exact final integrity, staging cleanup, and controlled credential non-persistence in native staging and `browser.storage.local`.
 
@@ -177,8 +189,8 @@ python clients/firefox/scripts/package.py
 
 ## Current boundaries
 
-Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic native takeover/request replay of Firefox-started downloads, or origin/user-supplied cryptographic checksum enforcement. The 0.2.15 source candidate retains non-destructive automatic manager adoption for ordinary HTTP/HTTPS Firefox downloads and adds per-download Save As prompting for GoreeCloud-started Firefox-engine transfers, but neither change is yet an accepted Stable release capability. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
+Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic native takeover/request replay of Firefox-started downloads, or origin/user-supplied cryptographic checksum enforcement. The 0.2.16 source candidate carries forward non-destructive automatic adoption and per-download Save As prompting while adding native-settings/optional-permission UX hardening; these later-version changes are not yet accepted Stable capabilities. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.15 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.15 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.16 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.16 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.

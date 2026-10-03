@@ -1,6 +1,19 @@
 # Change Log — GoreeCloud Download Manager Extension
 
 
+## 0.2.16 — Source candidate
+
+- Reorganized Settings into separate general-download and native-acceleration sections so native-only controls no longer appear active while Firefox downloads mode is selected.
+- Disabled native segments, native retry count, native destination, cookie forwarding, and native-helper testing while the Firefox engine is selected.
+- Changed optional cookie access to a least-privilege flow: **Allow cookie access…** is enabled only after native mode and cookie forwarding are both deliberately selected.
+- Added pre-request disclosure that Firefox may describe the optional host grant as **Access your data for all websites**.
+- Added **Revoke cookie access** to remove the optional Cookies + All Sites permission from the extension after grant.
+- Kept Firefox's required direct user-action permission request contract; Save never attempts to request optional permission asynchronously.
+- Allowed browser-engine settings to save without cookie permission because cookie forwarding is a native-only path.
+- Expanded source-contract coverage for deliberate permission gating, native-section inactive state, permission revocation, disclosure text, and 0.2.16 identity.
+- Carries forward 0.2.15 mandatory Firefox Save As prompting and 0.2.14 non-destructive automatic Firefox-download adoption.
+- Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.16 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
+
 ## 0.2.15 — Source candidate
 
 - Changed Firefox-engine downloads started through GoreeCloud controls to request Firefox's Save As dialog by default, allowing the destination and filename to be chosen separately for each new transfer.
