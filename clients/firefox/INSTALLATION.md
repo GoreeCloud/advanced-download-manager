@@ -6,6 +6,14 @@ GoreeCloud Download Manager Extension **0.2.12 is the accepted Stable Mozilla-si
 
 Unsigned Development builds may still be loaded temporarily through `about:debugging` → **This Firefox** → **Load Temporary Add-on**. Temporary loading is development-only and does not replace the accepted signed artifact or establish Stable status for later versions.
 
+## Per-download destination prompts
+
+For current 0.2.15 source-candidate builds, Firefox-engine downloads started through GoreeCloud controls request Firefox's Save As dialog by default. The extension Settings page exposes **Ask where to save GoreeCloud-started downloads** so this can be disabled explicitly.
+
+Ordinary downloads that Firefox itself starts are adopted only after Firefox has created the original download. GoreeCloud intentionally does not cancel and replay those requests. To choose a destination for every automatically captured Firefox-started download too, open Firefox **Settings → General → Files and Applications → Downloads** and enable **Always ask you where to save files**. Firefox then prompts before the original download starts, and GoreeCloud adopts that same download afterward.
+
+Native segmented downloads continue to use the configured native destination directory; 0.2.15 does not claim a cross-platform native system-save-dialog implementation.
+
 ## Linux native helper
 
 Stable extension 0.2.12 uses accepted native helper **0.2.11 / protocol 2**. The helper version intentionally remains 0.2.11 because 0.2.12 changes only the Firefox extension version and packaged lifecycle-neutral Settings label.
