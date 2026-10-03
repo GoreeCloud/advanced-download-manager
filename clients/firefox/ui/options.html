@@ -23,7 +23,7 @@
   </style>
 </head>
 <body>
-<div class="heading"><img class="icon" src="../icons/app-icon.svg" alt=""><div><h1>Download Manager settings</h1><div class="muted">GoreeCloud Download Manager Extension 0.2.13</div></div></div>
+<div class="heading"><img class="icon" src="../icons/app-icon.svg" alt=""><div><h1>Download Manager settings</h1><div class="muted">GoreeCloud Download Manager Extension 0.2.14</div></div></div>
 <div class="panel stack">
   <div class="field"><label for="mode">Download engine</label><select id="mode"><option value="browser">Firefox downloads — maximum compatibility</option><option value="native">Native segmented helper — acceleration + durable resume</option></select></div>
   <div class="grid"><div class="field"><label for="segments">Segments per native download</label><input id="segments" type="number" min="1" max="32"></div><div class="field"><label for="maxConcurrent">Concurrent downloads</label><input id="maxConcurrent" type="number" min="1" max="12"></div></div>
@@ -32,6 +32,7 @@
     <div class="check"><input id="forwardCookies" type="checkbox"><div><strong>Forward target-site cookies to the native helper</strong><div class="muted">Off by default. When enabled, the extension requests Firefox's optional Cookies + All Sites permission and passes only cookies for the target download URL to the native process in memory. Cookies are not stored in download history.</div></div></div>
     <div class="flex-wrap"><button id="grantCookies">Grant optional cookie permission</button><span id="cookieStatus" class="muted"></span></div>
   </div>
+  <div class="check"><input id="captureFirefoxDownloads" type="checkbox"><div><strong>Automatically manage Firefox downloads</strong><div class="muted">Adds ordinary HTTP/HTTPS downloads that Firefox starts to GoreeCloud Download Manager without cancelling or replaying the request. Automatically captured downloads stay on Firefox's engine; native segmented mode applies to downloads started through GoreeCloud controls.</div></div></div>
   <div class="check"><input id="completionNotifications" type="checkbox"><div><strong>Completion and failure notifications</strong><div class="muted">Show a Firefox notification when a managed download completes, fails, or is interrupted.</div></div></div>
   <div class="footer"><button class="primary" id="save">Save settings</button><button id="test">Test native helper</button><span id="status" class="muted"></span></div>
 </div>
