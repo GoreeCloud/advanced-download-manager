@@ -1,14 +1,26 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.16 source candidate** — native-settings and optional-permission UX hardening under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.17 source candidate** — compact Settings hierarchy and contextual native-permission UX under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
 Firefox add-on ID: `download-manager@goreecloud.com`  
 Native Messaging host: `goreecloud_download_manager`  
-Current source version: `0.2.16`  
+Current source version: `0.2.17`  
 Accepted Stable extension version: `0.2.12`  
 Accepted native helper: `0.2.11` / protocol `2`
+
+## 0.2.17 source-candidate polish
+
+0.2.17 refines the Settings hierarchy based on representative 0.2.16 UI review. When the Firefox download engine is selected, the native-acceleration section now collapses to a compact summary instead of rendering a large disabled form. Selecting the native segmented helper expands the acceleration, retry, destination, authenticated-cookie, and helper-test controls.
+
+Optional cookie permission actions are now contextual rather than permanently visible. **Allow cookie access…** appears only when native mode and cookie forwarding are both selected and permission is absent. **Revoke cookie access** appears only when permission is currently granted. This removes disabled destructive-looking controls from the ordinary Firefox-mode view while preserving the 0.2.16 least-privilege permission gate.
+
+The per-download destination explanation is shorter and keeps the same contract: GoreeCloud-started Firefox-engine transfers always open Save As, while Firefox-started downloads use Firefox's own **Always ask you where to save files** preference. The primary action is renamed **Save changes**.
+
+0.2.17 changes Settings presentation only. It carries forward 0.2.16 permission gating/revocation, 0.2.15 mandatory Save As behavior, and 0.2.14 non-destructive automatic Firefox-download adoption. Native helper 0.2.11 / protocol 2 is unchanged.
+
+0.2.17 is a source candidate only. Accepted Stable remains 0.2.12 until applicable Mozilla signing, persistent-install/runtime validation, and explicit lifecycle promotion succeed.
 
 ## 0.2.16 source-candidate fix
 
@@ -193,4 +205,4 @@ Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary PO
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.16 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.16 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.17 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.17 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
