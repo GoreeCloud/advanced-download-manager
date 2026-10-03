@@ -1,14 +1,22 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.13 source candidate** — media-context download correctness fix under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.14 source candidate** — automatic Firefox download adoption under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
 Firefox add-on ID: `download-manager@goreecloud.com`  
 Native Messaging host: `goreecloud_download_manager`  
-Current source version: `0.2.13`  
+Current source version: `0.2.14`  
 Accepted Stable extension version: `0.2.12`  
 Accepted native helper: `0.2.11` / protocol `2`
+
+## 0.2.14 source-candidate fix
+
+0.2.14 adds default-on automatic adoption of ordinary HTTP/HTTPS downloads that Firefox starts outside GoreeCloud controls. The extension listens for new Firefox downloads, records them as managed Firefox-engine jobs, and retains the original Firefox download ID so pause, resume, cancel, history, telemetry, and terminal notifications can operate without requiring the user to paste the URL manually.
+
+Automatic adoption intentionally does not cancel or replay the originating request. This preserves Firefox's original request semantics and avoids converting authenticated, POST-backed, signed-URL, service-worker-influenced, or otherwise browser-context-sensitive transfers into a new request. Downloads started by this extension are ignored by the adoption listener to prevent duplicate jobs, unsupported non-HTTP(S) schemes remain outside capture, and Settings includes a default-on **Automatically manage Firefox downloads** control.
+
+When native segmented mode is selected, an already-started Firefox download that is automatically adopted remains on the Firefox engine. Native acceleration continues to apply only when GoreeCloud itself initiates the download through its popup, Manager, context-menu action, or another explicitly managed start path. 0.2.14 is a source candidate only; accepted Stable remains 0.2.12 until Mozilla signing, persistent-install/runtime validation, and explicit promotion succeed.
 
 ## 0.2.13 source-candidate fix
 
@@ -51,6 +59,7 @@ No native-helper behavior changed in 0.2.12. The accepted helper remains **0.2.1
 - Shared Firefox/native managed-download concurrency enforcement.
 - Pause, resume, cancel, retry, pause-all, resume-all, and clear-completed actions.
 - Batch URL queueing and link/media context-menu capture.
+- Default-on automatic adoption of ordinary HTTP/HTTPS downloads started by Firefox, with a Settings opt-out and no cancellation/replay of the originating request.
 - Live bytes, progress, rolling speed, ETA, queue position, engine state, and effective native segment count.
 - Persistent native staging under `.goreecloud-downloads/<job-id>/`.
 - Same-job native recovery after helper interruption, Firefox background-context recreation, and accepted full Firefox process restart.
@@ -146,6 +155,7 @@ node clients/firefox/tests/test_browser_scheduler.js
 node clients/firefox/tests/test_mixed_scheduler.js
 node clients/firefox/tests/test_lifecycle_faults.js
 node clients/firefox/tests/test_retry_snapshots.js
+node clients/firefox/tests/test_auto_capture.js
 node --check clients/firefox/ui/popup.js
 node --check clients/firefox/ui/manager.js
 node --check clients/firefox/ui/options.js
@@ -157,8 +167,8 @@ python clients/firefox/scripts/package.py
 
 ## Current boundaries
 
-Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic browser-wide interception, or origin/user-supplied cryptographic checksum enforcement. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
+Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic native takeover/request replay of Firefox-started downloads, or origin/user-supplied cryptographic checksum enforcement. The 0.2.14 source candidate adds non-destructive automatic manager adoption for ordinary HTTP/HTTPS Firefox downloads, but that narrower capture behavior is not yet an accepted Stable release capability. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.13 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.13 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.14 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.14 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.

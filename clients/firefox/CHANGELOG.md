@@ -1,5 +1,15 @@
 # Change Log — GoreeCloud Download Manager Extension
 
+
+## 0.2.14 — Source candidate
+
+- Added default-on automatic adoption of ordinary HTTP/HTTPS downloads started by Firefox outside GoreeCloud controls, so those downloads appear in GoreeCloud Download Manager without manual URL pasting.
+- Preserved the original Firefox request and download ID rather than cancelling/replaying the transfer; automatically adopted jobs therefore remain on the Firefox engine even when native segmented mode is selected.
+- Excluded extension-originated downloads from the adoption listener to prevent duplicate jobs and excluded unsupported non-HTTP(S) schemes from automatic capture.
+- Added a Settings opt-out, **Automatically manage Firefox downloads**, while keeping automatic management enabled by default for existing and new profiles unless explicitly disabled.
+- Added deterministic automatic-capture regression coverage for default adoption, no replay, extension-owned de-duplication, scheme filtering, user opt-out, native-mode safety, and control through the original Firefox download ID.
+- Advanced the Firefox source version and lifecycle record to 0.2.14 source-candidate state. Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.14 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
+
 ## 0.2.13 — Source candidate
 
 - Fixed Firefox context-menu capture for media wrapped in links. When Firefox provides both `srcUrl` and `linkUrl`, the extension now prefers the direct media source so **Download with GoreeCloud Download Manager Extension** downloads the selected image/video/audio rather than the wrapping page or article.
