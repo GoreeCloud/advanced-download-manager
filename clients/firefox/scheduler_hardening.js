@@ -284,7 +284,6 @@
       });
       if (!starting) return null;
 
-      const settings = await getSettings();
       const options = {
         url: starting.url,
         saveAs: true
