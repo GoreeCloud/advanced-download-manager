@@ -5,10 +5,50 @@ const COOKIE_PERMISSION = Object.freeze({
   origins: ["<all_urls>"]
 });
 
+let cookiePermissionGranted = false;
+let permissionBusy = false;
+
+function nativeModeSelected() {
+  return $("#mode").value === "native";
+}
+
+function updateNativeUi() {
+  const nativeMode = nativeModeSelected();
+  const forwardingRequested = $("#forwardCookies").checked;
+
+  for (const id of ["segments", "retryCount", "nativeDirectory", "forwardCookies"]) {
+    $("#" + id).disabled = !nativeMode;
+  }
+
+  $("#nativeSettings").classList.toggle("settings-section-disabled", !nativeMode);
+  $("#nativeSettings").setAttribute("aria-disabled", String(!nativeMode));
+  $("#nativeState").textContent = nativeMode ? "Selected engine" : "Inactive";
+  $("#nativeState").classList.toggle("active", nativeMode);
+
+  $("#grantCookies").disabled = permissionBusy
+    || !nativeMode
+    || !forwardingRequested
+    || cookiePermissionGranted;
+  $("#revokeCookies").disabled = permissionBusy || !cookiePermissionGranted;
+  $("#test").disabled = permissionBusy || !nativeMode;
+
+  if (cookiePermissionGranted) {
+    $("#cookieStatus").textContent = nativeMode && forwardingRequested
+      ? "Cookie access granted; forwarding can be saved."
+      : "Cookie access granted, but it is not currently in use.";
+  } else if (!nativeMode) {
+    $("#cookieStatus").textContent = "No cookie access needed while Firefox downloads is selected.";
+  } else if (!forwardingRequested) {
+    $("#cookieStatus").textContent = "Cookie forwarding is off; no optional website-data permission is needed.";
+  } else {
+    $("#cookieStatus").textContent = "Cookie access is required before forwarding can be saved.";
+  }
+}
+
 async function refreshCookiePermission() {
-  const granted = await browser.permissions.contains(COOKIE_PERMISSION);
-  $("#cookieStatus").textContent = granted ? "Optional cookie permission granted" : "Optional cookie permission not granted";
-  return granted;
+  cookiePermissionGranted = await browser.permissions.contains(COOKIE_PERMISSION);
+  updateNativeUi();
+  return cookiePermissionGranted;
 }
 
 async function load() {
@@ -22,46 +62,92 @@ async function load() {
   await refreshCookiePermission();
 }
 
+$("#mode").addEventListener("change", () => {
+  updateNativeUi();
+  $("#status").textContent = nativeModeSelected()
+    ? "Native acceleration settings are now available. Save settings to apply this engine."
+    : "Firefox downloads selected. Native-only controls are inactive.";
+});
+
+$("#forwardCookies").addEventListener("change", () => {
+  updateNativeUi();
+  $("#status").textContent = $("#forwardCookies").checked
+    ? "Cookie forwarding selected. Allow cookie access before saving if permission has not already been granted."
+    : "Cookie forwarding is off.";
+});
+
 $("#grantCookies").addEventListener("click", () => {
   // Firefox requires permissions.request() to run directly from a user-action
-  // handler. Do not move this request behind runtime messaging or an awaited
-  // operation, or the transient user activation will be lost.
+  // handler. Keep the request synchronous with this deliberate click.
+  const nativeMode = nativeModeSelected();
+  const forwardingRequested = $("#forwardCookies").checked;
+  if (!nativeMode || !forwardingRequested) {
+    updateNativeUi();
+    $("#status").textContent = nativeMode
+      ? "Turn on cookie forwarding before requesting website-data access."
+      : "Select the native segmented helper before requesting website-data access.";
+    return;
+  }
+
   let request;
   try {
+    permissionBusy = true;
+    updateNativeUi();
+    $("#status").textContent = "Waiting for Firefox permission decision…";
     request = browser.permissions.request(COOKIE_PERMISSION);
   } catch (error) {
-    $("#cookieStatus").textContent = "Optional cookie permission request failed";
+    permissionBusy = false;
+    updateNativeUi();
     $("#status").textContent = `Permission request failed: ${error.message || String(error)}`;
     return;
   }
 
-  $("#grantCookies").disabled = true;
-  $("#status").textContent = "Waiting for Firefox permission decision…";
-
   request.then((granted) => {
-    $("#cookieStatus").textContent = granted ? "Optional cookie permission granted" : "Permission was not granted";
+    cookiePermissionGranted = Boolean(granted);
     $("#status").textContent = granted
-      ? "Cookie permission granted. Save settings to enable forwarding."
+      ? "Cookie access granted. Save settings to enable forwarding."
       : "Firefox did not grant the optional cookie permission.";
   }).catch((error) => {
-    $("#cookieStatus").textContent = "Optional cookie permission request failed";
     $("#status").textContent = `Permission request failed: ${error.message || String(error)}`;
   }).finally(() => {
-    $("#grantCookies").disabled = false;
+    permissionBusy = false;
+    refreshCookiePermission().catch(() => updateNativeUi());
+  });
+});
+
+$("#revokeCookies").addEventListener("click", () => {
+  permissionBusy = true;
+  updateNativeUi();
+  $("#status").textContent = "Removing optional cookie access…";
+
+  browser.permissions.remove(COOKIE_PERMISSION).then((removed) => {
+    if (removed) {
+      cookiePermissionGranted = false;
+      $("#forwardCookies").checked = false;
+      $("#status").textContent = "Cookie access revoked. Save settings to keep cookie forwarding off.";
+    } else {
+      $("#status").textContent = "Cookie access was already absent.";
+    }
+  }).catch((error) => {
+    $("#status").textContent = `Permission removal failed: ${error.message || String(error)}`;
+  }).finally(() => {
+    permissionBusy = false;
+    refreshCookiePermission().catch(() => updateNativeUi());
   });
 });
 
 $("#save").addEventListener("click", async () => {
   $("#save").disabled = true;
   try {
+    const mode = $("#mode").value;
     const forwardCookies = $("#forwardCookies").checked;
-    if (forwardCookies && !(await refreshCookiePermission())) {
-      $("#status").textContent = "Cookie forwarding was not saved. Click Grant optional cookie permission, approve Firefox's prompt, then save again.";
+    if (mode === "native" && forwardCookies && !(await refreshCookiePermission())) {
+      $("#status").textContent = "Cookie forwarding was not saved. Turn it on, choose Allow cookie access, approve Firefox's prompt, then save again.";
       return;
     }
 
     const settings = {
-      mode: $("#mode").value,
+      mode,
       segments: Number($("#segments").value),
       maxConcurrent: Number($("#maxConcurrent").value),
       retryCount: Number($("#retryCount").value),
@@ -90,7 +176,7 @@ $("#test").addEventListener("click", async () => {
       $("#status").textContent = result.error || "Native helper unavailable. Install or repair the current native host first.";
     }
   } finally {
-    $("#test").disabled = false;
+    updateNativeUi();
   }
 });
 
