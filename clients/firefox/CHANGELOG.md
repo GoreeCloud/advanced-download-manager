@@ -4,10 +4,9 @@
 ## 0.2.15 — Source candidate
 
 - Changed Firefox-engine downloads started through GoreeCloud controls to request Firefox's Save As dialog by default, allowing the destination and filename to be chosen separately for each new transfer.
-- Added a default-on **Ask where to save GoreeCloud-started downloads** setting with an explicit opt-out for users who prefer automatic placement.
-- Snapshotted the destination-prompt choice onto newly queued GoreeCloud jobs and preserved that choice across ordinary retry creation.
+- Made the Save As prompt mandatory for Firefox-engine downloads started through GoreeCloud controls so each new transfer asks for its destination and filename instead of silently using one automatic location.
 - Kept automatically adopted Firefox-started downloads non-destructive. The extension does not cancel/replay an already-started browser request merely to force a destination dialog; Firefox's own **Always ask you where to save files** preference remains the safe prompt authority for those downloads.
-- Added deterministic browser-scheduler/source-contract coverage for default Save As prompting, explicit prompt opt-out, Settings exposure, and the 0.2.15 packaged identity.
+- Added deterministic browser-scheduler/source-contract coverage for enforced Save As prompting, Settings guidance, and the 0.2.15 packaged identity.
 - Advanced the Firefox source version and lifecycle record to 0.2.15 source-candidate state. Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.15 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
 
 ## 0.2.14 — Source candidate
