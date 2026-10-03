@@ -1,35 +1,49 @@
 :root {
   color-scheme: light dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --bg: color-mix(in srgb, Canvas 96%, #3b82f6 4%);
-  --surface: color-mix(in srgb, Canvas 88%, transparent);
-  --surface-strong: color-mix(in srgb, Canvas 96%, transparent);
-  --border: color-mix(in srgb, CanvasText 14%, transparent);
-  --border-strong: color-mix(in srgb, CanvasText 22%, transparent);
+  --bg: color-mix(in srgb, Canvas 94%, #3b82f6 6%);
+  --surface: color-mix(in srgb, Canvas 80%, transparent);
+  --surface-soft: color-mix(in srgb, Canvas 88%, transparent);
+  --surface-strong: color-mix(in srgb, Canvas 95%, transparent);
+  --surface-elevated: color-mix(in srgb, Canvas 98%, transparent);
+  --border: color-mix(in srgb, CanvasText 13%, transparent);
+  --border-strong: color-mix(in srgb, CanvasText 21%, transparent);
   --muted: color-mix(in srgb, CanvasText 61%, transparent);
   --accent: #3b82f6;
   --accent-strong: #174ea6;
+  --accent-soft: color-mix(in srgb, var(--accent) 13%, transparent);
   --success: #16835d;
   --warning: #b56a00;
   --danger: #c43d4b;
   --radius: 16px;
-  --shadow: 0 14px 44px color-mix(in srgb, CanvasText 10%, transparent);
+  --radius-small: 12px;
+  --shadow: 0 18px 54px color-mix(in srgb, CanvasText 11%, transparent);
+  --shadow-soft: 0 8px 26px color-mix(in srgb, CanvasText 7%, transparent);
 }
 
 * { box-sizing: border-box; }
 html { min-height: 100%; background: var(--bg); }
-body { margin: 0; min-height: 100%; background: var(--bg); color: CanvasText; }
+body {
+  margin: 0;
+  min-height: 100%;
+  color: CanvasText;
+  background:
+    radial-gradient(54rem 28rem at 12% -6%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 72%),
+    radial-gradient(38rem 22rem at 88% 6%, color-mix(in srgb, var(--success) 6%, transparent), transparent 74%),
+    var(--bg);
+  background-attachment: fixed;
+}
 button, input, select, textarea { font: inherit; }
 button, input, select, textarea { border-radius: 11px; }
 button {
   cursor: pointer;
   border: 1px solid var(--border);
-  background: var(--surface-strong);
+  background: var(--surface-elevated);
   color: CanvasText;
   padding: 8px 11px;
   transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
 }
-button:hover { border-color: var(--border-strong); background: color-mix(in srgb, var(--surface-strong) 88%, var(--accent) 12%); }
+button:hover { border-color: var(--border-strong); background: color-mix(in srgb, var(--surface-elevated) 88%, var(--accent) 12%); }
 button:active { transform: translateY(1px); }
 button:disabled { cursor: not-allowed; opacity: .48; transform: none; }
 button.primary { background: linear-gradient(135deg, var(--accent), var(--accent-strong)); color: white; border-color: transparent; }
@@ -46,10 +60,11 @@ textarea { min-height: 92px; resize: vertical; }
 input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 62%, transparent); outline-offset: 2px; }
 .panel {
   border: 1px solid var(--border);
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, white 8%), var(--surface));
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(20px) saturate(1.05);
+  backdrop-filter: blur(18px) saturate(1.08);
 }
 .muted { color: var(--muted); }
 .sr-only {
@@ -93,7 +108,35 @@ progress {
 }
 progress::-moz-progress-bar { background: linear-gradient(90deg, var(--accent), var(--accent-strong)); border-radius: 999px; }
 .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.summary-card { padding: 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-strong); }
-.summary-card strong { display: block; font-size: 19px; }
-.summary-card span { font-size: 11px; color: var(--muted); }
+.summary-card {
+  --summary-accent: var(--accent);
+  position: relative;
+  overflow: hidden;
+  padding: 13px 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-soft);
+}
+.summary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--summary-accent);
+}
+.summary-card.active { --summary-accent: var(--accent); }
+.summary-card.queued { --summary-accent: var(--warning); }
+.summary-card.completed { --summary-accent: var(--success); }
+.summary-card.speed { --summary-accent: color-mix(in srgb, var(--accent) 68%, var(--success) 32%); }
+.summary-card strong { display: block; font-size: 20px; line-height: 1.1; }
+.summary-card span { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
+input[type="checkbox"] { accent-color: var(--accent); }
+@media (prefers-reduced-transparency: reduce) {
+  .panel { background: var(--surface-strong); backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  .panel, .summary-card, .status-badge, .engine-badge { backdrop-filter: none; box-shadow: none; }
+  .summary-card::before { background: CanvasText; }
+}
 @media (max-width: 720px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
