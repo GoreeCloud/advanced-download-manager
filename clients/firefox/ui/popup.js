@@ -1,4 +1,5 @@
 const $ = (selector) => document.querySelector(selector);
+let lastPopupAnnouncement = "";
 
 function fmtBytes(value) {
   const n = Number(value);
@@ -41,7 +42,10 @@ function button(label, type, id) {
 }
 
 async function render() {
-  const jobs = await browser.runtime.sendMessage({ type: "list-jobs" });
+  const [jobs, settings] = await Promise.all([
+    browser.runtime.sendMessage({ type: "list-jobs" }),
+    browser.runtime.sendMessage({ type: "get-settings" }).catch(() => null)
+  ]);
   const visible = jobs.slice(0, 6);
   const active = jobs.filter((job) => ["starting", "in_progress", "downloading"].includes(job.state)).length;
   const queued = jobs.filter((job) => job.state === "queued").length;
@@ -49,13 +53,32 @@ async function render() {
   $("#summary").textContent = `${active} active · ${queued} queued`;
   $("#speed").textContent = active ? fmtSpeed(totalSpeed) : "";
 
+  const announcement = `${active} active, ${queued} queued`;
+  if (announcement !== lastPopupAnnouncement) {
+    lastPopupAnnouncement = announcement;
+    $("#popupAnnouncement").textContent = announcement;
+  }
+
   const root = $("#jobs");
   root.replaceChildren();
   if (!visible.length) {
     const empty = document.createElement("div");
-    empty.className = "muted";
-    empty.style.cssText = "font-size:12px;padding:14px 0";
-    empty.textContent = "No downloads yet.";
+    empty.className = "empty";
+
+    const icon = document.createElement("img");
+    icon.src = "../icons/app-icon.svg";
+    icon.alt = "";
+
+    const title = document.createElement("strong");
+    title.textContent = "No downloads yet";
+
+    const copy = document.createElement("div");
+    copy.className = "muted";
+    copy.textContent = settings?.captureFirefoxDownloads === false
+      ? "Auto-capture is off. Paste a direct URL or enable it in Settings."
+      : "Firefox downloads will appear here automatically.";
+
+    empty.append(icon, title, copy);
     root.appendChild(empty);
     return;
   }

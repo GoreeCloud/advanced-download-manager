@@ -1,6 +1,19 @@
 # Change Log — GoreeCloud Download Manager Extension
 
 
+## 0.2.18 — Source candidate
+
+- Refined the full Manager zero-download state with a compact explanatory empty state instead of a bare “No downloads yet” panel.
+- Added an automatic-capture status badge to the Manager so Firefox integration state is visible without opening Settings.
+- Hid Manager search/filter/bulk controls when there is no managed history.
+- Disabled Pause all, Resume all, and Clear completed when no current jobs can use those actions.
+- Added structured zero-download presentation to the toolbar popup and tailored its copy when automatic capture is disabled.
+- Shortened the Manager/popup product title to **GoreeCloud Download Manager** while preserving the manifest product identity.
+- Added dedicated visually hidden polite live regions for Manager/popup count changes without making the one-second-refreshing job lists themselves live regions.
+- Added deterministic source-contract coverage for the new Manager/popup UI states.
+- No transfer, scheduler, native-helper protocol, permission, or Save As behavior changed.
+- Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.18 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
+
 ## 0.2.17 — Source candidate
 
 - Collapsed the inactive native-acceleration Settings section into a compact summary while Firefox downloads mode is selected.

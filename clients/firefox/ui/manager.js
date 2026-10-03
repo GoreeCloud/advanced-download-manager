@@ -1,5 +1,7 @@
 const $ = (selector) => document.querySelector(selector);
 let cachedJobs = [];
+let cachedSettings = null;
+let lastAnnouncement = "";
 
 function fmtBytes(value) {
   const n = Number(value);
@@ -47,14 +49,37 @@ function actionButton(label, type, id, className = "") {
 }
 
 function updateSummary(jobs) {
-  $("#activeCount").textContent = jobs.filter(isActive).length;
-  $("#queuedCount").textContent = jobs.filter((job) => job.state === "queued").length;
-  $("#completeCount").textContent = jobs.filter((job) => job.state === "complete").length;
+  const active = jobs.filter(isActive).length;
+  const queued = jobs.filter((job) => job.state === "queued").length;
+  const completed = jobs.filter((job) => job.state === "complete").length;
+
+  $("#activeCount").textContent = active;
+  $("#queuedCount").textContent = queued;
+  $("#completeCount").textContent = completed;
   $("#totalSpeed").textContent = fmtSpeed(jobs.reduce((sum, job) => sum + Number(job.speedBps || 0), 0));
+
+  const announcement = `${active} active, ${queued} queued, ${completed} completed`;
+  if (announcement !== lastAnnouncement) {
+    lastAnnouncement = announcement;
+    $("#announcement").textContent = announcement;
+  }
+}
+
+function updateManagerControls(jobs) {
+  $("#listTools").hidden = jobs.length === 0;
+  $("#pauseAll").disabled = !jobs.some((job) => ["starting", "in_progress", "downloading", "queued"].includes(job.state));
+  $("#resumeAll").disabled = !jobs.some((job) => job.state === "paused");
+  $("#clearCompleted").disabled = !jobs.some((job) => job.state === "complete");
+
+  const capture = $("#captureStatus");
+  const enabled = cachedSettings?.captureFirefoxDownloads !== false;
+  capture.textContent = enabled ? "Auto-capture on" : "Auto-capture off";
+  capture.className = `status-badge ${enabled ? "complete" : "queued"}`;
 }
 
 function render() {
   updateSummary(cachedJobs);
+  updateManagerControls(cachedJobs);
   const search = $("#search").value.trim().toLowerCase();
   const filter = $("#filter").value;
   const jobs = cachedJobs.filter((job) => {
@@ -67,11 +92,41 @@ function render() {
   root.replaceChildren();
   if (!jobs.length) {
     const empty = document.createElement("div");
-    empty.className = "empty muted";
-    empty.textContent = cachedJobs.length ? "No downloads match this view." : "No downloads yet.";
+    empty.className = "empty";
+
+    if (cachedJobs.length) {
+      empty.classList.add("muted");
+      empty.textContent = "No downloads match this view.";
+      root.classList.remove("empty-panel");
+    } else {
+      root.classList.add("empty-panel");
+      const card = document.createElement("div");
+      card.className = "empty-card";
+
+      const icon = document.createElement("img");
+      icon.className = "empty-icon";
+      icon.src = "../icons/app-icon.svg";
+      icon.alt = "";
+
+      const title = document.createElement("div");
+      title.className = "empty-title";
+      title.textContent = "No downloads yet";
+
+      const copy = document.createElement("div");
+      copy.className = "empty-copy muted";
+      copy.textContent = cachedSettings?.captureFirefoxDownloads === false
+        ? "Automatic Firefox download management is off. Start a direct download above or enable auto-capture in Settings."
+        : "Downloads started in Firefox can appear here automatically. You can also paste a direct HTTP/HTTPS URL above.";
+
+      card.append(icon, title, copy);
+      empty.appendChild(card);
+    }
+
     root.appendChild(empty);
     return;
   }
+
+  root.classList.remove("empty-panel");
 
   for (const job of jobs) {
     const row = document.createElement("div");
@@ -155,7 +210,12 @@ function render() {
 }
 
 async function refresh() {
-  cachedJobs = await browser.runtime.sendMessage({ type: "list-jobs" }).catch(() => cachedJobs);
+  const [jobs, settings] = await Promise.all([
+    browser.runtime.sendMessage({ type: "list-jobs" }).catch(() => cachedJobs),
+    browser.runtime.sendMessage({ type: "get-settings" }).catch(() => cachedSettings)
+  ]);
+  cachedJobs = jobs;
+  cachedSettings = settings;
   render();
 }
 

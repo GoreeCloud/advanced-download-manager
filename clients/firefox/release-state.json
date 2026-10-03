@@ -2,7 +2,7 @@
   "schema_version": 1,
   "product": "GoreeCloud Download Manager Extension",
   "firefox_addon_id": "download-manager@goreecloud.com",
-  "source_version": "0.2.17",
+  "source_version": "0.2.18",
   "source_state": "source-candidate",
   "accepted_stable_version": "0.2.12",
   "native_host": "goreecloud_download_manager",
