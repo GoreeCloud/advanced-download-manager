@@ -1,4 +1,5 @@
 const $ = (selector) => document.querySelector(selector);
+let lastPopupAnnouncement = "";
 
 function fmtBytes(value) {
   const n = Number(value);
@@ -51,6 +52,12 @@ async function render() {
   const totalSpeed = jobs.reduce((sum, job) => sum + Number(job.speedBps || 0), 0);
   $("#summary").textContent = `${active} active · ${queued} queued`;
   $("#speed").textContent = active ? fmtSpeed(totalSpeed) : "";
+
+  const announcement = `${active} active, ${queued} queued`;
+  if (announcement !== lastPopupAnnouncement) {
+    lastPopupAnnouncement = announcement;
+    $("#popupAnnouncement").textContent = announcement;
+  }
 
   const root = $("#jobs");
   root.replaceChildren();
