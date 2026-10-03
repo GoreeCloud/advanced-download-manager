@@ -105,7 +105,7 @@ $("#grantCookies").addEventListener("click", () => {
   request.then((granted) => {
     cookiePermissionGranted = Boolean(granted);
     $("#status").textContent = granted
-      ? "Cookie access granted. Save settings to enable forwarding."
+      ? "Cookie access granted. Save changes to enable forwarding."
       : "Firefox did not grant the optional cookie permission.";
   }).catch((error) => {
     $("#status").textContent = `Permission request failed: ${error.message || String(error)}`;
@@ -124,7 +124,7 @@ $("#revokeCookies").addEventListener("click", () => {
     if (removed) {
       cookiePermissionGranted = false;
       $("#forwardCookies").checked = false;
-      $("#status").textContent = "Cookie access revoked. Save settings to keep cookie forwarding off.";
+      $("#status").textContent = "Cookie access revoked. Save changes to keep cookie forwarding off.";
     } else {
       $("#status").textContent = "Cookie access was already absent.";
     }
