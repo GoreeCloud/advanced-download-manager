@@ -61,7 +61,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .panel {
   border: 1px solid var(--border);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, white 8%), var(--surface));
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, Canvas 8%), var(--surface));
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px) saturate(1.08);
