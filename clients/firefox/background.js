@@ -6,7 +6,8 @@ const DEFAULTS = Object.freeze({
   retryCount: 3,
   nativeDirectory: "",
   forwardCookies: false,
-  completionNotifications: true
+  completionNotifications: true,
+  captureFirefoxDownloads: true
 });
 
 const ACTIVE_STATES = new Set(["starting", "in_progress", "downloading"]);
@@ -37,7 +38,8 @@ function normalizeSettings(value = {}) {
     retryCount: clamp(value.retryCount, 0, 10, DEFAULTS.retryCount),
     nativeDirectory: String(value.nativeDirectory || "").trim(),
     forwardCookies: Boolean(value.forwardCookies),
-    completionNotifications: value.completionNotifications !== false
+    completionNotifications: value.completionNotifications !== false,
+    captureFirefoxDownloads: value.captureFirefoxDownloads !== false
   };
 }
 
@@ -152,6 +154,55 @@ async function findBrowserJob(downloadId) {
   const jobs = await rawJobs();
   const job = jobs.find((candidate) => candidate.downloadId === downloadId) || null;
   if (job) browserJobByDownloadId.set(downloadId, job.id);
+  return job;
+}
+
+function isSupportedCapturedUrl(raw) {
+  try {
+    const url = new URL(String(raw || ""));
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (_) {
+    return false;
+  }
+}
+
+async function adoptFirefoxDownload(item) {
+  if (!item || !Number.isInteger(item.id)) return null;
+
+  const settings = await getSettings();
+  if (!settings.captureFirefoxDownloads) return null;
+
+  const ownExtensionId = browser.runtime.id || "download-manager@goreecloud.com";
+  if (item.byExtensionId && item.byExtensionId === ownExtensionId) return null;
+  if (!isSupportedCapturedUrl(item.url)) return null;
+  if (await findBrowserJob(item.id)) return null;
+
+  const parsedStart = Date.parse(String(item.startTime || ""));
+  const state = item.paused ? "paused" : (item.state || "in_progress");
+  const job = {
+    id: crypto.randomUUID(),
+    url: item.url,
+    filename: item.filename || null,
+    requestedFilename: null,
+    state,
+    paused: Boolean(item.paused),
+    bytesReceived: Number(item.bytesReceived || 0),
+    totalBytes: Number.isFinite(Number(item.totalBytes)) ? Number(item.totalBytes) : -1,
+    createdAt: Number.isFinite(parsedStart) ? parsedStart : Date.now(),
+    engine: "browser",
+    native: false,
+    nativeStarted: false,
+    downloadId: item.id,
+    acquisition: "firefox-auto-capture",
+    autoCaptured: true,
+    error: item.error || null
+  };
+
+  await browser.storage.local.set({ [`job:${job.id}`]: job });
+  browserJobByDownloadId.set(item.id, job.id);
+  await browser.runtime.sendMessage({ type: "job-update", job }).catch(() => {});
+
+  if (TERMINAL_STATES.has(job.state)) await notifyJob(job);
   return job;
 }
 
@@ -487,6 +538,10 @@ browser.contextMenus.onClicked.addListener(async (info) => {
       message: String(error.message || error)
     }).catch(() => {});
   }
+});
+
+browser.downloads.onCreated?.addListener((item) => {
+  adoptFirefoxDownload(item).catch(() => {});
 });
 
 browser.downloads.onChanged.addListener(async (delta) => {
