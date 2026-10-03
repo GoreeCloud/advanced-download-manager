@@ -25,6 +25,14 @@ class SigningContractTests(unittest.TestCase):
         self.assertIn("signed_restart_smoke.py", text)
         self.assertIn("download-manager-signing-evidence.json", text)
         self.assertIn("stablePromoted", text)
+        self.assertIn("Retain unsigned candidate evidence", text)
+        self.assertIn("unsigned-candidate", text)
+        self.assertIn("dist/candidate-sha256.txt", text)
+        self.assertIn("dist/source-revision.txt", text)
+        self.assertLess(
+            text.index("Retain unsigned candidate evidence"),
+            text.index("Require Mozilla Add-ons signing credentials"),
+        )
 
     def test_signing_branch_must_match_authoritative_main(self):
         text = WORKFLOW.read_text(encoding="utf-8")
