@@ -12,11 +12,11 @@ Accepted native helper: `0.2.11` / protocol `2`
 
 ## 0.2.15 source-candidate fix
 
-0.2.15 makes per-download destination choice the default for Firefox-engine downloads that GoreeCloud itself starts through the popup, Manager, context-menu action, batch queue, retry path, or browser fallback. Those launches call Firefox's downloads API with `saveAs: true`, which opens Firefox's Save As dialog for each newly started transfer. Settings exposes **Ask where to save GoreeCloud-started downloads**, enabled by default, with an explicit opt-out for users who prefer Firefox's automatic destination behavior.
+0.2.15 makes per-download destination choice mandatory for Firefox-engine downloads that GoreeCloud itself starts through the popup, Manager, context-menu action, batch queue, retry path, or browser fallback. Those launches call Firefox's downloads API with `saveAs: true`, which opens Firefox's Save As dialog for each newly started transfer instead of silently using one automatic location.
 
 Automatically captured Firefox-started downloads remain deliberately non-destructive. By the time the WebExtension receives Firefox's `downloads.onCreated` event, the original request has already begun; cancelling and replaying it just to force a dialog could change POST bodies, short-lived authorization state, container/session context, signed URLs, service-worker behavior, or other request semantics. For those captured downloads, Firefox's own **Always ask you where to save files** preference controls the destination dialog before GoreeCloud adopts the original download ID.
 
-The per-download prompt setting is snapshotted onto GoreeCloud-started jobs so a queued transfer keeps the user's destination-prompt choice from when it was created. Existing Firefox downloads that are merely adopted are never replayed. Native segmented downloads continue to use the native destination-directory contract; a cross-platform native system-save-dialog contract is not claimed in 0.2.15.
+Existing Firefox downloads that are merely adopted are never replayed. The Settings page explains the distinction between GoreeCloud-started Save As prompting and Firefox's own prompt preference for automatically captured downloads. Native segmented downloads continue to use the native destination-directory contract; a cross-platform native system-save-dialog contract is not claimed in 0.2.15.
 
 0.2.15 is a source candidate only. Accepted Stable remains 0.2.12 until applicable Mozilla signing, persistent-install/runtime validation, and explicit lifecycle promotion succeed.
 
