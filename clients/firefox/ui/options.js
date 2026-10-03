@@ -18,6 +18,7 @@ async function load() {
   }
   $("#forwardCookies").checked = Boolean(settings.forwardCookies);
   $("#completionNotifications").checked = settings.completionNotifications !== false;
+  $("#captureFirefoxDownloads").checked = settings.captureFirefoxDownloads !== false;
   await refreshCookiePermission();
 }
 
@@ -66,7 +67,8 @@ $("#save").addEventListener("click", async () => {
       retryCount: Number($("#retryCount").value),
       nativeDirectory: $("#nativeDirectory").value.trim(),
       forwardCookies,
-      completionNotifications: $("#completionNotifications").checked
+      completionNotifications: $("#completionNotifications").checked,
+      captureFirefoxDownloads: $("#captureFirefoxDownloads").checked
     };
     await browser.runtime.sendMessage({ type: "save-settings", settings });
     $("#status").textContent = "Settings saved.";
