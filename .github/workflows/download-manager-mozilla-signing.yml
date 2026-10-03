@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: download-manager-mozilla-signing
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   sign-and-restart:
