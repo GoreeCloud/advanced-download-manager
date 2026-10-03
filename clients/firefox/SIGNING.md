@@ -43,14 +43,15 @@ The workflow:
 1. validates the canonical inventory, Download Manager source contracts, Python/native sources, browser/native schedulers, lifecycle faults, retry snapshots, and JavaScript syntax;
 2. builds a deterministic unsigned XPI from the manifest-declared version;
 3. records exact candidate SHA-256 and source revision;
-4. submits the exact candidate to Mozilla's unlisted signing channel, or retrieves the exact already-approved version only when Mozilla reports that same version already exists;
-5. verifies Mozilla signature material, add-on ID/version, payload inventory, non-manifest byte parity, and governed manifest normalization;
-6. installs the compatible native helper from the same repository revision;
-7. installs the signed XPI persistently into Firefox;
-8. starts a throttled native segmented transfer, exits the complete Firefox process while validated partial staging exists, and starts a new Firefox process against the same profile without reinstalling;
-9. requires signed extension survival, same-job preserved-range recovery, final exact SHA-256 integrity, staging cleanup, and helper reconnect; and
-10. writes a machine-readable evidence record whose `sourceState`, `acceptedStableVersion`, and `stablePromoted` fields are derived from `clients/firefox/release-state.json`.
+4. retains the exact unsigned candidate XPI plus its SHA-256/source-revision evidence before the Mozilla credential gate, so a credential-blocked run still preserves the tested candidate for bounded development inspection;
+5. submits the exact candidate to Mozilla's unlisted signing channel, or retrieves the exact already-approved version only when Mozilla reports that same version already exists;
+6. verifies Mozilla signature material, add-on ID/version, payload inventory, non-manifest byte parity, and governed manifest normalization;
+7. installs the compatible native helper from the same repository revision;
+8. installs the signed XPI persistently into Firefox;
+9. starts a throttled native segmented transfer, exits the complete Firefox process while validated partial staging exists, and starts a new Firefox process against the same profile without reinstalling;
+10. requires signed extension survival, same-job preserved-range recovery, final exact SHA-256 integrity, staging cleanup, and helper reconnect; and
+11. writes a machine-readable evidence record whose `sourceState`, `acceptedStableVersion`, and `stablePromoted` fields are derived from `clients/firefox/release-state.json`.
 
 ## Release boundary
 
-Temporary unsigned loading and deterministic packaging remain development evidence only. Stable status is version-specific and requires the accepted signed runtime plus explicit canonical lifecycle promotion. Any later Download Manager version must obtain its own applicable signing, restart/recovery, integrity, review, and promotion evidence before replacing 0.2.12 as Stable.
+Temporary unsigned loading and deterministic packaging remain development evidence only. The retained unsigned-candidate artifact is intended for bounded inspection or temporary `about:debugging` loading when signing is externally blocked; it is not a persistently installable Mozilla-signed release and does not satisfy any Stable gate. Stable status is version-specific and requires the accepted signed runtime plus explicit canonical lifecycle promotion. Any later Download Manager version must obtain its own applicable signing, restart/recovery, integrity, review, and promotion evidence before replacing 0.2.12 as Stable.
