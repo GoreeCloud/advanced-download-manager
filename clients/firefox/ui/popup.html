@@ -19,18 +19,22 @@
     .actions { display:flex; gap:6px; flex-wrap:wrap; }
     .actions button { font-size:10px; padding:5px 8px; }
     .summary { display:flex; justify-content:space-between; gap:10px; margin:9px 2px 0; font-size:11px; }
+    .empty { display:grid; justify-items:center; gap:5px; padding:16px 10px; text-align:center; }
+    .empty img { width:28px; height:28px; opacity:.85; }
+    .empty strong { font-size:12px; }
+    .empty .muted { font-size:11px; line-height:1.35; }
   </style>
 </head>
 <body>
   <header>
-    <div class="app-title"><img class="icon" src="../icons/app-icon.svg" alt=""><h1>GoreeCloud Download Manager Extension</h1></div>
+    <div class="app-title"><img class="icon" src="../icons/app-icon.svg" alt=""><h1>GoreeCloud Download Manager</h1></div>
     <button id="manager" title="Open full manager">Manager</button>
   </header>
   <div class="panel input-panel">
     <div class="input-row"><input id="url" type="url" placeholder="Paste a direct HTTP/HTTPS download URL"><button class="primary" id="start">Start</button></div>
     <div class="summary"><span id="summary" class="muted">Loading…</span><span id="speed" class="muted"></span></div>
   </div>
-  <div id="jobs" class="panel"></div>
+  <div id="jobs" class="panel" aria-live="polite"></div>
   <script src="popup.js"></script>
 </body>
 </html>
