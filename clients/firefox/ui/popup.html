@@ -34,7 +34,8 @@
     <div class="input-row"><input id="url" type="url" placeholder="Paste a direct HTTP/HTTPS download URL"><button class="primary" id="start">Start</button></div>
     <div class="summary"><span id="summary" class="muted">Loading…</span><span id="speed" class="muted"></span></div>
   </div>
-  <div id="jobs" class="panel" aria-live="polite"></div>
+  <div id="popupAnnouncement" class="sr-only" aria-live="polite"></div>
+  <div id="jobs" class="panel" aria-label="Recent downloads"></div>
   <script src="popup.js"></script>
 </body>
 </html>
