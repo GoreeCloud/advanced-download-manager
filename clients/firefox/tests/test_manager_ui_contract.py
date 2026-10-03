@@ -1,1 +1,29 @@
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+class ManagerUiContractTests(unittest.TestCase):
+    def test_manager_zero_state_and_bulk_controls(self):
+        html = (ROOT / "ui" / "manager.html").read_text(encoding="utf-8")
+        source = (ROOT / "ui" / "manager.js").read_text(encoding="utf-8")
+        self.assertIn('id="captureStatus"', html)
+        self.assertIn('id="listTools" class="controls" hidden', html)
+        self.assertIn('id="jobs" class="panel" aria-live="polite"', html)
+        self.assertIn('$("#listTools").hidden = jobs.length === 0;', source)
+        self.assertIn('$("#pauseAll").disabled = !jobs.some', source)
+        self.assertIn('$("#resumeAll").disabled = !jobs.some', source)
+        self.assertIn('$("#clearCompleted").disabled = !jobs.some', source)
+        self.assertIn('capture.textContent = enabled ? "Auto-capture on" : "Auto-capture off";', source)
+        self.assertIn('title.textContent = "No downloads yet";', source)
+
+    def test_popup_zero_state_is_structured(self):
+        html = (ROOT / "ui" / "popup.html").read_text(encoding="utf-8")
+        source = (ROOT / "ui" / "popup.js").read_text(encoding="utf-8")
+        self.assertIn('id="jobs" class="panel" aria-live="polite"', html)
+        self.assertIn('empty.className = "empty";', source)
+        self.assertIn('title.textContent = "No downloads yet";', source)
+        self.assertIn('icon.alt = "";', source)
+
+if __name__ == "__main__":
+    unittest.main()
