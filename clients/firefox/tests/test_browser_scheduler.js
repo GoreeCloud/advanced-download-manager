@@ -240,6 +240,11 @@ async function main() {
     "https://media.example.test/photo.jpg",
     "media context action must prefer srcUrl over a wrapping linkUrl"
   );
+  assert.equal(
+    contextHarness.downloadCalls[0].options.saveAs,
+    true,
+    "GoreeCloud-started Firefox downloads must ask for a destination by default"
+  );
 
   await contextHarness.browser.contextMenus.onClicked.emit({
     menuItemId: "goreecloud-download",
@@ -254,6 +259,7 @@ async function main() {
     "https://downloads.example.test/archive.zip",
     "plain link context action must keep using linkUrl when no media source exists"
   );
+  assert.equal(contextHarness.downloadCalls[1].options.saveAs, true);
 
   const h = createHarness();
 
@@ -281,6 +287,10 @@ async function main() {
   assert.equal(states.in_progress, 3, "initial scheduler should launch exactly three Firefox jobs");
   assert.equal(states.queued, 2, "initial scheduler should leave two Firefox jobs queued");
   assert.equal(h.downloadCalls.length, 3, "Firefox downloads API should receive exactly three initial launches");
+  assert(
+    h.downloadCalls.every((call) => call.options.saveAs === true),
+    "every GoreeCloud-started Firefox download must request the Save As dialog by default"
+  );
 
   const job01 = jobs.find((job) => job.url.endsWith("goreecloud-concurrency-01.bin"));
   assert(job01, "job 01 missing");
@@ -340,6 +350,26 @@ async function main() {
 
   assert.equal(h.notifications.length, 1, "completed Firefox job should emit one completion notification");
 
+  const optOut = createHarness();
+  await optOut.message({
+    type: "save-settings",
+    settings: {
+      mode: "browser",
+      segments: 8,
+      maxConcurrent: 3,
+      retryCount: 3,
+      nativeDirectory: "",
+      forwardCookies: false,
+      completionNotifications: true,
+      captureFirefoxDownloads: true,
+      askWhereToSave: false
+    }
+  });
+  await optOut.message({ type: "start-download", url: "https://downloads.example.test/no-prompt.zip" });
+  await optOut.settle();
+  assert.equal(optOut.downloadCalls.length, 1);
+  assert.equal(optOut.downloadCalls[0].options.saveAs, false, "explicit prompt opt-out must be respected");
+
   console.log("BROWSER SCHEDULER HARDENING: PASS");
   console.log("- media context prefers srcUrl over wrapping linkUrl: PASS");
   console.log("- plain link context retains linkUrl fallback: PASS");
@@ -350,6 +380,7 @@ async function main() {
   console.log("- USER_CANCELED suppression for paused/queued resume state: PASS");
   console.log("- freed slot resumes existing Firefox download without replacement: PASS");
   console.log("- completion notification: PASS");
+  console.log("- per-download Save As prompt default + explicit opt-out: PASS");
 }
 
 main().catch((error) => {
