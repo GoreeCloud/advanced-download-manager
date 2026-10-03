@@ -57,10 +57,21 @@ async function render() {
   if (!visible.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
-    empty.innerHTML = '<img src="../icons/app-icon.svg" alt=""><strong>No downloads yet</strong><div class="muted"></div>';
-    empty.querySelector(".muted").textContent = settings?.captureFirefoxDownloads === false
+
+    const icon = document.createElement("img");
+    icon.src = "../icons/app-icon.svg";
+    icon.alt = "";
+
+    const title = document.createElement("strong");
+    title.textContent = "No downloads yet";
+
+    const copy = document.createElement("div");
+    copy.className = "muted";
+    copy.textContent = settings?.captureFirefoxDownloads === false
       ? "Auto-capture is off. Paste a direct URL or enable it in Settings."
       : "Firefox downloads will appear here automatically.";
+
+    empty.append(icon, title, copy);
     root.appendChild(empty);
     return;
   }
