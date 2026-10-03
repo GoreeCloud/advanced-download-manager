@@ -5,6 +5,8 @@ on:
     paths:
       - 'clients/firefox/**'
       - '.github/workflows/firefox-client.yml'
+      - '.github/workflows/download-manager-mozilla-signing.yml'
+      - '.github/workflows/download-manager-mozilla-signing.yml'
   push:
     branches: [main]
     paths:
