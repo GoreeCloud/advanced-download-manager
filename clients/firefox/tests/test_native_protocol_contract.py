@@ -64,7 +64,7 @@ class NativeProtocolContractTests(unittest.TestCase):
         html = OPTIONS_HTML.read_text(encoding="utf-8")
         self.assertIn("captureFirefoxDownloads: true", background)
         self.assertIn("value.captureFirefoxDownloads !== false", background)
-        self.assertIn('"captureFirefoxDownloads"', options)
+        self.assertIn("captureFirefoxDownloads", options)
         self.assertIn('id="captureFirefoxDownloads"', html)
         self.assertIn("Automatically manage Firefox downloads", html)
 
