@@ -3,7 +3,7 @@
 
 **Product internal version:** 0.1.0  
 **Release lifecycle:** Development  
-**Repository state:** Development-stage Rust application foundation plus an application-owned Firefox client under `clients/firefox/`. The standalone application engine is not yet a supported downloader; Firefox client source is currently 0.2.19 source-candidate while accepted Stable release evidence remains 0.2.12.
+**Repository state:** Development-stage Rust application foundation plus an application-owned Firefox client under `clients/firefox/`. The standalone application engine is not yet a supported downloader; Firefox client source is currently 0.2.18 source-candidate while accepted Stable release evidence remains 0.2.12.
 
 GoreeCloud Advanced Download Manager is the developing cross-platform download and transfer-orchestration application for Linux, Windows, and Android. Its target is a local-first common download engine with durable transfers, intelligent acceleration, queues, automation, privacy and security controls, browser integration, and authorized GoreeCloud ecosystem coordination.
 
