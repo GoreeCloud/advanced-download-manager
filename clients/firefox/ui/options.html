@@ -52,16 +52,16 @@
       <span id="nativeState" class="section-badge">Inactive</span>
     </div>
     <div class="grid">
-      <div class="field"><label class="native-control-label" for="segments">Segments per native download</label><input id="segments" type="number" min="1" max="32"></div>
-      <div class="field"><label class="native-control-label" for="retryCount">Native retry attempts</label><input id="retryCount" type="number" min="0" max="10"></div>
+      <div class="field"><label class="native-control-label" for="segments">Segments per native download</label><input id="segments" type="number" min="1" max="32" disabled></div>
+      <div class="field"><label class="native-control-label" for="retryCount">Native retry attempts</label><input id="retryCount" type="number" min="0" max="10" disabled></div>
     </div>
-    <div class="field"><label class="native-control-label" for="nativeDirectory">Native destination directory</label><input id="nativeDirectory" placeholder="Leave blank for ~/Downloads"></div>
+    <div class="field"><label class="native-control-label" for="nativeDirectory">Native destination directory</label><input id="nativeDirectory" placeholder="Leave blank for ~/Downloads" disabled></div>
     <div class="permission stack">
-      <div class="check"><input id="forwardCookies" type="checkbox"><div><strong>Forward target-site cookies to the native helper</strong><div class="muted">Off by default. When deliberately enabled in native mode, Firefox can grant optional Cookies + All Sites access. GoreeCloud forwards only cookies for the target download URL to the local native process in memory and does not intentionally store them in download history.</div></div></div>
+      <div class="check"><input id="forwardCookies" type="checkbox" disabled><div><strong>Forward target-site cookies to the native helper</strong><div class="muted">Off by default. When deliberately enabled in native mode, Firefox can grant optional Cookies + All Sites access. GoreeCloud forwards only cookies for the target download URL to the local native process in memory and does not intentionally store them in download history.</div></div></div>
       <div class="muted">Firefox may describe this optional permission as “Access your data for all websites.” GoreeCloud will not request it unless native mode and cookie forwarding are both selected.</div>
-      <div class="flex-wrap"><button id="grantCookies">Allow cookie access…</button><button id="revokeCookies" class="danger">Revoke cookie access</button><span id="cookieStatus" class="muted"></span></div>
+      <div class="flex-wrap"><button id="grantCookies" disabled>Allow cookie access…</button><button id="revokeCookies" class="danger" disabled>Revoke cookie access</button><span id="cookieStatus" class="muted"></span></div>
     </div>
-    <div class="flex-wrap"><button id="test">Test native helper</button></div>
+    <div class="flex-wrap"><button id="test" disabled>Test native helper</button></div>
   </section>
 
   <div class="footer"><button class="primary" id="save">Save settings</button><span id="status" class="muted" role="status" aria-live="polite"></span></div>
