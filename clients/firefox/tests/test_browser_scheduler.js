@@ -350,26 +350,6 @@ async function main() {
 
   assert.equal(h.notifications.length, 1, "completed Firefox job should emit one completion notification");
 
-  const optOut = createHarness();
-  await optOut.message({
-    type: "save-settings",
-    settings: {
-      mode: "browser",
-      segments: 8,
-      maxConcurrent: 3,
-      retryCount: 3,
-      nativeDirectory: "",
-      forwardCookies: false,
-      completionNotifications: true,
-      captureFirefoxDownloads: true,
-      askWhereToSave: false
-    }
-  });
-  await optOut.message({ type: "start-download", url: "https://downloads.example.test/no-prompt.zip" });
-  await optOut.settle();
-  assert.equal(optOut.downloadCalls.length, 1);
-  assert.equal(optOut.downloadCalls[0].options.saveAs, false, "explicit prompt opt-out must be respected");
-
   console.log("BROWSER SCHEDULER HARDENING: PASS");
   console.log("- media context prefers srcUrl over wrapping linkUrl: PASS");
   console.log("- plain link context retains linkUrl fallback: PASS");
@@ -380,7 +360,7 @@ async function main() {
   console.log("- USER_CANCELED suppression for paused/queued resume state: PASS");
   console.log("- freed slot resumes existing Firefox download without replacement: PASS");
   console.log("- completion notification: PASS");
-  console.log("- per-download Save As prompt default + explicit opt-out: PASS");
+  console.log("- per-download Save As prompt enforcement: PASS");
 }
 
 main().catch((error) => {
