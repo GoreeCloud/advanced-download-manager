@@ -1,6 +1,7 @@
 const $ = (selector) => document.querySelector(selector);
 let cachedJobs = [];
 let cachedSettings = null;
+let lastAnnouncement = "";
 
 function fmtBytes(value) {
   const n = Number(value);
@@ -48,10 +49,20 @@ function actionButton(label, type, id, className = "") {
 }
 
 function updateSummary(jobs) {
-  $("#activeCount").textContent = jobs.filter(isActive).length;
-  $("#queuedCount").textContent = jobs.filter((job) => job.state === "queued").length;
-  $("#completeCount").textContent = jobs.filter((job) => job.state === "complete").length;
+  const active = jobs.filter(isActive).length;
+  const queued = jobs.filter((job) => job.state === "queued").length;
+  const completed = jobs.filter((job) => job.state === "complete").length;
+
+  $("#activeCount").textContent = active;
+  $("#queuedCount").textContent = queued;
+  $("#completeCount").textContent = completed;
   $("#totalSpeed").textContent = fmtSpeed(jobs.reduce((sum, job) => sum + Number(job.speedBps || 0), 0));
+
+  const announcement = `${active} active, ${queued} queued, ${completed} completed`;
+  if (announcement !== lastAnnouncement) {
+    lastAnnouncement = announcement;
+    $("#announcement").textContent = announcement;
+  }
 }
 
 function updateManagerControls(jobs) {
