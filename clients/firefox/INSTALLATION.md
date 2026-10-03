@@ -8,7 +8,7 @@ Unsigned Development builds may still be loaded temporarily through `about:debug
 
 ## Per-download destination prompts
 
-For current 0.2.15 source-candidate builds, Firefox-engine downloads started through GoreeCloud controls request Firefox's Save As dialog by default. The extension Settings page exposes **Ask where to save GoreeCloud-started downloads** so this can be disabled explicitly.
+For current 0.2.15 source-candidate builds, Firefox-engine downloads started through GoreeCloud controls always request Firefox's Save As dialog so each new transfer asks for its destination and filename. The extension Settings page explains this behavior rather than offering an automatic-location override.
 
 Ordinary downloads that Firefox itself starts are adopted only after Firefox has created the original download. GoreeCloud intentionally does not cancel and replay those requests. To choose a destination for every automatically captured Firefox-started download too, open Firefox **Settings → General → Files and Applications → Downloads** and enable **Always ask you where to save files**. Firefox then prompts before the original download starts, and GoreeCloud adopts that same download afterward.
 
