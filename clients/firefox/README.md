@@ -1,6 +1,6 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.18 source candidate** — Manager/popup zero-state and control-state polish under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.18 source candidate** — refreshed Glaze light/dark visual hierarchy under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 

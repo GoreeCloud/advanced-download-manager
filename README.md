@@ -27,7 +27,7 @@ The implementation uses a Rust workspace pinned to Rust 1.98.1:
 - `crates/download-fs` — bounded staging-file durability primitives for checkpoint-length reconciliation, synchronized append/truncate operations, and safe final-file promotion; it performs no network I/O;
 - `crates/download-store-sqlite` — transaction-safe SQLite durable job-state adapter;
 - `crates/gcdm` — minimal Development-stage CLI shell.
-- `clients/firefox/` — application-owned GoreeCloud Download Manager Firefox client; current source candidate 0.2.18 keeps automatic Firefox adoption and mandatory per-download Save As prompting while refining Settings, Manager, and popup presentation, while accepted Stable remains 0.2.12 with native helper 0.2.11 / protocol 2 and separately governed release evidence.
+- `clients/firefox/` — application-owned GoreeCloud Download Manager Firefox client; current source candidate 0.2.18 keeps automatic Firefox adoption and mandatory per-download Save As prompting while refining Glaze light/dark material hierarchy and Manager status composition, while accepted Stable remains 0.2.12 with native helper 0.2.11 / protocol 2 and separately governed release evidence.
 
 CI validates formatting, Clippy, tests, native workspace checks, repository policy, and portable shared-core compilation for the Android target. A separate Firefox-client workflow validates current Firefox source/tests and deterministic source-candidate packaging while the accepted Stable 0.2.12 signed evidence remains separately retained. A successful Android target compilation is not an Android application acceptance result.
 
