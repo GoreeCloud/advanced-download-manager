@@ -34,7 +34,7 @@ jobs:
           from pathlib import Path
           manifest = json.loads(Path('clients/firefox/manifest.json').read_text())
           state = json.loads(Path('clients/firefox/release-state.json').read_text())
-          assert manifest['version'] == state['source_version'] == '0.2.14'
+          assert manifest['version'] == state['source_version'] == '0.2.15'
           assert state['source_state'] == 'source-candidate'
           assert state['accepted_stable_version'] == '0.2.12'
           assert manifest['browser_specific_settings']['gecko']['id'] == state['firefox_addon_id'] == 'download-manager@goreecloud.com'
@@ -60,20 +60,20 @@ jobs:
           done
       - name: Build deterministic Firefox package
         run: python clients/firefox/scripts/package.py
-      - name: Verify 0.2.14 source-candidate package determinism
+      - name: Verify 0.2.15 source-candidate package determinism
         shell: bash
         run: |
           set -euo pipefail
-          package="$(find dist -maxdepth 1 -type f -name 'goreecloud-download-manager-0.2.14.xpi' -print -quit)"
+          package="$(find dist -maxdepth 1 -type f -name 'goreecloud-download-manager-0.2.15.xpi' -print -quit)"
           test -n "$package"
           unzip -t "$package"
           first="$(sha256sum "$package" | awk '{print $1}')"
           python clients/firefox/scripts/package.py
           second="$(sha256sum "$package" | awk '{print $1}')"
           test "$first" = "$second" || {
-            echo "::error::Firefox 0.2.14 source-candidate package is not deterministic"
+            echo "::error::Firefox 0.2.15 source-candidate package is not deterministic"
             echo "First:  $first"
             echo "Second: $second"
             exit 1
           }
-          echo "0.2.14 source-candidate SHA-256: $first"
+          echo "0.2.15 source-candidate SHA-256: $first"
