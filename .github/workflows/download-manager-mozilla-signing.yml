@@ -123,6 +123,17 @@ jobs:
           PY
           unzip -t "$candidate"
 
+      - name: Retain unsigned candidate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-download-manager-${{ steps.version.outputs.version }}-unsigned-candidate
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            dist/candidate/goreecloud-download-manager-*.xpi
+            dist/candidate-sha256.txt
+            dist/source-revision.txt
+
       - name: Require Mozilla Add-ons signing credentials
         env:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
