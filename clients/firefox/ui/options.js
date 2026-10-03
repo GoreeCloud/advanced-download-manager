@@ -20,28 +20,28 @@ function updateNativeUi() {
     $("#" + id).disabled = !nativeMode;
   }
 
-  $("#nativeSettings").classList.toggle("settings-section-disabled", !nativeMode);
-  $("#nativeSettings").setAttribute("aria-disabled", String(!nativeMode));
-  $("#nativeState").textContent = nativeMode ? "Selected engine" : "Inactive";
+  $("#nativeDetails").hidden = !nativeMode;
+  $("#nativeSummary").hidden = nativeMode;
+  $("#nativeState").textContent = nativeMode ? "On" : "Off";
   $("#nativeState").classList.toggle("active", nativeMode);
 
-  $("#grantCookies").disabled = permissionBusy
-    || !nativeMode
-    || !forwardingRequested
-    || cookiePermissionGranted;
-  $("#revokeCookies").disabled = permissionBusy || !cookiePermissionGranted;
+  const showGrant = nativeMode && forwardingRequested && !cookiePermissionGranted;
+  const showRevoke = cookiePermissionGranted;
+  $("#permissionActions").hidden = !(showGrant || showRevoke);
+  $("#grantCookies").hidden = !showGrant;
+  $("#grantCookies").disabled = permissionBusy || !showGrant;
+  $("#revokeCookies").hidden = !showRevoke;
+  $("#revokeCookies").disabled = permissionBusy || !showRevoke;
   $("#test").disabled = permissionBusy || !nativeMode;
 
   if (cookiePermissionGranted) {
     $("#cookieStatus").textContent = nativeMode && forwardingRequested
-      ? "Cookie access granted; forwarding can be saved."
-      : "Cookie access granted, but it is not currently in use.";
-  } else if (!nativeMode) {
-    $("#cookieStatus").textContent = "No cookie access needed while Firefox downloads is selected.";
+      ? "Cookie access granted."
+      : "Cookie access is granted but not currently in use.";
   } else if (!forwardingRequested) {
-    $("#cookieStatus").textContent = "Cookie forwarding is off; no optional website-data permission is needed.";
+    $("#cookieStatus").textContent = "Cookie forwarding is off.";
   } else {
-    $("#cookieStatus").textContent = "Cookie access is required before forwarding can be saved.";
+    $("#cookieStatus").textContent = "Allow cookie access before saving authenticated native downloads.";
   }
 }
 
@@ -65,8 +65,8 @@ async function load() {
 $("#mode").addEventListener("change", () => {
   updateNativeUi();
   $("#status").textContent = nativeModeSelected()
-    ? "Native acceleration settings are now available. Save settings to apply this engine."
-    : "Firefox downloads selected. Native-only controls are inactive.";
+    ? "Native acceleration settings are available. Save changes to apply this engine."
+    : "Firefox downloads selected.";
 });
 
 $("#forwardCookies").addEventListener("change", () => {
@@ -157,7 +157,7 @@ $("#save").addEventListener("click", async () => {
       captureFirefoxDownloads: $("#captureFirefoxDownloads").checked
     };
     await browser.runtime.sendMessage({ type: "save-settings", settings });
-    $("#status").textContent = "Settings saved.";
+    $("#status").textContent = "Changes saved.";
     setTimeout(() => { $("#status").textContent = ""; }, 2200);
   } finally {
     $("#save").disabled = false;
