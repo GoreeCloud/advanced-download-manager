@@ -16,6 +16,7 @@ class SigningContractTests(unittest.TestCase):
     def test_signing_workflow_is_governed_and_unlisted(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("release/download-manager-signing", text)
+        self.assertIn("runs-on: ubuntu-24.04", text)
         self.assertIn("AMO_JWT_ISSUER", text)
         self.assertIn("AMO_JWT_SECRET", text)
         self.assertIn("web-ext@10.5.0 sign", text)
