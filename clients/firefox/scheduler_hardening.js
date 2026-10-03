@@ -239,9 +239,6 @@
       const directory = Object.prototype.hasOwnProperty.call(payload, "directory")
         ? String(payload.directory || "").trim()
         : settings.nativeDirectory;
-      const askWhereToSave = Object.prototype.hasOwnProperty.call(payload, "askWhereToSave")
-        ? payload.askWhereToSave !== false
-        : settings.askWhereToSave !== false;
       const queueOrder = await allocateQueueOrder();
       const job = {
         id,
@@ -259,8 +256,7 @@
         nativeStarted: false,
         segments,
         retryCount,
-        directory: directory || null,
-        askWhereToSave
+        directory: directory || null
       };
       await browser.storage.local.set({ [`job:${id}`]: job });
       await browser.runtime.sendMessage({ type: "job-update", job }).catch(() => {});
@@ -291,7 +287,7 @@
       const settings = await getSettings();
       const options = {
         url: starting.url,
-        saveAs: (starting.askWhereToSave ?? settings.askWhereToSave) !== false
+        saveAs: true
       };
       const requestedFilename = sanitizeRequestedFilename(starting.requestedFilename ?? starting.filename);
       if (requestedFilename) options.filename = requestedFilename;
