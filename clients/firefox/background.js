@@ -7,7 +7,8 @@ const DEFAULTS = Object.freeze({
   nativeDirectory: "",
   forwardCookies: false,
   completionNotifications: true,
-  captureFirefoxDownloads: true
+  captureFirefoxDownloads: true,
+  askWhereToSave: true
 });
 
 const ACTIVE_STATES = new Set(["starting", "in_progress", "downloading"]);
@@ -39,7 +40,8 @@ function normalizeSettings(value = {}) {
     nativeDirectory: String(value.nativeDirectory || "").trim(),
     forwardCookies: Boolean(value.forwardCookies),
     completionNotifications: value.completionNotifications !== false,
-    captureFirefoxDownloads: value.captureFirefoxDownloads !== false
+    captureFirefoxDownloads: value.captureFirefoxDownloads !== false,
+    askWhereToSave: value.askWhereToSave !== false
   };
 }
 
@@ -340,13 +342,17 @@ async function getEphemeralNativeHeaders(url, settings) {
   }
 }
 
-async function launchBrowserJob(job) {
+async function launchBrowserJob(job, settings = null) {
   if (job.downloadId != null) {
     await browser.downloads.resume(job.downloadId);
     return updateJob(job.id, { state: "in_progress", paused: false, error: null });
   }
 
-  const options = { url: job.url, saveAs: false };
+  const effectiveSettings = settings || await getSettings();
+  const options = {
+    url: job.url,
+    saveAs: (job.askWhereToSave ?? effectiveSettings.askWhereToSave) !== false
+  };
   if (job.filename) options.filename = job.filename;
   const downloadId = await browser.downloads.download(options);
   browserJobByDownloadId.set(downloadId, job.id);
@@ -395,10 +401,10 @@ async function launchJob(job, settings) {
         title: "GoreeCloud Download Manager Extension",
         message: "Native helper unavailable. This download is using Firefox's download engine."
       }).catch(() => {});
-      return launchBrowserJob(fallback);
+      return launchBrowserJob(fallback, settings);
     }
   }
-  return launchBrowserJob(job);
+  return launchBrowserJob(job, settings);
 }
 
 async function pumpQueue() {
@@ -449,7 +455,8 @@ async function queueDownload(payload, deferPump = false) {
     nativeStarted: false,
     segments: settings.segments,
     retryCount: settings.retryCount,
-    directory: settings.nativeDirectory || null
+    directory: settings.nativeDirectory || null,
+    askWhereToSave: payload.askWhereToSave ?? settings.askWhereToSave
   };
   await browser.storage.local.set({ [`job:${id}`]: job });
   await browser.runtime.sendMessage({ type: "job-update", job }).catch(() => {});
@@ -616,7 +623,8 @@ browser.runtime.onMessage.addListener(async (message) => {
         engine: job.engine,
         segments: job.segments,
         retryCount: job.retryCount,
-        directory: job.directory
+        directory: job.directory,
+        askWhereToSave: job.askWhereToSave
       });
     }
     case "remove-job":
