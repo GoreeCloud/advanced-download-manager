@@ -124,7 +124,8 @@ async function main() {
       retryCount: 1,
       nativeDirectory: "/tmp/current-settings",
       forwardCookies: false,
-      completionNotifications: true
+      completionNotifications: true,
+      askWhereToSave: true
     }
   });
 
@@ -156,7 +157,8 @@ async function main() {
     nativeStarted: true,
     segments: 5,
     retryCount: 7,
-    directory: "/tmp/original-native-directory"
+    directory: "/tmp/original-native-directory",
+    askWhereToSave: true
   });
 
   const nativeRetry = await h.message({ type: "retry-job", id: "cancelled-native" });
@@ -169,6 +171,8 @@ async function main() {
   assert.equal(nativeRetry.retryCount, 7, "retry must preserve the original retry-count snapshot despite Settings drift");
   assert.equal(nativeRetry.directory, "/tmp/original-native-directory",
     "retry must preserve the original native destination snapshot despite Settings drift");
+  assert.equal(nativeRetry.askWhereToSave, true,
+    "retry must preserve the original per-download destination-prompt snapshot");
   assert.equal(nativeRetry.requestedFilename, "archives/team/report_.bin",
     "retry must prefer and sanitize the original requested relative filename");
   assert.equal(nativeRetry.filename, "archives/team/report_.bin");
@@ -190,7 +194,8 @@ async function main() {
     nativeStarted: false,
     segments: 11,
     retryCount: 4,
-    directory: "/tmp/legacy-directory"
+    directory: "/tmp/legacy-directory",
+    askWhereToSave: false
   });
 
   const browserRetry = await h.message({ type: "retry-job", id: "legacy-browser" });
@@ -200,6 +205,8 @@ async function main() {
   assert.equal(browserRetry.segments, 11);
   assert.equal(browserRetry.retryCount, 4);
   assert.equal(browserRetry.directory, "/tmp/legacy-directory");
+  assert.equal(browserRetry.askWhereToSave, false,
+    "browser retry must preserve an explicit no-prompt snapshot despite current Settings");
   assert.equal(browserRetry.requestedFilename, "legacy-browser.bin");
   assert.equal(browserRetry.filename, "legacy-browser.bin");
   assert(browserRetry.queueOrder > nativeRetry.queueOrder, "subsequent retry must remain FIFO at the queue tail");
@@ -210,6 +217,7 @@ async function main() {
   console.log("- clean relative subdirectory preservation: PASS");
   console.log("- engine snapshot preservation across Settings drift: PASS");
   console.log("- native segment/retry/directory snapshot preservation: PASS");
+  console.log("- per-download destination-prompt snapshot preservation: PASS");
   console.log("- legacy absolute Firefox destination retry compatibility: PASS");
   console.log("- retry queue-tail sequencing: PASS");
 }
