@@ -41,7 +41,10 @@ function button(label, type, id) {
 }
 
 async function render() {
-  const jobs = await browser.runtime.sendMessage({ type: "list-jobs" });
+  const [jobs, settings] = await Promise.all([
+    browser.runtime.sendMessage({ type: "list-jobs" }),
+    browser.runtime.sendMessage({ type: "get-settings" }).catch(() => null)
+  ]);
   const visible = jobs.slice(0, 6);
   const active = jobs.filter((job) => ["starting", "in_progress", "downloading"].includes(job.state)).length;
   const queued = jobs.filter((job) => job.state === "queued").length;
@@ -53,9 +56,11 @@ async function render() {
   root.replaceChildren();
   if (!visible.length) {
     const empty = document.createElement("div");
-    empty.className = "muted";
-    empty.style.cssText = "font-size:12px;padding:14px 0";
-    empty.textContent = "No downloads yet.";
+    empty.className = "empty";
+    empty.innerHTML = '<img src="../icons/app-icon.svg" alt=""><strong>No downloads yet</strong><div class="muted"></div>';
+    empty.querySelector(".muted").textContent = settings?.captureFirefoxDownloads === false
+      ? "Auto-capture is off. Paste a direct URL or enable it in Settings."
+      : "Firefox downloads will appear here automatically.";
     root.appendChild(empty);
     return;
   }
