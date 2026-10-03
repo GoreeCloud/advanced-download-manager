@@ -346,7 +346,7 @@ async function launchBrowserJob(job) {
     return updateJob(job.id, { state: "in_progress", paused: false, error: null });
   }
 
-  const options = { url: job.url, saveAs: false };
+  const options = { url: job.url, saveAs: true };
   if (job.filename) options.filename = job.filename;
   const downloadId = await browser.downloads.download(options);
   browserJobByDownloadId.set(downloadId, job.id);

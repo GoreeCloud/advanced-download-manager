@@ -1,6 +1,14 @@
 # Change Log — GoreeCloud Download Manager Extension
 
 
+## 0.2.15 — Source candidate
+
+- Changed Firefox-engine downloads started through GoreeCloud controls to request Firefox's Save As dialog by default, allowing the destination and filename to be chosen separately for each new transfer.
+- Made the Save As prompt mandatory for Firefox-engine downloads started through GoreeCloud controls so each new transfer asks for its destination and filename instead of silently using one automatic location.
+- Kept automatically adopted Firefox-started downloads non-destructive. The extension does not cancel/replay an already-started browser request merely to force a destination dialog; Firefox's own **Always ask you where to save files** preference remains the safe prompt authority for those downloads.
+- Added deterministic browser-scheduler/source-contract coverage for enforced Save As prompting, Settings guidance, and the 0.2.15 packaged identity.
+- Advanced the Firefox source version and lifecycle record to 0.2.15 source-candidate state. Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.15 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
+
 ## 0.2.14 — Source candidate
 
 - Added default-on automatic adoption of ordinary HTTP/HTTPS downloads started by Firefox outside GoreeCloud controls, so those downloads appear in GoreeCloud Download Manager without manual URL pasting.

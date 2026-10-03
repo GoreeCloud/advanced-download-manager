@@ -284,7 +284,10 @@
       });
       if (!starting) return null;
 
-      const options = { url: starting.url, saveAs: false };
+      const options = {
+        url: starting.url,
+        saveAs: true
+      };
       const requestedFilename = sanitizeRequestedFilename(starting.requestedFilename ?? starting.filename);
       if (requestedFilename) options.filename = requestedFilename;
 

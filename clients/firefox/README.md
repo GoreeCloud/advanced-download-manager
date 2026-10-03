@@ -1,14 +1,24 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.14 source candidate** — automatic Firefox download adoption under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.15 source candidate** — per-download destination prompting plus automatic Firefox download adoption under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
 Firefox add-on ID: `download-manager@goreecloud.com`  
 Native Messaging host: `goreecloud_download_manager`  
-Current source version: `0.2.14`  
+Current source version: `0.2.15`  
 Accepted Stable extension version: `0.2.12`  
 Accepted native helper: `0.2.11` / protocol `2`
+
+## 0.2.15 source-candidate fix
+
+0.2.15 makes per-download destination choice mandatory for Firefox-engine downloads that GoreeCloud itself starts through the popup, Manager, context-menu action, batch queue, retry path, or browser fallback. Those launches call Firefox's downloads API with `saveAs: true`, which opens Firefox's Save As dialog for each newly started transfer instead of silently using one automatic location.
+
+Automatically captured Firefox-started downloads remain deliberately non-destructive. By the time the WebExtension receives Firefox's `downloads.onCreated` event, the original request has already begun; cancelling and replaying it just to force a dialog could change POST bodies, short-lived authorization state, container/session context, signed URLs, service-worker behavior, or other request semantics. For those captured downloads, Firefox's own **Always ask you where to save files** preference controls the destination dialog before GoreeCloud adopts the original download ID.
+
+Existing Firefox downloads that are merely adopted are never replayed. The Settings page explains the distinction between GoreeCloud-started Save As prompting and Firefox's own prompt preference for automatically captured downloads. Native segmented downloads continue to use the native destination-directory contract; a cross-platform native system-save-dialog contract is not claimed in 0.2.15.
+
+0.2.15 is a source candidate only. Accepted Stable remains 0.2.12 until applicable Mozilla signing, persistent-install/runtime validation, and explicit lifecycle promotion succeed.
 
 ## 0.2.14 source-candidate fix
 
@@ -167,8 +177,8 @@ python clients/firefox/scripts/package.py
 
 ## Current boundaries
 
-Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic native takeover/request replay of Firefox-started downloads, or origin/user-supplied cryptographic checksum enforcement. The 0.2.14 source candidate adds non-destructive automatic manager adoption for ordinary HTTP/HTTPS Firefox downloads, but that narrower capture behavior is not yet an accepted Stable release capability. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
+Stable 0.2.12 does not establish Windows/macOS native-host support, arbitrary POST/body downloads, complete browser authorization-state reproduction, mirror failover, bandwidth limiting, time scheduling, automatic native takeover/request replay of Firefox-started downloads, or origin/user-supplied cryptographic checksum enforcement. The 0.2.15 source candidate retains non-destructive automatic manager adoption for ordinary HTTP/HTTPS Firefox downloads and adds per-download Save As prompting for GoreeCloud-started Firefox-engine transfers, but neither change is yet an accepted Stable release capability. The supported Stable scope is the Firefox extension plus the separately installed Linux native helper and the behaviors actually covered by the accepted evidence.
 
 ## Release state
 
-**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.14 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.14 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
+**GoreeCloud Download Manager Extension 0.2.12 remains the accepted Stable release.** The application-local Firefox release-state record now identifies 0.2.15 as a source candidate while retaining `accepted_stable_version: 0.2.12`. The 0.2.15 candidate must independently repeat its applicable validation, Mozilla signing, signed-install/runtime acceptance, integrity, review, and promotion gates before replacing 0.2.12 as Stable.
