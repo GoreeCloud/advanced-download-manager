@@ -1,6 +1,18 @@
 # Change Log — GoreeCloud Download Manager Extension
 
 
+## 0.2.17 — Source candidate
+
+- Collapsed the inactive native-acceleration Settings section into a compact summary while Firefox downloads mode is selected.
+- Expanded native acceleration controls only when the native segmented helper is selected.
+- Made cookie permission actions contextual: **Allow cookie access…** appears only when a grant is actually needed, and **Revoke cookie access** appears only while optional permission is granted.
+- Removed permanently visible disabled destructive-looking permission controls from the normal Firefox-mode Settings view.
+- Shortened the per-download destination explanation while preserving the 0.2.15 Save As and Firefox preference boundary.
+- Renamed the primary Settings action to **Save changes**.
+- Added source-contract coverage for collapsed native details, contextual permission actions, and 0.2.17 identity.
+- No native-helper protocol or transfer-engine behavior changed; accepted native helper remains 0.2.11 / protocol 2.
+- Accepted Stable remains 0.2.12; no Mozilla-signed 0.2.17 artifact, persistent-install/runtime acceptance, or Stable promotion is claimed yet.
+
 ## 0.2.16 — Source candidate
 
 - Reorganized Settings into separate general-download and native-acceleration sections so native-only controls no longer appear active while Firefox downloads mode is selected.

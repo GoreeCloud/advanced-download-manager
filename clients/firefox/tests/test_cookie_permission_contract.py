@@ -23,8 +23,8 @@ class CookiePermissionContractTests(unittest.TestCase):
         self.assertIn('const nativeMode = nativeModeSelected();', source)
         self.assertIn('const forwardingRequested = $("#forwardCookies").checked;', source)
         self.assertIn("if (!nativeMode || !forwardingRequested)", source)
-        self.assertIn('|| !nativeMode', source)
-        self.assertIn('|| !forwardingRequested', source)
+        self.assertIn("const showGrant = nativeMode && forwardingRequested && !cookiePermissionGranted;", source)
+        self.assertIn('$("#grantCookies").hidden = !showGrant;', source)
 
     def test_cookie_permission_can_be_revoked_from_settings(self):
         source = (ROOT / "ui" / "options.js").read_text(encoding="utf-8")
@@ -33,26 +33,26 @@ class CookiePermissionContractTests(unittest.TestCase):
         self.assertIn("browser.permissions.remove(COOKIE_PERMISSION)", source)
         self.assertIn('id="revokeCookies"', html)
         self.assertIn("Revoke cookie access", html)
+        self.assertIn('$("#revokeCookies").hidden = !showRevoke;', source)
 
-    def test_native_settings_have_explicit_inactive_state(self):
+    def test_native_settings_collapse_when_firefox_engine_is_selected(self):
         source = (ROOT / "ui" / "options.js").read_text(encoding="utf-8")
         html = (ROOT / "ui" / "options.html").read_text(encoding="utf-8")
         self.assertIn('id="nativeSettings"', html)
         self.assertIn('id="nativeState"', html)
-        self.assertIn('aria-disabled="true"', html)
-        self.assertIn('id="grantCookies" disabled', html)
-        self.assertIn('id="revokeCookies" class="danger" disabled', html)
-        self.assertIn('id="test" disabled', html)
-        self.assertIn('$("#mode").addEventListener("change"', source)
-        self.assertIn('$("#forwardCookies").addEventListener("change"', source)
-        self.assertIn('$("#nativeSettings").setAttribute("aria-disabled", String(!nativeMode))', source)
+        self.assertIn('id="nativeSummary"', html)
+        self.assertIn('id="nativeDetails" class="native-details stack" hidden', html)
+        self.assertIn('$("#nativeDetails").hidden = !nativeMode;', source)
+        self.assertIn('$("#nativeSummary").hidden = nativeMode;', source)
+        self.assertIn('$("#nativeState").textContent = nativeMode ? "On" : "Off";', source)
         self.assertIn('$("#test").disabled = permissionBusy || !nativeMode;', source)
 
     def test_permission_wording_is_disclosed_before_request(self):
         html = (ROOT / "ui" / "options.html").read_text(encoding="utf-8")
         self.assertIn("Access your data for all websites", html)
-        self.assertIn("will not request it unless native mode and cookie forwarding are both selected", html)
+        self.assertIn("requests it only after native mode and cookie forwarding are both selected", html)
         self.assertIn("Allow cookie access", html)
+        self.assertIn('id="permissionActions" class="flex-wrap permission-actions" hidden', html)
 
     def test_cookie_permission_remains_optional(self):
         manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))

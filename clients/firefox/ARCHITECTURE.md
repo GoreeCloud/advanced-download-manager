@@ -96,7 +96,7 @@ A live same-ID native worker is reused. A dead recoverable error worker can be r
 
 ## Optional authenticated native downloads
 
-Cookie forwarding is disabled by default. Firefox's `cookies` and `<all_urls>` permissions remain optional. In 0.2.16 source-candidate Settings, the grant action is enabled only when native mode and cookie forwarding are both deliberately selected, and the permission can be explicitly revoked from Settings. Target cookies are read at launch/resume time and forwarded in memory. The native helper allows only bounded `Cookie` and `Referer` headers and rejects CR/LF-bearing values.
+Cookie forwarding is disabled by default. Firefox's `cookies` and `<all_urls>` permissions remain optional. In 0.2.17 source-candidate Settings, the grant action is enabled only when native mode and cookie forwarding are both deliberately selected, and the permission can be explicitly revoked from Settings. Target cookies are read at launch/resume time and forwarded in memory. The native helper allows only bounded `Cookie` and `Referer` headers and rejects CR/LF-bearing values.
 
 Earlier Firefox 155.0.1 / Flathub Flatpak controlled testing accepted the authenticated native path with exact final integrity and controlled credential non-persistence.
 

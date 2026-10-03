@@ -15,8 +15,9 @@
     .section-heading .muted { margin-top:3px; font-size:12px; }
     .section-badge { display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:999px; padding:3px 8px; font-size:11px; color:var(--muted); white-space:nowrap; }
     .section-badge.active { color:var(--success); border-color:color-mix(in srgb, var(--success) 45%, var(--border)); }
-    .settings-section-disabled { background:color-mix(in srgb, var(--surface-strong) 92%, CanvasText 8%); }
-    .settings-section-disabled .native-control-label { color:var(--muted); }
+    .settings-section-compact { gap:8px; }
+    .native-summary { padding:2px 0 1px; font-size:12px; color:var(--muted); }
+    .native-details[hidden], .permission-actions[hidden] { display:none !important; }
     .field { display:grid; gap:6px; }
     .field label { font-size:13px; font-weight:650; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
@@ -33,7 +34,7 @@
   </style>
 </head>
 <body>
-<div class="heading"><img class="icon" src="../icons/app-icon.svg" alt=""><div><h1>Download Manager settings</h1><div class="muted">GoreeCloud Download Manager Extension 0.2.16</div></div></div>
+<div class="heading"><img class="icon" src="../icons/app-icon.svg" alt=""><div><h1>Download Manager settings</h1><div class="muted">GoreeCloud Download Manager Extension 0.2.17</div></div></div>
 <div class="panel stack">
   <section class="settings-section" aria-labelledby="downloads-heading">
     <div class="section-heading">
@@ -41,30 +42,34 @@
     </div>
     <div class="field"><label for="mode">Download engine</label><select id="mode"><option value="browser">Firefox downloads — maximum compatibility</option><option value="native">Native segmented helper — acceleration + durable resume</option></select></div>
     <div class="field"><label for="maxConcurrent">Concurrent downloads</label><input id="maxConcurrent" type="number" min="1" max="12"></div>
-    <div class="permission"><div class="permission-title">Per-download destination</div><div class="muted">Firefox-engine downloads started from GoreeCloud controls always open Firefox's Save As dialog so you choose the destination and filename for each transfer. For automatically captured downloads that Firefox has already started, enable Firefox Settings → General → Files and Applications → Downloads → Always ask you where to save files; GoreeCloud deliberately does not cancel and replay those requests.</div></div>
+    <div class="permission"><div class="permission-title">Per-download destination</div><div class="muted">GoreeCloud-started Firefox downloads always open Save As. Downloads Firefox starts itself use Firefox Settings → General → Downloads → Always ask you where to save files.</div></div>
     <div class="check"><input id="captureFirefoxDownloads" type="checkbox"><div><strong>Automatically manage Firefox downloads</strong><div class="muted">Adds ordinary HTTP/HTTPS downloads that Firefox starts to GoreeCloud Download Manager without cancelling or replaying the request. Automatically captured downloads stay on Firefox's engine; native segmented mode applies only to downloads started through GoreeCloud controls.</div></div></div>
     <div class="check"><input id="completionNotifications" type="checkbox"><div><strong>Completion and failure notifications</strong><div class="muted">Show a Firefox notification when a managed download completes, fails, or is interrupted.</div></div></div>
   </section>
 
-  <section id="nativeSettings" class="settings-section" aria-labelledby="native-heading" aria-disabled="true">
+  <section id="nativeSettings" class="settings-section settings-section-compact" aria-labelledby="native-heading">
     <div class="section-heading">
-      <div><h2 id="native-heading">Native acceleration</h2><div class="muted">These controls apply only when the native segmented helper is the selected download engine.</div></div>
-      <span id="nativeState" class="section-badge">Inactive</span>
+      <div><h2 id="native-heading">Native acceleration</h2><div class="muted">Segmented downloads, durable resume, and optional authenticated transfers.</div></div>
+      <span id="nativeState" class="section-badge">Off</span>
     </div>
-    <div class="grid">
-      <div class="field"><label class="native-control-label" for="segments">Segments per native download</label><input id="segments" type="number" min="1" max="32" disabled></div>
-      <div class="field"><label class="native-control-label" for="retryCount">Native retry attempts</label><input id="retryCount" type="number" min="0" max="10" disabled></div>
+    <div id="nativeSummary" class="native-summary">Switch the Download engine to Native segmented helper to configure acceleration.</div>
+    <div id="nativeDetails" class="native-details stack" hidden>
+      <div class="grid">
+        <div class="field"><label for="segments">Segments per native download</label><input id="segments" type="number" min="1" max="32" disabled></div>
+        <div class="field"><label for="retryCount">Native retry attempts</label><input id="retryCount" type="number" min="0" max="10" disabled></div>
+      </div>
+      <div class="field"><label for="nativeDirectory">Native destination directory</label><input id="nativeDirectory" placeholder="Leave blank for ~/Downloads" disabled></div>
+      <div class="permission stack">
+        <div class="check"><input id="forwardCookies" type="checkbox" disabled><div><strong>Forward target-site cookies</strong><div class="muted">Off by default. When enabled, GoreeCloud can pass cookies for the target download URL to the local native helper in memory.</div></div></div>
+        <div class="muted">Firefox may call this optional grant “Access your data for all websites.” GoreeCloud requests it only after native mode and cookie forwarding are both selected.</div>
+        <div id="permissionActions" class="flex-wrap permission-actions" hidden><button id="grantCookies" disabled>Allow cookie access…</button><button id="revokeCookies" class="danger" disabled>Revoke cookie access</button></div>
+        <div id="cookieStatus" class="muted"></div>
+      </div>
+      <div class="flex-wrap"><button id="test" disabled>Test native helper</button></div>
     </div>
-    <div class="field"><label class="native-control-label" for="nativeDirectory">Native destination directory</label><input id="nativeDirectory" placeholder="Leave blank for ~/Downloads" disabled></div>
-    <div class="permission stack">
-      <div class="check"><input id="forwardCookies" type="checkbox" disabled><div><strong>Forward target-site cookies to the native helper</strong><div class="muted">Off by default. When deliberately enabled in native mode, Firefox can grant optional Cookies + All Sites access. GoreeCloud forwards only cookies for the target download URL to the local native process in memory and does not intentionally store them in download history.</div></div></div>
-      <div class="muted">Firefox may describe this optional permission as “Access your data for all websites.” GoreeCloud will not request it unless native mode and cookie forwarding are both selected.</div>
-      <div class="flex-wrap"><button id="grantCookies" disabled>Allow cookie access…</button><button id="revokeCookies" class="danger" disabled>Revoke cookie access</button><span id="cookieStatus" class="muted"></span></div>
-    </div>
-    <div class="flex-wrap"><button id="test" disabled>Test native helper</button></div>
   </section>
 
-  <div class="footer"><button class="primary" id="save">Save settings</button><span id="status" class="muted" role="status" aria-live="polite"></span></div>
+  <div class="footer"><button class="primary" id="save">Save changes</button><span id="status" class="muted" role="status" aria-live="polite"></span></div>
 </div>
 <script src="options.js"></script>
 </body>

@@ -17,7 +17,7 @@ The native helper is a same-user local process, not a security sandbox. The stag
 - Download URLs are restricted to HTTP/HTTPS before queueing and independently validated by the native helper.
 - Native filenames and job identifiers are sanitized before filesystem use.
 - Forwarded native request headers are allowlisted to the implemented Cookie/Referer boundary; CR/LF-bearing and over-64-KiB values are rejected.
-- Cookie forwarding is disabled by default, requires explicit optional Firefox permission, and request credentials are not intentionally persisted in extension history or native recovery metadata. In 0.2.16 source-candidate Settings, the grant control is disabled until native mode and cookie forwarding are both deliberately selected, and the user can explicitly revoke the permission afterward.
+- Cookie forwarding is disabled by default, requires explicit optional Firefox permission, and request credentials are not intentionally persisted in extension history or native recovery metadata. In 0.2.17 source-candidate Settings, the grant control is disabled until native mode and cookie forwarding are both deliberately selected, and the user can explicitly revoke the permission afterward.
 - Persisted native partial reuse requires structurally valid same-job `metadata.json` plus source URL/size/ETag/Last-Modified validation.
 - Resumed and segmented HTTP 206 responses require exact `Content-Range` semantics before bytes are appended.
 - Expected segment sizes and assembled total size are validated when source size is known.

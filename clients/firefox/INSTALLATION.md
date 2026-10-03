@@ -8,7 +8,7 @@ Unsigned Development builds may still be loaded temporarily through `about:debug
 
 ## Per-download destination prompts
 
-For current 0.2.16 source-candidate builds, Firefox-engine downloads started through GoreeCloud controls always request Firefox's Save As dialog so each new transfer asks for its destination and filename. The extension Settings page explains this behavior rather than offering an automatic-location override.
+For current 0.2.17 source-candidate builds, Firefox-engine downloads started through GoreeCloud controls always request Firefox's Save As dialog so each new transfer asks for its destination and filename. The extension Settings page explains this behavior rather than offering an automatic-location override.
 
 Ordinary downloads that Firefox itself starts are adopted only after Firefox has created the original download. GoreeCloud intentionally does not cancel and replay those requests. To choose a destination for every automatically captured Firefox-started download too, open Firefox **Settings → General → Files and Applications → Downloads** and enable **Always ask you where to save files**. Firefox then prompts before the original download starts, and GoreeCloud adopts that same download afterward.
 
@@ -16,7 +16,7 @@ Native segmented downloads continue to use the configured native destination dir
 
 ## Optional cookie access
 
-In 0.2.16 source-candidate builds, optional cookie access is unavailable while the Firefox downloads engine is selected. To use authenticated native downloads, first select **Native segmented helper — acceleration + durable resume**, then turn on **Forward target-site cookies to the native helper**. Only then does **Allow cookie access…** become available.
+In 0.2.17 source-candidate builds, the inactive native section stays compact while the Firefox downloads engine is selected. To use authenticated native downloads, first select **Native segmented helper — acceleration + durable resume**, then turn on **Forward target-site cookies**. Only then does **Allow cookie access…** appear. **Revoke cookie access** appears only while the optional permission is currently granted.
 
 Firefox may label that optional grant **Access your data for all websites** because the extension declares optional `<all_urls>` host access so it can read target-site cookies for user-selected downloads. GoreeCloud does not request the permission before both native mode and cookie forwarding are deliberately selected. After a grant, Settings exposes **Revoke cookie access**.
 
