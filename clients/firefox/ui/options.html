@@ -29,7 +29,7 @@
     .check strong { display:block; font-size:13px; }
     .check .muted { font-size:12px; margin-top:2px; }
     .permission { padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-elevated); }
-    .permission.info-card { border-color:color-mix(in srgb, var(--accent) 26%, var(--border)); }
+    .permission.info-card { border-color:var(--border); box-shadow:inset 3px 0 var(--accent); }
     .permission-layout { display:flex; gap:10px; align-items:flex-start; }
     .permission-layout .section-icon { width:30px; height:30px; border-radius:10px; }
     .permission-title { font-size:13px; font-weight:650; }
@@ -49,8 +49,8 @@
     </div>
     <div class="field"><label for="mode">Download engine</label><select id="mode"><option value="browser">Firefox downloads — maximum compatibility</option><option value="native">Native segmented helper — acceleration + durable resume</option></select></div>
     <div class="field"><label for="maxConcurrent">Concurrent downloads</label><input id="maxConcurrent" type="number" min="1" max="12"></div>
-    <div class="permission info-card"><div class="permission-layout"><span class="section-icon"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 2h9v9H3z"/></svg></span><div><div class="permission-title">Per-download destination</div><div class="muted">GoreeCloud-started Firefox downloads always open Save As. Downloads Firefox starts itself use Firefox Settings → General → Downloads → Always ask you where to save files.</div></div></div></div>
-    <label class="check switch-check"><input id="captureFirefoxDownloads" type="checkbox"><div><strong>Automatically manage Firefox downloads</strong><div class="muted">Adds ordinary HTTP/HTTPS downloads that Firefox starts to GoreeCloud Download Manager without cancelling or replaying the request. Automatically captured downloads stay on Firefox's engine; native segmented mode applies only to downloads started through GoreeCloud controls.</div></div></label>
+    <div class="permission info-card"><div class="permission-layout"><span class="section-icon"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 2h9v9H3z"/></svg></span><div><div class="permission-title">Per-download destination</div><div class="muted">GoreeCloud-started Firefox downloads always show Save As. Firefox-started downloads use Firefox Settings → General → Downloads → Always ask you where to save files.</div></div></div></div>
+    <label class="check switch-check"><input id="captureFirefoxDownloads" type="checkbox"><div><strong>Automatically manage Firefox downloads</strong><div class="muted">Shows ordinary HTTP/HTTPS downloads Firefox starts in GoreeCloud without cancelling or replaying them. Captured downloads remain on Firefox's engine; native acceleration applies only to GoreeCloud-started downloads.</div></div></label>
     <label class="check switch-check"><input id="completionNotifications" type="checkbox"><div><strong>Completion and failure notifications</strong><div class="muted">Show a Firefox notification when a managed download completes, fails, or is interrupted.</div></div></label>
   </section>
 
