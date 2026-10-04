@@ -3,6 +3,10 @@
 
 ## 0.2.18 — Source candidate
 
+- Added a fourth rendered-screenshot density pass without changing transfer behavior or source-candidate identity.
+- Combined Download engine and Concurrent downloads into one responsive Settings row on wider surfaces while retaining a single-column mobile fallback.
+- Updated the Manager zero-download guidance to distinguish GoreeCloud-started Save As behavior from Firefox-started downloads that follow Firefox's save-location preference.
+
 - Added a third representative-screenshot polish pass without changing transfer behavior or release identity.
 - Shortened the popup URL prompt and rendered active/queued and speed metadata as compact status pills for better small-surface legibility.
 - Refined the Manager batch disclosure and added explicit accessible names for batch, search, and state-filter controls.

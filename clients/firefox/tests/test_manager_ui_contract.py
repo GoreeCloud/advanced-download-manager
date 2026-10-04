@@ -29,6 +29,8 @@ class ManagerUiContractTests(unittest.TestCase):
         self.assertIn('<label class="check switch-check"><input id="completionNotifications"', options)
         self.assertIn('<label class="check switch-check"><input id="forwardCookies"', options)
         self.assertIn('class="section-leading"', options)
+        self.assertIn('class="download-grid"', options)
+        self.assertIn('grid-template-columns:minmax(0,1fr) 180px', options)
         self.assertIn('box-shadow:inset 3px 0 var(--accent)', options)
         self.assertIn('Firefox-started downloads use Firefox Settings', options)
         self.assertIn('id="listTools" class="controls" hidden', html)
@@ -43,6 +45,7 @@ class ManagerUiContractTests(unittest.TestCase):
         self.assertIn('$("#clearCompleted").disabled = !jobs.some', source)
         self.assertIn('capture.textContent = enabled ? "Auto-capture on" : "Auto-capture off";', source)
         self.assertIn('title.textContent = "No downloads yet";', source)
+        self.assertIn("GoreeCloud-started downloads always show Save As", source)
         self.assertIn('if (announcement !== lastAnnouncement)', source)
 
     def test_popup_zero_state_is_structured(self):

@@ -22,6 +22,7 @@
     .native-details[hidden], .permission-actions[hidden] { display:none !important; }
     .field { display:grid; gap:6px; }
     .field label { font-size:13px; font-weight:650; }
+    .download-grid { display:grid; grid-template-columns:minmax(0,1fr) 180px; gap:12px; align-items:end; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .check { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start; }
     .check input { width:auto; margin-top:3px; }
@@ -37,7 +38,7 @@
     .footer { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding-top:1px; }
     #save { display:inline-flex; align-items:center; gap:7px; }
     #status { font-size:12px; min-height:1em; }
-    @media(max-width:650px){body{padding:16px}.grid{grid-template-columns:1fr}.section-heading{align-items:flex-start}}
+    @media(max-width:650px){body{padding:16px}.download-grid,.grid{grid-template-columns:1fr}.section-heading{align-items:flex-start}}
   </style>
 </head>
 <body>
@@ -47,8 +48,10 @@
     <div class="section-heading">
       <div class="section-leading"><span class="section-icon"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/></svg></span><div><h2 id="downloads-heading">Downloads</h2><div class="muted">Choose the transfer engine and behavior shared across managed downloads.</div></div></div>
     </div>
-    <div class="field"><label for="mode">Download engine</label><select id="mode"><option value="browser">Firefox downloads — maximum compatibility</option><option value="native">Native segmented helper — acceleration + durable resume</option></select></div>
-    <div class="field"><label for="maxConcurrent">Concurrent downloads</label><input id="maxConcurrent" type="number" min="1" max="12"></div>
+    <div class="download-grid">
+      <div class="field"><label for="mode">Download engine</label><select id="mode"><option value="browser">Firefox downloads — maximum compatibility</option><option value="native">Native segmented helper — acceleration + durable resume</option></select></div>
+      <div class="field"><label for="maxConcurrent">Concurrent downloads</label><input id="maxConcurrent" type="number" min="1" max="12"></div>
+    </div>
     <div class="permission info-card"><div class="permission-layout"><span class="section-icon"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 2h9v9H3z"/></svg></span><div><div class="permission-title">Per-download destination</div><div class="muted">GoreeCloud-started Firefox downloads always show Save As. Firefox-started downloads use Firefox Settings → General → Downloads → Always ask you where to save files.</div></div></div></div>
     <label class="check switch-check"><input id="captureFirefoxDownloads" type="checkbox"><div><strong>Automatically manage Firefox downloads</strong><div class="muted">Shows ordinary HTTP/HTTPS downloads Firefox starts in GoreeCloud without cancelling or replaying them. Captured downloads remain on Firefox's engine; native acceleration applies only to GoreeCloud-started downloads.</div></div></label>
     <label class="check switch-check"><input id="completionNotifications" type="checkbox"><div><strong>Completion and failure notifications</strong><div class="muted">Show a Firefox notification when a managed download completes, fails, or is interrupted.</div></div></label>
