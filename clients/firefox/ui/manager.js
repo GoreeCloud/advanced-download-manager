@@ -115,7 +115,7 @@ function render() {
       const copy = document.createElement("div");
       copy.className = "empty-copy muted";
       copy.textContent = cachedSettings?.captureFirefoxDownloads === false
-        ? "Automatic Firefox download management is off. Start a direct download above or enable auto-capture in Settings."
+        ? "Auto-capture is off. Start a direct download above or enable it in Settings."
         : "Downloads started in Firefox can appear here automatically. You can also paste a direct HTTP/HTTPS URL above.";
 
       card.append(icon, title, copy);
