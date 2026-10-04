@@ -116,7 +116,7 @@ function render() {
       copy.className = "empty-copy muted";
       copy.textContent = cachedSettings?.captureFirefoxDownloads === false
         ? "Auto-capture is off. Start a direct download above or enable it in Settings."
-        : "Downloads started in Firefox can appear here automatically. You can also paste a direct HTTP/HTTPS URL above.";
+        : "Firefox downloads appear here automatically. GoreeCloud-started downloads always show Save As; Firefox-started downloads follow Firefox's save-location setting.";
 
       card.append(icon, title, copy);
       empty.appendChild(card);
