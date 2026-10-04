@@ -213,7 +213,7 @@ input[type="checkbox"] { accent-color: var(--accent); }
   border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
   border-radius: 11px;
   background: var(--accent-soft);
-  color: var(--accent-strong);
+  color: var(--accent);
   flex: 0 0 auto;
 }
 @media (prefers-reduced-transparency: reduce) {
