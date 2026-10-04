@@ -1,6 +1,6 @@
 # GoreeCloud Download Manager Extension
 
-**Status:** **0.2.18 source candidate** — refreshed Glaze light/dark visual hierarchy under validation; accepted Stable remains 0.2.12
+**Status:** **0.2.18 source candidate** — screenshot-driven Glaze control and Settings refinement under validation; accepted Stable remains 0.2.12
 
 GoreeCloud Download Manager Extension is GoreeCloud's first-party Firefox Manifest V3 download manager. It provides managed queueing, pause/resume, retries, batch input, telemetry, and an optional separately installed Linux Native Messaging helper for segmented HTTP range transfers and durable same-job recovery.
 
@@ -13,6 +13,8 @@ Accepted native helper: `0.2.11` / protocol `2`
 ## 0.2.18 source-candidate polish
 
 0.2.18 refines the full Manager and toolbar popup presentation without changing transfer behavior. The Manager now presents a compact automatic-capture status badge, hides search/filter/bulk controls until managed history exists, and disables bulk actions that have no applicable jobs. Its zero-download state now explains automatic Firefox adoption and the direct-URL path instead of leaving an undifferentiated empty panel.
+
+A follow-up representative Firefox screenshot review refines the same candidate line further: Manager and popup secondary navigation now use compact glyph buttons with accessible names, primary download/save actions pair glyphs with text, summary cards gain semantic glyphs in addition to their existing labels and color rails, and Settings replaces plain checkboxes with keyboard-focusable Glaze-style switches. Settings sections now use stronger Glaze grouping, section glyphs, and a clearer destination-information card while preserving every existing permission and transfer contract.
 
 The toolbar popup now uses the shorter GoreeCloud Download Manager title and a structured zero-download state. When automatic capture is disabled, both Manager and popup explain that state rather than implying that Firefox downloads will necessarily appear automatically.
 

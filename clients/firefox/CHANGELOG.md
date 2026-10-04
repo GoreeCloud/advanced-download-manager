@@ -3,6 +3,13 @@
 
 ## 0.2.18 — Source candidate
 
+- Added a second screenshot-driven Glaze refinement pass across popup, Manager, and Settings while keeping the 0.2.18 source-candidate identity unchanged.
+- Replaced popup Manager and full-Manager Settings text navigation with compact accessible glyph buttons.
+- Added glyph reinforcement to primary Start/Save actions and the Active, Queued, Completed, and Total speed summary cards.
+- Replaced plain Settings checkboxes with keyboard-focusable Glaze-style switch controls without changing stored settings semantics.
+- Strengthened Settings section grouping with Glaze section glyphs, softer surfaces, and a clearer per-download destination information card.
+- Corrected the repository's documented current Glaze consumer target from V1.6 / 1.6.0 to V1.7 / 1.7.0 while preserving the separate consumer-acceptance boundary.
+
 - Refined the full Manager zero-download state with a compact explanatory empty state instead of a bare “No downloads yet” panel.
 - Added an automatic-capture status badge to the Manager so Firefox integration state is visible without opening Settings.
 - Hid Manager search/filter/bulk controls when there is no managed history.
