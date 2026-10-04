@@ -52,7 +52,7 @@ CI validates formatting, Clippy, tests, native workspace checks, repository poli
 
 ## Platform contract
 
-`goreecloud.platform.yaml` records the current GoreeCloud Platform Contract declaration. All nine Integral Platform Systems — GoreeCloud Manager, Privacy Shield, Wardveil Security, Everkeep, Glaze UI, GoreeCloud Mesh, GoreeCloud Identity, GoreeCloud Policy, and GoreeCloud Observability — remain unaccepted for this application. The current Official GLAZE UI consumer target is V1.6 / 1.6.0 (canonical lifecycle: Anchor; retained Stable compatibility vocabulary remains in Glaze UI lifecycle metadata), but no runtime UI or application-specific Glaze acceptance exists. Contract metadata does not establish integration.
+`goreecloud.platform.yaml` records the current GoreeCloud Platform Contract declaration. All nine Integral Platform Systems — GoreeCloud Manager, Privacy Shield, Wardveil Security, Everkeep, Glaze, GoreeCloud Mesh, GoreeCloud Identity, GoreeCloud Policy, and GoreeCloud Observability — remain unaccepted for this application. The current Official Glaze consumer target is V1.7 / 1.7.0 (Official Anchor / Stable-compatibility shared release), but no fresh Download Manager consumer acceptance against that target has been established. Contract metadata does not establish integration.
 
 ## Development boundaries
 
