@@ -219,6 +219,14 @@ input[type="checkbox"] { accent-color: var(--accent); }
 @media (prefers-reduced-transparency: reduce) {
   .panel { background: var(--surface-strong); backdrop-filter: none; }
 }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
 @media (forced-colors: active) {
   .panel, .summary-card, .status-badge, .engine-badge { backdrop-filter: none; box-shadow: none; }
   button.primary { box-shadow: none; }
