@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'release/download-manager-signing'
+      - 'release/download-manager-signing-exact'
 
 permissions:
   contents: read
