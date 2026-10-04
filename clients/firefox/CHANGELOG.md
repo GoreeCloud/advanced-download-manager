@@ -3,6 +3,13 @@
 
 ## 0.2.18 — Source candidate
 
+- Added a third representative-screenshot polish pass without changing transfer behavior or release identity.
+- Shortened the popup URL prompt and rendered active/queued and speed metadata as compact status pills for better small-surface legibility.
+- Refined the Manager batch disclosure and added explicit accessible names for batch, search, and state-filter controls.
+- Changed the per-download destination callout from an accent-outline treatment to a neutral information surface with a restrained accent rail.
+- Tightened automatic-capture wording while preserving the existing non-destructive Firefox-engine contract.
+- Added a shared reduced-motion fallback that effectively disables UI transitions and animations for users who request reduced motion.
+
 - Added a second screenshot-driven Glaze refinement pass across popup, Manager, and Settings while keeping the 0.2.18 source-candidate identity unchanged.
 - Replaced popup Manager and full-Manager Settings text navigation with compact accessible glyph buttons.
 - Added glyph reinforcement to primary Start/Save actions and the Active, Queued, Completed, and Total speed summary cards.
