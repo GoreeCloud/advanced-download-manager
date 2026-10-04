@@ -19,7 +19,11 @@
     .download-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
     #start { display:inline-flex; align-items:center; gap:7px; }
     details { margin-top:10px; }
-    summary { cursor:pointer; color:var(--muted); font-size:12px; }
+    summary { cursor:pointer; color:var(--muted); font-size:12px; width:max-content; list-style:none; display:flex; align-items:center; gap:6px; padding:3px 5px; border-radius:8px; }
+    summary::-webkit-details-marker { display:none; }
+    summary::before { content:"›"; font-size:16px; line-height:1; transform:translateY(-1px); transition:transform 120ms ease; }
+    details[open] summary::before { transform:rotate(90deg); }
+    summary:hover { color:CanvasText; background:var(--accent-soft); }
     .batch { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:end; margin-top:10px; }
     .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
     .controls[hidden] { display:none !important; }
@@ -66,12 +70,12 @@
   <div class="download-row"><input id="url" type="url" aria-label="Direct download URL" placeholder="Paste a direct HTTP/HTTPS download URL"><button class="primary" id="start"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/></svg><span>Start download</span></button></div>
   <details>
     <summary>Batch download URLs</summary>
-    <div class="batch"><textarea id="batch" placeholder="One HTTP/HTTPS URL per line"></textarea><button id="startBatch">Queue batch</button></div>
+    <div class="batch"><textarea id="batch" aria-label="Batch download URLs" placeholder="One HTTP/HTTPS URL per line"></textarea><button id="startBatch">Queue batch</button></div>
   </details>
 </div>
 
 <div id="listTools" class="controls" hidden>
-  <div class="search-row"><input id="search" type="search" placeholder="Search downloads"><select id="filter"><option value="all">All states</option><option value="active">Active</option><option value="queued">Queued</option><option value="paused">Paused</option><option value="complete">Completed</option><option value="problem">Errors / interrupted</option></select></div>
+  <div class="search-row"><input id="search" type="search" aria-label="Search downloads" placeholder="Search downloads"><select id="filter" aria-label="Filter downloads by state"><option value="all">All states</option><option value="active">Active</option><option value="queued">Queued</option><option value="paused">Paused</option><option value="complete">Completed</option><option value="problem">Errors / interrupted</option></select></div>
   <div class="flex-wrap"><button id="pauseAll">Pause all</button><button id="resumeAll">Resume all</button><button id="clearCompleted">Clear completed</button></div>
 </div>
 
