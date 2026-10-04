@@ -12,13 +12,21 @@
     .header-copy { display:grid; gap:5px; min-width:0; }
     .header-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .command-panel { padding:14px; margin-bottom:14px; }
+    .command-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .command-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:720; }
+    .command-title .section-icon { width:30px; height:30px; border-radius:10px; }
+    .command-hint { font-size:11px; }
     .download-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+    #start { display:inline-flex; align-items:center; gap:7px; }
     details { margin-top:10px; }
     summary { cursor:pointer; color:var(--muted); font-size:12px; }
     .batch { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:end; margin-top:10px; }
     .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
     .controls[hidden] { display:none !important; }
     .header-status { font-size:11px; }
+    .summary-card { min-height:68px; }
+    .summary-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+    .summary-glyph { width:18px; height:18px; color:var(--summary-accent); opacity:.78; }
     .empty { min-height:160px; display:grid; place-items:center; padding:32px 18px; text-align:center; }
     .empty-card { display:grid; justify-items:center; gap:8px; max-width:460px; }
     .empty-icon { width:38px; height:38px; opacity:.9; }
@@ -43,18 +51,19 @@
 <body>
 <header>
   <div class="app-title"><img class="icon" src="../icons/app-icon.svg" alt=""><div class="header-copy"><h1>GoreeCloud Download Manager</h1><div class="header-meta"><div class="subtitle muted">Firefox downloads, queues, and optional native acceleration.</div><span id="captureStatus" class="status-badge header-status">Checking…</span></div></div></div>
-  <button id="settings">Settings</button>
+  <button id="settings" class="icon-button" title="Settings" aria-label="Settings"><svg class="glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19 13.5v-3l-2-.7a7.8 7.8 0 0 0-.8-1.8l.9-1.9-2.2-2.1-1.8.9a7.8 7.8 0 0 0-1.9-.8L10.5 2h-3l-.7 2.1a7.8 7.8 0 0 0-1.8.8L3.1 4 1 6.1 1.9 8a7.8 7.8 0 0 0-.8 1.8L-1 10.5v3l2.1.7a7.8 7.8 0 0 0 .8 1.8L1 17.9 3.1 20l1.9-.9a7.8 7.8 0 0 0 1.8.8l.7 2.1h3l.7-2.1a7.8 7.8 0 0 0 1.9-.8l1.8.9 2.2-2.1-.9-1.9a7.8 7.8 0 0 0 .8-1.8l2-.7Z" transform="translate(2) scale(.83)"/></svg></button>
 </header>
 
 <div class="summary-grid" style="margin-bottom:14px">
-  <div class="summary-card active"><strong id="activeCount">0</strong><span>Active</span></div>
-  <div class="summary-card queued"><strong id="queuedCount">0</strong><span>Queued</span></div>
-  <div class="summary-card completed"><strong id="completeCount">0</strong><span>Completed</span></div>
-  <div class="summary-card speed"><strong id="totalSpeed">—</strong><span>Total speed</span></div>
+  <div class="summary-card active"><div class="summary-top"><strong id="activeCount">0</strong><svg class="glyph summary-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 20h14"/></svg></div><span>Active</span></div>
+  <div class="summary-card queued"><div class="summary-top"><strong id="queuedCount">0</strong><svg class="glyph summary-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12M6 12h12M6 17h8"/></svg></div><span>Queued</span></div>
+  <div class="summary-card completed"><div class="summary-top"><strong id="completeCount">0</strong><svg class="glyph summary-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg></div><span>Completed</span></div>
+  <div class="summary-card speed"><div class="summary-top"><strong id="totalSpeed">—</strong><svg class="glyph summary-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 12 4-3"/><path d="M7 19h10"/></svg></div><span>Total speed</span></div>
 </div>
 
 <div class="panel command-panel">
-  <div class="download-row"><input id="url" type="url" placeholder="Paste a direct HTTP/HTTPS download URL"><button class="primary" id="start">Start download</button></div>
+  <div class="command-head"><div class="command-title"><span class="section-icon"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m8 11 4 4 4-4"/></svg></span><span>New download</span></div><span class="command-hint muted">Direct HTTP/HTTPS URL</span></div>
+  <div class="download-row"><input id="url" type="url" aria-label="Direct download URL" placeholder="Paste a direct HTTP/HTTPS download URL"><button class="primary" id="start"><svg class="glyph small" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/></svg><span>Start download</span></button></div>
   <details>
     <summary>Batch download URLs</summary>
     <div class="batch"><textarea id="batch" placeholder="One HTTP/HTTPS URL per line"></textarea><button id="startBatch">Queue batch</button></div>
